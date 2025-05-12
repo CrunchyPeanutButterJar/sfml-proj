@@ -36,6 +36,11 @@ void Window::Destroy()
     m_window.close();
 }
 
+sf::RenderWindow* Window::GetRenderWindow()
+{
+    return &m_window;
+}
+
 void Window::Update()
 {
     sf::Event event;

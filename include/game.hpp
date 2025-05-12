@@ -3,7 +3,9 @@
 
 #include <SFML/Graphics.hpp>
 
+#include <snake.hpp>
 #include <window.hpp>
+#include <world.hpp>
 
 class Game
 {
@@ -15,12 +17,16 @@ public:
     void Update();
     void Render();
     Window* GetWindow();
+    sf::Time GetElapsed();
+    void RestartClock();
 
 private:
-    Window m_window;
+    sf::Clock m_clock;
+    sf::Time m_elapsed;
 
-    sf::Texture m_catTexture;
-    sf::Sprite m_cat;
+    Window m_window;
+    World m_world;
+    Snake m_snake;
 };
 
 #endif
