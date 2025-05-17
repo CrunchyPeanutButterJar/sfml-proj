@@ -29,9 +29,23 @@ void Snake::SetDirection(Direction l_dir)
     m_dir = l_dir;
 }
 
-Direction Snake::GetDirection()
+Direction Snake::GetPhysicalDirection() const
 {
-    return m_dir;
+    const auto& head = m_snakeBody[0];
+    const auto& neck = m_snakeBody[1];
+
+    if(head.position.x == neck.position.x)
+    {
+        return (head.position.y < neck.position.y) ? Direction::Up : Direction::Down;
+    }
+    else if (head.position.y == neck.position.y)
+    {
+        return (head.position.x < neck.position.x) ? Direction::Left : Direction::Right;
+    }
+    else
+    {
+        return Direction::None;
+    }
 }
 
 int Snake::GetSpeed()
@@ -170,7 +184,7 @@ void Snake::CheckCollision()
     if(m_snakeBody.size() < 5) { return;}
 
     SnakeSegment& head = m_snakeBody.front();
-    for(auto itr = m_snakeBody.begin() + 1; itr != m_snakeBody.end(); ++itr)
+    for(auto itr = m_snakeBody.begin() + 1; itr < m_snakeBody.end(); ++itr)
     {
         if(itr->position == head.position)
         {

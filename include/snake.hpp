@@ -23,7 +23,7 @@ public:
 
     // Helper methods.
     void SetDirection(Direction l_dir);
-    Direction GetDirection();
+    Direction GetPhysicalDirection() const;
     int GetSpeed();
     sf::Vector2i GetPosition();
     int GetLives();

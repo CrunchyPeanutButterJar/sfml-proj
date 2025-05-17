@@ -56,8 +56,8 @@ void World::Update(Snake& l_player)
     int gridSize_x = m_windowSize.x / m_blockSize;
     int gridSize_y = m_windowSize.y / m_blockSize;
 
-    if(l_player.GetPosition().x < 0 || l_player.GetPosition().x >= gridSize_x - 1 ||
-       l_player.GetPosition().y < 0 || l_player.GetPosition().y >= gridSize_y - 1)
+    if(l_player.GetPosition().x <= 0 || l_player.GetPosition().x >= gridSize_x - 1 ||
+       l_player.GetPosition().y <= 0 || l_player.GetPosition().y >= gridSize_y - 1)
     {
         l_player.Lose();
     }

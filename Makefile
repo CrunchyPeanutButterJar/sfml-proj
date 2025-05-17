@@ -8,6 +8,7 @@ SOURCE_FILES:=$(wildcard $(SOURCE_DIR)/*.cpp)
 OBJ_FILES:=$(patsubst $(SOURCE_DIR)/%.cpp, $(BUILD_DIR)/%.o, $(SOURCE_FILES))
 
 CFLAGS:= -I$(INCLUDE_DIR) -MMD -MP
+#CFLAGS+= -g
 
 $(BUILD_DIR)/%.o:$(SOURCE_DIR)/%.cpp
 	@mkdir -p $(BUILD_DIR)
