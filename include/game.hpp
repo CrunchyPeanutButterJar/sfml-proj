@@ -4,6 +4,7 @@
 #include <SFML/Graphics.hpp>
 
 #include <snake.hpp>
+#include <textbox.hpp>
 #include <window.hpp>
 #include <world.hpp>
 
@@ -27,6 +28,7 @@ private:
     Window m_window;
     World m_world;
     Snake m_snake;
+    Textbox m_textbox;
 };
 
 #endif
