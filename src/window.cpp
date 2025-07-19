@@ -55,7 +55,10 @@ void Window::Update()
         {
             ToggleFullscreen();
         }
+        m_eventManager.HandleEvent(event);
     }
+    
+    m_eventManager.Update();
 }
 
 void Window::ToggleFullscreen()

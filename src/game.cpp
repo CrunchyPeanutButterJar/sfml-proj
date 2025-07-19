@@ -1,10 +1,35 @@
 #include <game.hpp>
 
+static void moveSnake(Snake& l_snake, const Events& events)
+{
+    const auto& event = events[0];
+
+    if( event.key.code == sf::Keyboard::Up && l_snake.GetPhysicalDirection() != Direction::Down)
+    {
+        l_snake.SetDirection(Direction::Up);
+    }
+    else if(event.key.code == sf::Keyboard::Down && l_snake.GetPhysicalDirection() != Direction::Up)
+    {
+        l_snake.SetDirection(Direction::Down);
+    }
+    else if(event.key.code == sf::Keyboard::Left && l_snake.GetPhysicalDirection() != Direction::Right)
+    {
+        l_snake.SetDirection(Direction::Left);
+    }
+    else if(event.key.code == sf::Keyboard::Right && l_snake.GetPhysicalDirection() != Direction::Left)
+    {
+        l_snake.SetDirection(Direction::Right);
+    }
+}
+
 Game::Game() : m_window{"snake", sf::Vector2u(800, 600)},
 m_snake(m_world.GetBlockSize()), m_world(sf::Vector2u(800, 600), m_textbox)
 {
     m_textbox.Setup(5, 14, 350, sf::Vector2f(225, 0));
     m_textbox.Add("Seeded random number generator with: " + std::to_string(time(nullptr)));
+
+    auto* eventManager = m_window.GetEventManager();
+    eventManager->AddCallback("Move", std::bind(moveSnake, std::ref(m_snake), std::placeholders::_1));
 }
 
 void Game::Update()
@@ -38,26 +63,26 @@ void Game::RestartClock()
 
 void Game::HandleInput()
 {
-    if( sf::Keyboard::isKeyPressed(sf::Keyboard::Up)
-        && m_snake.GetPhysicalDirection() != Direction::Down)
-    {
-        m_snake.SetDirection(Direction::Up);
-    }
-    else if(sf::Keyboard::isKeyPressed(sf::Keyboard::Down)
-            && m_snake.GetPhysicalDirection() != Direction::Up)
-    {
-        m_snake.SetDirection(Direction::Down);
-    }
-    else if(sf::Keyboard::isKeyPressed(sf::Keyboard::Left)
-            && m_snake.GetPhysicalDirection() != Direction::Right)
-    {
-        m_snake.SetDirection(Direction::Left);
-    }
-    else if(sf::Keyboard::isKeyPressed(sf::Keyboard::Right)
-            && m_snake.GetPhysicalDirection() != Direction::Left)
-    {
-        m_snake.SetDirection(Direction::Right);
-    }
+    // if( sf::Keyboard::isKeyPressed(sf::Keyboard::Up)
+    //     && m_snake.GetPhysicalDirection() != Direction::Down)
+    // {
+    //     m_snake.SetDirection(Direction::Up);
+    // }
+    // else if(sf::Keyboard::isKeyPressed(sf::Keyboard::Down)
+    //         && m_snake.GetPhysicalDirection() != Direction::Up)
+    // {
+    //     m_snake.SetDirection(Direction::Down);
+    // }
+    // else if(sf::Keyboard::isKeyPressed(sf::Keyboard::Left)
+    //         && m_snake.GetPhysicalDirection() != Direction::Right)
+    // {
+    //     m_snake.SetDirection(Direction::Left);
+    // }
+    // else if(sf::Keyboard::isKeyPressed(sf::Keyboard::Right)
+    //         && m_snake.GetPhysicalDirection() != Direction::Left)
+    // {
+    //     m_snake.SetDirection(Direction::Right);
+    // }
 }
 
 Window* Game::GetWindow()
