@@ -14,7 +14,6 @@ public:
     Game();
     ~Game() = default;
 
-    void HandleInput();
     void Update();
     void Render();
     Window* GetWindow();

@@ -8,8 +8,9 @@
 
 using KeyPressedEvent = PhantomType<sf::Keyboard::Key, struct KeyPressedEventTag>;
 using MouseButtonPressedEvent = PhantomType<sf::Mouse::Button, struct MouseButtonPressedEventTag>;
+struct ClosedEvent{};
 
-using SimplifiedEvent = std::variant<KeyPressedEvent, MouseButtonPressedEvent>;
+using SimplifiedEvent = std::variant<KeyPressedEvent, MouseButtonPressedEvent, ClosedEvent>;
 
 using SimplifiedEvents = std::vector<SimplifiedEvent>;
 
@@ -24,10 +25,15 @@ EventManager::EventManager() : m_impl(std::make_unique<Impl>())
 {
     auto& [bindings, _] = *m_impl;
 
-    bindings.emplace_back("Move", SimplifiedEvents{KeyPressedEvent{sf::Keyboard::Up}}, 0);
-    bindings.emplace_back("Move", SimplifiedEvents{KeyPressedEvent{sf::Keyboard::Down}}, 0);
-    bindings.emplace_back("Move", SimplifiedEvents{KeyPressedEvent{sf::Keyboard::Left}}, 0);
-    bindings.emplace_back("Move", SimplifiedEvents{KeyPressedEvent{sf::Keyboard::Right}}, 0);
+    bindings.emplace_back("Move", SimplifiedEvents{KeyPressedEvent{sf::Keyboard::Up}}, Events{});
+    bindings.emplace_back("Move", SimplifiedEvents{KeyPressedEvent{sf::Keyboard::Down}}, Events{});
+    bindings.emplace_back("Move", SimplifiedEvents{KeyPressedEvent{sf::Keyboard::Left}}, Events{});
+    bindings.emplace_back("Move", SimplifiedEvents{KeyPressedEvent{sf::Keyboard::Right}}, Events{});
+
+    bindings.emplace_back("Close", SimplifiedEvents{ClosedEvent{}}, Events{});
+    bindings.emplace_back("Close", SimplifiedEvents{KeyPressedEvent{sf::Keyboard::Escape}}, Events{});
+
+    bindings.emplace_back("ToggleFullscreen", SimplifiedEvents{KeyPressedEvent{sf::Keyboard::F5}}, Events{});
 }
 
 bool EventManager::AddCallback(const std::string& l_action, Callback l_callback)
@@ -75,8 +81,15 @@ void EventManager::HandleEvent(sf::Event& l_event)
                     auto& [_, __, actualEvents] = binding;
                     actualEvents.push_back(l_event);
                 }
-            }
-            }, event);
+            },
+            [&](ClosedEvent)
+            {
+                if(l_event.type == sf::Event::Closed)
+                {
+                    auto& [_, __, actualEvents] = binding;
+                    actualEvents.push_back(l_event);
+                }
+            }}, event);
         }
     }
 }

@@ -30,6 +30,8 @@ m_snake(m_world.GetBlockSize()), m_world(sf::Vector2u(800, 600), m_textbox)
 
     auto* eventManager = m_window.GetEventManager();
     eventManager->AddCallback("Move", std::bind(moveSnake, std::ref(m_snake), std::placeholders::_1));
+    eventManager->AddCallback("Close", std::bind(&Window::SetAsDone, std::ref(m_window)));
+    eventManager->AddCallback("ToggleFullscreen", std::bind(&Window::ToggleFullscreen, std::ref(m_window)));
 }
 
 void Game::Update()
@@ -59,30 +61,6 @@ sf::Time Game::GetElapsed()
 void Game::RestartClock()
 {
     m_elapsed += m_clock.restart();
-}
-
-void Game::HandleInput()
-{
-    // if( sf::Keyboard::isKeyPressed(sf::Keyboard::Up)
-    //     && m_snake.GetPhysicalDirection() != Direction::Down)
-    // {
-    //     m_snake.SetDirection(Direction::Up);
-    // }
-    // else if(sf::Keyboard::isKeyPressed(sf::Keyboard::Down)
-    //         && m_snake.GetPhysicalDirection() != Direction::Up)
-    // {
-    //     m_snake.SetDirection(Direction::Down);
-    // }
-    // else if(sf::Keyboard::isKeyPressed(sf::Keyboard::Left)
-    //         && m_snake.GetPhysicalDirection() != Direction::Right)
-    // {
-    //     m_snake.SetDirection(Direction::Left);
-    // }
-    // else if(sf::Keyboard::isKeyPressed(sf::Keyboard::Right)
-    //         && m_snake.GetPhysicalDirection() != Direction::Left)
-    // {
-    //     m_snake.SetDirection(Direction::Right);
-    // }
 }
 
 Window* Game::GetWindow()
