@@ -2,13 +2,14 @@
 #define WORLD_HPP
 
 #include <snake.hpp>
+#include <textbox.hpp>
 
 #include <SFML/Graphics.hpp>
 
 class World
 {
 public:
-    World(sf::Vector2u l_windSize);
+    World(sf::Vector2u l_windSize, Textbox& l_textBox);
     ~World();
 
     int GetBlockSize();
@@ -25,6 +26,8 @@ private:
 
     sf::CircleShape m_appleShape;
     sf::RectangleShape m_bounds[4];
+
+    Textbox& m_textbox;
 };
 
 #endif

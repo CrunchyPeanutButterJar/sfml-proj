@@ -26,9 +26,9 @@ private:
     sf::Time m_elapsed;
 
     Window m_window;
+    Textbox m_textbox;
     World m_world;
     Snake m_snake;
-    Textbox m_textbox;
 };
 
 #endif

@@ -1,6 +1,6 @@
 #include <world.hpp>
 
-World::World(sf::Vector2u l_windSize)
+World::World(sf::Vector2u l_windSize, Textbox& l_textBox) : m_textbox(l_textBox)
 {
     m_blockSize = 16;
     
@@ -50,6 +50,7 @@ void World::Update(Snake& l_player)
     {
         l_player.Extend();
         l_player.IncreaseScore();
+        m_textbox.Add("You ate an apple, Score: " + std::to_string(l_player.GetScore()));
         RespawnApple();
     }
 
