@@ -5,14 +5,14 @@ Textbox::Textbox()
     Setup(5, 9, 200, sf::Vector2f(0, 0));
 }
 
-Textbox::Textbox(int l_visible, int l_charSize, int l_width, sf::Vector2f l_screenPos)
+Textbox::Textbox(size_t l_visible, int l_charSize, int l_width, sf::Vector2f l_screenPos)
 {
     Setup(l_visible, l_charSize, l_width, l_screenPos);
 }
 
 Textbox::~Textbox() {Clear();};
 
-void Textbox::Setup(int l_visible, int l_charSize, int l_width, sf::Vector2f l_screenPos)
+void Textbox::Setup(size_t l_visible, int l_charSize, int l_width, sf::Vector2f l_screenPos)
 {
     m_numVisible = l_visible;
 

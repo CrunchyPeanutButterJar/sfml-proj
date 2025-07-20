@@ -46,7 +46,7 @@ static EventManager createEventManager(Snake& l_snake)
     return eventManager;
 }
 
-Game::Game() : m_window{"snake", sf::Vector2u(800, 600), createEventManager(m_snake)}, m_snake(m_world.GetBlockSize()), m_world(sf::Vector2u(800, 600), m_textbox)
+Game::Game() : m_window{"snake", sf::Vector2u(800, 600), createEventManager(m_snake)}, m_world(sf::Vector2u(800, 600), m_textbox), m_snake(m_world.GetBlockSize())
 {
     m_textbox.Setup(5, 14, 350, sf::Vector2f(225, 0));
     m_textbox.Add("Seeded random number generator with: " + std::to_string(time(nullptr)));

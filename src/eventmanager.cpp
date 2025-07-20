@@ -57,9 +57,6 @@ bool EventManager::AddCallback(const std::string& l_action, Callback l_callback)
 template<class... Ts>
 struct overloaded : Ts... { using Ts::operator()...; };
 
-template<class... Ts>
-overloaded(Ts...) -> overloaded<Ts...>;
-
 void EventManager::HandleEvent(const sf::Event& l_event)
 {
     auto& [bindings, _] = *m_impl;

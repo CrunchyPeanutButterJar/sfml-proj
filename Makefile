@@ -7,14 +7,18 @@ SOURCE_DIR:=src
 SOURCE_FILES:=$(wildcard $(SOURCE_DIR)/*.cpp)
 OBJ_FILES:=$(patsubst $(SOURCE_DIR)/%.cpp, $(BUILD_DIR)/%.o, $(SOURCE_FILES))
 
-CFLAGS:= -I$(INCLUDE_DIR) -MMD -MP
-#CFLAGS+= -g
+CFLAGS:= -I$(INCLUDE_DIR) -MMD -MP -std=c++20 -Wall -Werror
 
 $(BUILD_DIR)/%.o:$(SOURCE_DIR)/%.cpp
 	@mkdir -p $(BUILD_DIR)
 	$(CC) -c $< $(CFLAGS) -o $@
 
-run: sfml-app
+runRelease: CFLAGS+=-O3
+runRelease: sfml-app
+	./sfml-app
+
+runDebug: CFLAGS+=-g
+runDebug: sfml-app
 	./sfml-app
 
 clean:
