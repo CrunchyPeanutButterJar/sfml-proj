@@ -19,7 +19,7 @@ class EventManager;
 enum class StateType
 {
     Game = 1,
-    Pause
+    Paused
 };
 
 
@@ -45,6 +45,7 @@ public:
     void ProcessRequests();
 
     StateType GetCurrentState() const;
+    bool HasState(StateType l_state) const;
 
     SharedContext& GetContext();
 

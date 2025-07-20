@@ -26,6 +26,8 @@ EventManager::EventManager() : m_impl(std::make_unique<Impl>())
 {
     auto& [bindings, _] = *m_impl;
 
+    bindings.emplace_back("Key_Escape", SimplifiedEvents{KeyPressedEvent{sf::Keyboard::Escape}}, Events{});
+
     bindings.emplace_back("Game_MoveUp", SimplifiedEvents{KeyPressedEvent{sf::Keyboard::Up}}, Events{});
     bindings.emplace_back("Game_MoveDown", SimplifiedEvents{KeyPressedEvent{sf::Keyboard::Down}}, Events{});
     bindings.emplace_back("Game_MoveRight", SimplifiedEvents{KeyPressedEvent{sf::Keyboard::Right}}, Events{});
@@ -120,7 +122,6 @@ void EventManager::Update(StateType l_state)
             if(it != stateCallbacks.end())
             {
                 it->second(actualEvents);
-                actualEvents.clear(); // Clear events after processing.
             }
 
             const auto& otherCallbacks = callbacksContainer[StateType{0}];
@@ -128,9 +129,15 @@ void EventManager::Update(StateType l_state)
             if(otherIt != otherCallbacks.end())
             {
                 otherIt->second(actualEvents);
-                actualEvents.clear(); // Clear events after processing.
             }
         }
+    }
+
+    // clear actual events after processing
+    for(auto& binding : bindings)
+    {
+        auto& [_, __, actualEvents] = binding;
+        actualEvents.clear();
     }
 }
 

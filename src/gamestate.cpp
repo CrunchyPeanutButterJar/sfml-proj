@@ -49,6 +49,8 @@ GameState::GameState(StateManager& l_stateManager): BaseState(l_stateManager), m
 
     auto& [_, eventManager] = m_stateManager.GetContext();
 
+    eventManager.AddCallback(StateType::Game, "Key_Escape", [&](const Events&){m_stateManager.SwitchTo(StateType::Paused);});
+
     eventManager.AddCallback(StateType::Game, "Game_MoveUp", std::bind(moveSnake<sf::Keyboard::Up>, std::ref(m_snake)));
     eventManager.AddCallback(StateType::Game, "Game_MoveDown", std::bind(moveSnake<sf::Keyboard::Down>, std::ref(m_snake)));
     eventManager.AddCallback(StateType::Game, "Game_MoveRight", std::bind(moveSnake<sf::Keyboard::Right>, std::ref(m_snake)));
@@ -58,6 +60,8 @@ GameState::GameState(StateManager& l_stateManager): BaseState(l_stateManager), m
 GameState::~GameState()
 {
     auto& [_, eventManager] = m_stateManager.GetContext();
+
+    eventManager.RemoveCallback(StateType::Game, "Key_Escape");
 
     eventManager.RemoveCallback(StateType::Game, "Game_MoveUp");
     eventManager.RemoveCallback(StateType::Game, "Game_MoveDown");
@@ -96,9 +100,17 @@ void GameState::Draw()
 
 void GameState::Activate()
 {
-
+    if(!m_stateManager.HasState(StateType::Paused))
+    {
+        m_textbox.Add("Game started!");
+    }
+    else
+    {
+        m_textbox.Add("Game resumed!");
+    }
 }
 
 void GameState::Deactivate()
 {
+    m_textbox.Add("Game paused!");
 }

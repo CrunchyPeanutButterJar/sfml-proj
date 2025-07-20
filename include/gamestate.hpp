@@ -25,7 +25,6 @@ private:
     World m_world;
     Snake m_snake;
     sf::Time m_elapsed;
-    bool m_paused{false};
 };
 
 #endif

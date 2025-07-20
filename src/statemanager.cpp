@@ -1,6 +1,7 @@
 #include <statemanager.hpp>
 
 #include <gamestate.hpp>
+#include <pausedstate.hpp>
 
 #include <algorithm>
 
@@ -84,9 +85,15 @@ void StateManager::RegisterState(StateType l_stateType)
 StateManager::StateManager(SharedContext l_sharedContext) : m_context{l_sharedContext}
 {
     RegisterState<GameState>(StateType::Game);
+    RegisterState<PausedState>(StateType::Paused);
 }
 
 SharedContext& StateManager::GetContext()
 {
     return m_context;
+}
+
+bool StateManager::HasState(StateType l_state) const
+{
+    return std::any_of(m_states.begin(), m_states.end(), [l_state](const auto& el){ return el.first == l_state; });
 }
