@@ -52,7 +52,19 @@ void Window::Update()
 
     while(m_window.pollEvent(event))
     {
-        m_eventManager.HandleEvent(event);
+        if(event.type == sf::Event::LostFocus)
+        {
+            m_isFocused = false;
+        }
+        else if(event.type == sf::Event::GainedFocus)
+        {
+            m_isFocused = true;
+        }
+
+        if(m_isFocused)
+        {
+            m_eventManager.HandleEvent(event);
+        }
     }
     
     m_eventManager.Update();

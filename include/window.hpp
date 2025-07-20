@@ -34,7 +34,8 @@ private:
     sf::Vector2u m_windowSize;
     std::string m_windowTitle;
     bool m_isDone;
-    bool m_isFullscreen; 
+    bool m_isFullscreen;
+    bool m_isFocused{}; 
 
 };
 
