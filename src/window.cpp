@@ -1,11 +1,13 @@
 #include <window.hpp>
 
+#include <functional>
+
 Window::Window()
 {
     Setup("Window", sf::Vector2u(640, 480));
 }
 
-Window::Window(const std::string& l_title, const sf::Vector2u& l_size)
+Window::Window(const std::string& l_title, const sf::Vector2u& l_size, EventManager l_eventManager) : m_eventManager(std::move(l_eventManager))
 {
     Setup(l_title, l_size);
 }
@@ -21,6 +23,9 @@ void Window::Setup(const std::string& l_title, const sf::Vector2u& l_size)
     m_windowSize = l_size;
     m_isDone = false;
     m_isFullscreen = false;
+
+    m_eventManager.AddCallback("Close", std::bind(&Window::SetAsDone, std::ref(*this)));
+    m_eventManager.AddCallback("ToggleFullscreen", std::bind(&Window::ToggleFullscreen, std::ref(*this)));
 
     Create();
 }

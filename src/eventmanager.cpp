@@ -25,10 +25,15 @@ EventManager::EventManager() : m_impl(std::make_unique<Impl>())
 {
     auto& [bindings, _] = *m_impl;
 
-    bindings.emplace_back("Move", SimplifiedEvents{KeyPressedEvent{sf::Keyboard::Up}}, Events{});
-    bindings.emplace_back("Move", SimplifiedEvents{KeyPressedEvent{sf::Keyboard::Down}}, Events{});
-    bindings.emplace_back("Move", SimplifiedEvents{KeyPressedEvent{sf::Keyboard::Left}}, Events{});
-    bindings.emplace_back("Move", SimplifiedEvents{KeyPressedEvent{sf::Keyboard::Right}}, Events{});
+    bindings.emplace_back("MoveUp", SimplifiedEvents{KeyPressedEvent{sf::Keyboard::Up}}, Events{});
+    bindings.emplace_back("MoveDown", SimplifiedEvents{KeyPressedEvent{sf::Keyboard::Down}}, Events{});
+    bindings.emplace_back("MoveRight", SimplifiedEvents{KeyPressedEvent{sf::Keyboard::Right}}, Events{});
+    bindings.emplace_back("MoveLeft", SimplifiedEvents{KeyPressedEvent{sf::Keyboard::Left}}, Events{});
+
+    bindings.emplace_back("MoveUp", SimplifiedEvents{KeyPressedEvent{sf::Keyboard::W}}, Events{});
+    bindings.emplace_back("MoveDown", SimplifiedEvents{KeyPressedEvent{sf::Keyboard::S}}, Events{});
+    bindings.emplace_back("MoveRight", SimplifiedEvents{KeyPressedEvent{sf::Keyboard::D}}, Events{});
+    bindings.emplace_back("MoveLeft", SimplifiedEvents{KeyPressedEvent{sf::Keyboard::A}}, Events{});
 
     bindings.emplace_back("Close", SimplifiedEvents{ClosedEvent{}}, Events{});
     bindings.emplace_back("Close", SimplifiedEvents{KeyPressedEvent{sf::Keyboard::Escape}}, Events{});
@@ -55,7 +60,7 @@ struct overloaded : Ts... { using Ts::operator()...; };
 template<class... Ts>
 overloaded(Ts...) -> overloaded<Ts...>;
 
-void EventManager::HandleEvent(sf::Event& l_event)
+void EventManager::HandleEvent(const sf::Event& l_event)
 {
     auto& [bindings, _] = *m_impl;
 
@@ -68,7 +73,7 @@ void EventManager::HandleEvent(sf::Event& l_event)
             std::visit(overloaded{
             [&](KeyPressedEvent key)
             {
-                if(l_event.type == sf::Event::KeyPressed && l_event.key.code == key.get())
+                if(l_event.type == sf::Event::KeyPressed && (l_event.key.code == key.get() || key.get() == sf::Keyboard::Unknown))
                 {
                     auto& [_, __, actualEvents] = binding;
                     actualEvents.push_back(l_event);
@@ -112,3 +117,6 @@ void EventManager::Update()
 }
 
 EventManager::~EventManager() = default;
+
+EventManager::EventManager(EventManager&&) = default;
+EventManager& EventManager::operator=(EventManager&&) = default;

@@ -10,7 +10,7 @@ class Window
 public:
 
     Window();
-    Window(const std::string& l_title,const sf::Vector2u& l_size);
+    Window(const std::string& l_title, const sf::Vector2u& l_size, EventManager eventManager);
     ~Window();
     void BeginDraw(); // Clear the window.
     void EndDraw(); // Display the changes.
@@ -22,11 +22,6 @@ public:
     void ToggleFullscreen();
     void Draw(sf::Drawable& l_drawable);
     sf::RenderWindow* GetRenderWindow();
-
-    inline EventManager* GetEventManager()
-    {
-        return &m_eventManager;
-    }
 
 private:
     void Setup(const std::string& l_title, const sf::Vector2u& l_size);

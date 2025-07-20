@@ -15,13 +15,19 @@ using Callback = std::function<void(const Events&)>;
 class EventManager
 {
 public:
-    void HandleEvent(sf::Event& l_event);
+    void HandleEvent(const sf::Event& l_event);
     void Update();
 
     bool AddCallback(const std::string& l_action, Callback l_callback);
 
     EventManager();
     ~EventManager();
+
+    EventManager(const EventManager&) = delete;
+    EventManager& operator=(const EventManager&) = delete;
+
+    EventManager(EventManager&&);
+    EventManager& operator=(EventManager&&);
 
 private:
     class Impl;

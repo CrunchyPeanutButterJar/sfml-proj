@@ -1,37 +1,55 @@
 #include <game.hpp>
 
-static void moveSnake(Snake& l_snake, const Events& events)
-{
-    const auto& event = events[0];
 
-    if( event.key.code == sf::Keyboard::Up && l_snake.GetPhysicalDirection() != Direction::Down)
+template<sf::Keyboard::Key direction>
+static void moveSnake(Snake& l_snake) 
+{
+    if constexpr (direction == sf::Keyboard::Up)
     {
-        l_snake.SetDirection(Direction::Up);
+        if(l_snake.GetPhysicalDirection() != Direction::Down)
+        {
+            l_snake.SetDirection(Direction::Up);
+        }
     }
-    else if(event.key.code == sf::Keyboard::Down && l_snake.GetPhysicalDirection() != Direction::Up)
+    else if constexpr (direction == sf::Keyboard::Down)
     {
-        l_snake.SetDirection(Direction::Down);
+        if(l_snake.GetPhysicalDirection() != Direction::Up)
+        {
+            l_snake.SetDirection(Direction::Down);
+        }
     }
-    else if(event.key.code == sf::Keyboard::Left && l_snake.GetPhysicalDirection() != Direction::Right)
+    else if constexpr (direction == sf::Keyboard::Left)
     {
-        l_snake.SetDirection(Direction::Left);
+        if(l_snake.GetPhysicalDirection() != Direction::Right)
+        {
+            l_snake.SetDirection(Direction::Left);
+        }
     }
-    else if(event.key.code == sf::Keyboard::Right && l_snake.GetPhysicalDirection() != Direction::Left)
+    else if constexpr (direction == sf::Keyboard::Right)
     {
-        l_snake.SetDirection(Direction::Right);
+        if(l_snake.GetPhysicalDirection() != Direction::Left)
+        {
+            l_snake.SetDirection(Direction::Right);
+        }
     }
 }
 
-Game::Game() : m_window{"snake", sf::Vector2u(800, 600)},
-m_snake(m_world.GetBlockSize()), m_world(sf::Vector2u(800, 600), m_textbox)
+static EventManager createEventManager(Snake& l_snake)
+{
+    EventManager eventManager;
+
+    eventManager.AddCallback("MoveUp", std::bind(moveSnake<sf::Keyboard::Up>, std::ref(l_snake)));
+    eventManager.AddCallback("MoveDown", std::bind(moveSnake<sf::Keyboard::Down>, std::ref(l_snake)));
+    eventManager.AddCallback("MoveRight", std::bind(moveSnake<sf::Keyboard::Right>, std::ref(l_snake)));
+    eventManager.AddCallback("MoveLeft", std::bind(moveSnake<sf::Keyboard::Left>, std::ref(l_snake)));
+
+    return eventManager;
+}
+
+Game::Game() : m_window{"snake", sf::Vector2u(800, 600), createEventManager(m_snake)}, m_snake(m_world.GetBlockSize()), m_world(sf::Vector2u(800, 600), m_textbox)
 {
     m_textbox.Setup(5, 14, 350, sf::Vector2f(225, 0));
     m_textbox.Add("Seeded random number generator with: " + std::to_string(time(nullptr)));
-
-    auto* eventManager = m_window.GetEventManager();
-    eventManager->AddCallback("Move", std::bind(moveSnake, std::ref(m_snake), std::placeholders::_1));
-    eventManager->AddCallback("Close", std::bind(&Window::SetAsDone, std::ref(m_window)));
-    eventManager->AddCallback("ToggleFullscreen", std::bind(&Window::ToggleFullscreen, std::ref(m_window)));
 }
 
 void Game::Update()
