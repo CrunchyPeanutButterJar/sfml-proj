@@ -8,7 +8,7 @@ int main(int argc, char* argv[])
         //Game loop
         game.Update();
         game.Render();
-        game.RestartClock();
+        game.LateUpdate();
     }
 
     return 0;

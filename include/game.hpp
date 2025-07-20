@@ -3,10 +3,8 @@
 
 #include <SFML/Graphics.hpp>
 
-#include <snake.hpp>
-#include <textbox.hpp>
+#include <statemanager.hpp>
 #include <window.hpp>
-#include <world.hpp>
 
 class Game
 {
@@ -15,9 +13,12 @@ public:
     ~Game() = default;
 
     void Update();
+    void LateUpdate();
     void Render();
     Window* GetWindow();
     sf::Time GetElapsed();
+
+private:
     void RestartClock();
 
 private:
@@ -25,9 +26,7 @@ private:
     sf::Time m_elapsed;
 
     Window m_window;
-    Textbox m_textbox;
-    World m_world;
-    Snake m_snake;
+    StateManager m_stateManager;
 };
 
 #endif

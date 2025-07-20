@@ -18,32 +18,32 @@ using Binding = std::tuple<std::string, SimplifiedEvents, Events>;
 using Bindings = std::vector<Binding>;
 
 using Callbacks = std::unordered_map<std::string, Callback>;
+using CallbacksContainer = std::unordered_map<StateType, Callbacks>;
 
-class EventManager::Impl : public std::pair<Bindings, Callbacks> {};
+class EventManager::Impl : public std::pair<Bindings, CallbacksContainer> {};
 
 EventManager::EventManager() : m_impl(std::make_unique<Impl>())
 {
     auto& [bindings, _] = *m_impl;
 
-    bindings.emplace_back("MoveUp", SimplifiedEvents{KeyPressedEvent{sf::Keyboard::Up}}, Events{});
-    bindings.emplace_back("MoveDown", SimplifiedEvents{KeyPressedEvent{sf::Keyboard::Down}}, Events{});
-    bindings.emplace_back("MoveRight", SimplifiedEvents{KeyPressedEvent{sf::Keyboard::Right}}, Events{});
-    bindings.emplace_back("MoveLeft", SimplifiedEvents{KeyPressedEvent{sf::Keyboard::Left}}, Events{});
+    bindings.emplace_back("Game_MoveUp", SimplifiedEvents{KeyPressedEvent{sf::Keyboard::Up}}, Events{});
+    bindings.emplace_back("Game_MoveDown", SimplifiedEvents{KeyPressedEvent{sf::Keyboard::Down}}, Events{});
+    bindings.emplace_back("Game_MoveRight", SimplifiedEvents{KeyPressedEvent{sf::Keyboard::Right}}, Events{});
+    bindings.emplace_back("Game_MoveLeft", SimplifiedEvents{KeyPressedEvent{sf::Keyboard::Left}}, Events{});
 
-    bindings.emplace_back("MoveUp", SimplifiedEvents{KeyPressedEvent{sf::Keyboard::W}}, Events{});
-    bindings.emplace_back("MoveDown", SimplifiedEvents{KeyPressedEvent{sf::Keyboard::S}}, Events{});
-    bindings.emplace_back("MoveRight", SimplifiedEvents{KeyPressedEvent{sf::Keyboard::D}}, Events{});
-    bindings.emplace_back("MoveLeft", SimplifiedEvents{KeyPressedEvent{sf::Keyboard::A}}, Events{});
+    bindings.emplace_back("Game_MoveUp", SimplifiedEvents{KeyPressedEvent{sf::Keyboard::W}}, Events{});
+    bindings.emplace_back("Game_MoveDown", SimplifiedEvents{KeyPressedEvent{sf::Keyboard::S}}, Events{});
+    bindings.emplace_back("Game_MoveRight", SimplifiedEvents{KeyPressedEvent{sf::Keyboard::D}}, Events{});
+    bindings.emplace_back("Game_MoveLeft", SimplifiedEvents{KeyPressedEvent{sf::Keyboard::A}}, Events{});
 
-    bindings.emplace_back("Close", SimplifiedEvents{ClosedEvent{}}, Events{});
-    bindings.emplace_back("Close", SimplifiedEvents{KeyPressedEvent{sf::Keyboard::Escape}}, Events{});
-
-    bindings.emplace_back("ToggleFullscreen", SimplifiedEvents{KeyPressedEvent{sf::Keyboard::F5}}, Events{});
+    bindings.emplace_back("Window_Close", SimplifiedEvents{ClosedEvent{}}, Events{});
+    bindings.emplace_back("Window_ToggleFullscreen", SimplifiedEvents{KeyPressedEvent{sf::Keyboard::F5}}, Events{});
 }
 
-bool EventManager::AddCallback(const std::string& l_action, Callback l_callback)
+bool EventManager::AddCallback(StateType l_state, const std::string& l_action, Callback l_callback)
 {
-    auto& [_, callbacks] = *m_impl;
+    auto& [_, callbacksContainer] = *m_impl;
+    auto& callbacks = callbacksContainer[l_state];
 
     if(callbacks.find(l_action) != callbacks.end())
     {
@@ -52,6 +52,14 @@ bool EventManager::AddCallback(const std::string& l_action, Callback l_callback)
 
     callbacks[l_action] = std::move(l_callback);
     return true;
+}
+
+void EventManager::RemoveCallback(StateType l_state, const std::string& l_action)
+{
+    auto& [_, callbacksContainer] = *m_impl;
+    auto& callbacks = callbacksContainer[l_state];
+
+    callbacks.erase(l_action);
 }
 
 template<class... Ts>
@@ -96,9 +104,9 @@ void EventManager::HandleEvent(const sf::Event& l_event)
     }
 }
 
-void EventManager::Update()
+void EventManager::Update(StateType l_state)
 {
-    auto& [bindings, callbacks] = *m_impl;
+    auto& [bindings, callbacksContainer] = *m_impl;
 
     for(auto& binding : bindings)
     {
@@ -107,8 +115,21 @@ void EventManager::Update()
 
         if(events.size() == actualEvents.size())
         {
-            callbacks[action](actualEvents);
-            actualEvents.clear(); // Clear events after processing.
+            const auto& stateCallbacks = callbacksContainer[l_state];
+            auto it = stateCallbacks.find(action);
+            if(it != stateCallbacks.end())
+            {
+                it->second(actualEvents);
+                actualEvents.clear(); // Clear events after processing.
+            }
+
+            const auto& otherCallbacks = callbacksContainer[StateType{0}];
+            auto otherIt = otherCallbacks.find(action);
+            if(otherIt != otherCallbacks.end())
+            {
+                otherIt->second(actualEvents);
+                actualEvents.clear(); // Clear events after processing.
+            }
         }
     }
 }

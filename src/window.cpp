@@ -7,7 +7,7 @@ Window::Window()
     Setup("Window", sf::Vector2u(640, 480));
 }
 
-Window::Window(const std::string& l_title, const sf::Vector2u& l_size, EventManager l_eventManager) : m_eventManager(std::move(l_eventManager))
+Window::Window(const std::string& l_title, const sf::Vector2u& l_size)
 {
     Setup(l_title, l_size);
 }
@@ -24,8 +24,8 @@ void Window::Setup(const std::string& l_title, const sf::Vector2u& l_size)
     m_isDone = false;
     m_isFullscreen = false;
 
-    m_eventManager.AddCallback("Close", std::bind(&Window::SetAsDone, std::ref(*this)));
-    m_eventManager.AddCallback("ToggleFullscreen", std::bind(&Window::ToggleFullscreen, std::ref(*this)));
+    m_eventManager.AddCallback(StateType{0}, "Window_Close", std::bind(&Window::SetAsDone, std::ref(*this)));
+    m_eventManager.AddCallback(StateType{0}, "Window_ToggleFullscreen", std::bind(&Window::ToggleFullscreen, std::ref(*this)));
 
     Create();
 }
@@ -46,7 +46,12 @@ sf::RenderWindow* Window::GetRenderWindow()
     return &m_window;
 }
 
-void Window::Update()
+EventManager& Window::GetEventManager()
+{
+    return m_eventManager;
+}
+
+void Window::Update(StateType l_state)
 {
     sf::Event event;
 
@@ -67,7 +72,7 @@ void Window::Update()
         }
     }
     
-    m_eventManager.Update();
+    m_eventManager.Update(l_state);
 }
 
 void Window::ToggleFullscreen()

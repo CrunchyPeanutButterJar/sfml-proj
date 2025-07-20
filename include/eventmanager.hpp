@@ -3,6 +3,8 @@
 
 #include <SFML/Window/Event.hpp>
 
+#include <statemanager.hpp>
+
 #include <functional>
 #include <memory>
 #include <string>
@@ -16,9 +18,10 @@ class EventManager
 {
 public:
     void HandleEvent(const sf::Event& l_event);
-    void Update();
+    void Update(StateType l_state);
 
-    bool AddCallback(const std::string& l_action, Callback l_callback);
+    bool AddCallback(StateType l_state, const std::string& l_action, Callback l_callback);
+    void RemoveCallback(StateType l_state, const std::string& l_action);
 
     EventManager();
     ~EventManager();

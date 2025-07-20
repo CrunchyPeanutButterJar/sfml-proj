@@ -1,0 +1,61 @@
+#ifndef STATEMANAGER_HPP
+#define STATEMANAGER_HPP
+
+#include <basestate.hpp>
+
+#include <SFML/System/Time.hpp>
+
+#include <functional>
+#include <memory>
+#include <tuple>
+#include <unordered_map>
+#include <unordered_set>
+#include <utility>
+#include <vector>
+
+class Window;
+class EventManager;
+
+enum class StateType
+{
+    Game = 1,
+    Pause
+};
+
+
+using StatePtr = std::unique_ptr<BaseState>;
+using StateContainer = std::vector<std::pair<StateType, StatePtr>>;
+
+using StateFactory = std::unordered_map<StateType, std::function<StatePtr(void)>>;
+
+using StateTypeContainer = std::unordered_set<StateType>;
+
+using SharedContext = std::tuple<Window&, EventManager&>;
+
+class StateManager
+{
+public:
+    StateManager(SharedContext l_sharedContext);
+
+    void Update(const sf::Time& l_elapsed);
+    void Draw();
+
+    void SwitchTo(StateType l_state);
+    void Remove(StateType l_state);
+    void ProcessRequests();
+
+    StateType GetCurrentState() const;
+
+    SharedContext& GetContext();
+
+private:
+    template<typename StateImpl> void RegisterState(StateType l_stateType);
+
+private:
+    SharedContext m_context;
+    StateContainer m_states;
+    StateFactory m_stateFactory;
+    StateTypeContainer m_toBeRemoved;
+};
+
+#endif
