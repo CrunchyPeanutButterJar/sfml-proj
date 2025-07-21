@@ -3,6 +3,8 @@
 
 #include <basestate.hpp>
 
+#include <SFML/Graphics.hpp>
+
 class PausedState : public BaseState
 {
 public:
@@ -14,6 +16,9 @@ public:
 
     void Activate() override {};
     void Deactivate() override {};
+
+private:
+    sf::RectangleShape m_backdrop;
 };
 
 #endif

@@ -47,7 +47,7 @@ GameState::GameState(StateManager& l_stateManager): BaseState(l_stateManager), m
     m_textbox.Setup(5, 14, 350, sf::Vector2f(225, 0));
     time_t seed = time(nullptr);
     srand(static_cast<unsigned int>(seed));
-    
+
     m_textbox.Add("Seeded random number generator with: " + std::to_string(seed));
 
     auto& [_, eventManager] = m_stateManager.GetContext();
@@ -103,17 +103,8 @@ void GameState::Draw()
 
 void GameState::Activate()
 {
-    if(!m_stateManager.HasState(StateType::Paused))
-    {
-        m_textbox.Add("Game started!");
-    }
-    else
-    {
-        m_textbox.Add("Game resumed!");
-    }
 }
 
 void GameState::Deactivate()
 {
-    m_textbox.Add("Game paused!");
 }
