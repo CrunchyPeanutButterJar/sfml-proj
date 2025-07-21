@@ -45,7 +45,10 @@ static void moveSnake(Snake& l_snake)
 GameState::GameState(StateManager& l_stateManager): BaseState(l_stateManager), m_world(sf::Vector2u(800, 600), m_textbox), m_snake(m_world.GetBlockSize())
 {
     m_textbox.Setup(5, 14, 350, sf::Vector2f(225, 0));
-    m_textbox.Add("Seeded random number generator with: " + std::to_string(time(nullptr)));
+    time_t seed = time(nullptr);
+    srand(static_cast<unsigned int>(seed));
+    
+    m_textbox.Add("Seeded random number generator with: " + std::to_string(seed));
 
     auto& [_, eventManager] = m_stateManager.GetContext();
 
