@@ -17,7 +17,7 @@ runRelease: CFLAGS+=-O3
 runRelease: sfml-app
 	./sfml-app
 
-runDebug: CFLAGS+=-g
+runDebug: CFLAGS+=-g -DDEBUG_BUILD
 runDebug: sfml-app
 	./sfml-app
 
