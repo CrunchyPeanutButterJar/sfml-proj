@@ -9,8 +9,9 @@
 using KeyPressedEvent = PhantomType<sf::Keyboard::Key, struct KeyPressedEventTag>;
 using MouseButtonPressedEvent = PhantomType<sf::Mouse::Button, struct MouseButtonPressedEventTag>;
 struct ClosedEvent{};
+struct MouseMovedEvent{};
 
-using SimplifiedEvent = std::variant<KeyPressedEvent, MouseButtonPressedEvent, ClosedEvent>;
+using SimplifiedEvent = std::variant<KeyPressedEvent, MouseButtonPressedEvent, MouseMovedEvent, ClosedEvent>;
 
 using SimplifiedEvents = std::vector<SimplifiedEvent>;
 
@@ -37,6 +38,10 @@ EventManager::EventManager() : m_impl(std::make_unique<Impl>())
     bindings.emplace_back("Game_MoveDown", SimplifiedEvents{KeyPressedEvent{sf::Keyboard::S}}, Events{});
     bindings.emplace_back("Game_MoveRight", SimplifiedEvents{KeyPressedEvent{sf::Keyboard::D}}, Events{});
     bindings.emplace_back("Game_MoveLeft", SimplifiedEvents{KeyPressedEvent{sf::Keyboard::A}}, Events{});
+
+    bindings.emplace_back("Mouse_Moved", SimplifiedEvents{MouseMovedEvent{}}, Events{});
+    bindings.emplace_back("Mouse_ButtonPressed", SimplifiedEvents{MouseButtonPressedEvent{sf::Mouse::Left}}, Events{});
+    bindings.emplace_back("Mouse_ButtonPressed", SimplifiedEvents{MouseButtonPressedEvent{sf::Mouse::Right}}, Events{});
 
     bindings.emplace_back("Window_Close", SimplifiedEvents{ClosedEvent{}}, Events{});
     bindings.emplace_back("Window_ToggleFullscreen", SimplifiedEvents{KeyPressedEvent{sf::Keyboard::F5}}, Events{});
@@ -97,6 +102,14 @@ void EventManager::HandleEvent(const sf::Event& l_event)
             [&](ClosedEvent)
             {
                 if(l_event.type == sf::Event::Closed)
+                {
+                    auto& [_, __, actualEvents] = binding;
+                    actualEvents.push_back(l_event);
+                }
+            },
+            [&](MouseMovedEvent)
+            {
+                if(l_event.type == sf::Event::MouseMoved)
                 {
                     auto& [_, __, actualEvents] = binding;
                     actualEvents.push_back(l_event);
