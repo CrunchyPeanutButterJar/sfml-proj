@@ -5,8 +5,10 @@ template<typename UnderlyingType, typename PhantomTypeParam>
 class PhantomType
 {
 public:
+    using ReflectionType = UnderlyingType;
+
     template<typename... Args>
-    PhantomType(Args&&... args) : m_value{std::forward<Args>(args)...} {};
+    explicit PhantomType(Args&&... args) : m_value{std::forward<Args>(args)...} {};
 
     UnderlyingType& get()
     {
@@ -14,6 +16,11 @@ public:
     }
 
     const UnderlyingType& get() const
+    {
+        return m_value;
+    }
+
+    const ReflectionType& reflection() const
     {
         return m_value;
     }

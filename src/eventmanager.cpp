@@ -1,10 +1,21 @@
 #include <eventmanager.hpp>
 
+#include <iostream>
+#include <fstream>
+
+#include <assert.hpp>
+
 #include <phatomtype.hpp>
 #include <string>
 #include <tuple>
+#include <ranges>
+#include <optional>
 #include <unordered_map>
 #include <variant>
+#include <sstream>
+
+#include <rfl/json.hpp>
+#include <rfl/rfl.hpp>
 
 using KeyPressedEvent = PhantomType<sf::Keyboard::Key, struct KeyPressedEventTag>;
 using MouseButtonPressedEvent = PhantomType<sf::Mouse::Button, struct MouseButtonPressedEventTag>;
@@ -15,36 +26,108 @@ using SimplifiedEvent = std::variant<KeyPressedEvent, MouseButtonPressedEvent, M
 
 using SimplifiedEvents = std::vector<SimplifiedEvent>;
 
-using Binding = std::tuple<std::string, SimplifiedEvents, Events>;
-using Bindings = std::vector<Binding>;
+using Binding = std::tuple<std::string, SimplifiedEvents>;
+using SerializableBindings = std::vector<Binding>;
+
+using BindingsAndEvents = std::vector<std::tuple<Binding, Events>>;
 
 using Callbacks = std::unordered_map<std::string, Callback>;
 using CallbacksContainer = std::unordered_map<StateType, Callbacks>;
 
-class EventManager::Impl : public std::pair<Bindings, CallbacksContainer> {};
+static constexpr std::string_view BindingsFilePath{"bindings.json"};
+
+std::optional<SerializableBindings> loadFromBindingsFile()
+{
+    std::ifstream configFile(BindingsFilePath.data());
+    
+    if(!configFile.good())
+    {
+        configFile.close();
+        return std::nullopt;
+    }
+
+    std::stringstream buffer;
+    buffer << configFile.rdbuf();
+    std::string jsonString = buffer.str();
+    configFile.close();
+
+    auto result = rfl::json::read<SerializableBindings>(jsonString);
+    LOG_ERROR(result, "Failed to read bindings from file %s", BindingsFilePath);
+    
+    if(!result)
+    {
+        return std::nullopt;
+    }
+
+    return result.value();
+}
+
+BindingsAndEvents toBindingsAndEvents(const SerializableBindings& bindings)
+{
+    BindingsAndEvents result;
+
+    for(const auto& [action, events] : bindings)
+    {
+        result.emplace_back(std::make_tuple(action, events), Events{});
+    }
+
+    return result;
+}
+
+SerializableBindings toSerializableBindings(const BindingsAndEvents& bindingsAndEvents)
+{
+    std::vector<Binding> serializableBindings;
+    std::ranges::copy( bindingsAndEvents | std::views::transform([](const auto& be) { return std::get<0>(be);}), std::back_inserter(serializableBindings));
+    return serializableBindings;
+}
+
+SerializableBindings buildDefaultBindings()
+{
+    SerializableBindings bindings;
+
+    bindings.emplace_back("Key_Escape", SimplifiedEvents{KeyPressedEvent{sf::Keyboard::Escape}});
+
+    bindings.emplace_back("Game_MoveUp", SimplifiedEvents{KeyPressedEvent{sf::Keyboard::Up}});
+    bindings.emplace_back("Game_MoveDown", SimplifiedEvents{KeyPressedEvent{sf::Keyboard::Down}});
+    bindings.emplace_back("Game_MoveRight", SimplifiedEvents{KeyPressedEvent{sf::Keyboard::Right}});
+    bindings.emplace_back("Game_MoveLeft", SimplifiedEvents{KeyPressedEvent{sf::Keyboard::Left}});
+
+    bindings.emplace_back("Game_MoveUp", SimplifiedEvents{KeyPressedEvent{sf::Keyboard::W}});
+    bindings.emplace_back("Game_MoveDown", SimplifiedEvents{KeyPressedEvent{sf::Keyboard::S}});
+    bindings.emplace_back("Game_MoveRight", SimplifiedEvents{KeyPressedEvent{sf::Keyboard::D}});
+    bindings.emplace_back("Game_MoveLeft", SimplifiedEvents{KeyPressedEvent{sf::Keyboard::A}});
+
+    bindings.emplace_back("Mouse_Moved", SimplifiedEvents{MouseMovedEvent{}});
+    bindings.emplace_back("Mouse_ButtonPressed", SimplifiedEvents{MouseButtonPressedEvent{sf::Mouse::Left}});
+    bindings.emplace_back("Mouse_ButtonPressed", SimplifiedEvents{MouseButtonPressedEvent{sf::Mouse::Right}});
+
+    bindings.emplace_back("Window_Close", SimplifiedEvents{ClosedEvent{}});
+    bindings.emplace_back("Window_ToggleFullscreen", SimplifiedEvents{KeyPressedEvent{sf::Keyboard::F5}});
+
+    return bindings;
+}
+
+class EventManager::Impl : public std::pair<BindingsAndEvents, CallbacksContainer> {};
 
 EventManager::EventManager() : m_impl(std::make_unique<Impl>())
 {
-    auto& [bindings, _] = *m_impl;
+    auto& [bindingsAndEvents, _] = *m_impl;
 
-    bindings.emplace_back("Key_Escape", SimplifiedEvents{KeyPressedEvent{sf::Keyboard::Escape}}, Events{});
+    if(auto serializedBindings = loadFromBindingsFile())
+    {
+        bindingsAndEvents = toBindingsAndEvents(*serializedBindings);
+    }
+    else
+    {
+        const auto defaultBindings = buildDefaultBindings();
+        bindingsAndEvents = toBindingsAndEvents(defaultBindings);
+        std::ofstream configFile(BindingsFilePath.data());
 
-    bindings.emplace_back("Game_MoveUp", SimplifiedEvents{KeyPressedEvent{sf::Keyboard::Up}}, Events{});
-    bindings.emplace_back("Game_MoveDown", SimplifiedEvents{KeyPressedEvent{sf::Keyboard::Down}}, Events{});
-    bindings.emplace_back("Game_MoveRight", SimplifiedEvents{KeyPressedEvent{sf::Keyboard::Right}}, Events{});
-    bindings.emplace_back("Game_MoveLeft", SimplifiedEvents{KeyPressedEvent{sf::Keyboard::Left}}, Events{});
-
-    bindings.emplace_back("Game_MoveUp", SimplifiedEvents{KeyPressedEvent{sf::Keyboard::W}}, Events{});
-    bindings.emplace_back("Game_MoveDown", SimplifiedEvents{KeyPressedEvent{sf::Keyboard::S}}, Events{});
-    bindings.emplace_back("Game_MoveRight", SimplifiedEvents{KeyPressedEvent{sf::Keyboard::D}}, Events{});
-    bindings.emplace_back("Game_MoveLeft", SimplifiedEvents{KeyPressedEvent{sf::Keyboard::A}}, Events{});
-
-    bindings.emplace_back("Mouse_Moved", SimplifiedEvents{MouseMovedEvent{}}, Events{});
-    bindings.emplace_back("Mouse_ButtonPressed", SimplifiedEvents{MouseButtonPressedEvent{sf::Mouse::Left}}, Events{});
-    bindings.emplace_back("Mouse_ButtonPressed", SimplifiedEvents{MouseButtonPressedEvent{sf::Mouse::Right}}, Events{});
-
-    bindings.emplace_back("Window_Close", SimplifiedEvents{ClosedEvent{}}, Events{});
-    bindings.emplace_back("Window_ToggleFullscreen", SimplifiedEvents{KeyPressedEvent{sf::Keyboard::F5}}, Events{});
+        const auto jsonString = rfl::json::write(defaultBindings);
+        configFile << jsonString;
+        LOG_ERROR(!configFile.fail(), "Failed to write default bindings to file %s", BindingsFilePath);
+        configFile.close();
+    }
 }
 
 bool EventManager::AddCallback(StateType l_state, const std::string& l_action, Callback l_callback)
@@ -77,12 +160,13 @@ overloaded(Ts...) -> overloaded<Ts...>;
 
 void EventManager::HandleEvent(const sf::Event& l_event)
 {
-    auto& [bindings, _] = *m_impl;
+    auto& [bindingsAndActualEvents, _] = *m_impl;
 
-    for(auto& binding : bindings)
+    for(auto& [binding, actualEvents] : bindingsAndActualEvents)
     {
         //event matches
-        const auto& [_, events, __] = binding;
+        const auto& [_, events] = binding;
+
         for(const auto& event : events)
         {
             std::visit(overloaded{
@@ -90,7 +174,6 @@ void EventManager::HandleEvent(const sf::Event& l_event)
             {
                 if(l_event.type == sf::Event::KeyPressed && (l_event.key.code == key.get() || key.get() == sf::Keyboard::Unknown))
                 {
-                    auto& [_, __, actualEvents] = binding;
                     actualEvents.push_back(l_event);
                 }
             },
@@ -98,7 +181,6 @@ void EventManager::HandleEvent(const sf::Event& l_event)
             {
                 if(l_event.type == sf::Event::MouseButtonPressed && l_event.mouseButton.button == mouseButton.get())
                 {
-                    auto& [_, __, actualEvents] = binding;
                     actualEvents.push_back(l_event);
                 }
             },
@@ -106,7 +188,6 @@ void EventManager::HandleEvent(const sf::Event& l_event)
             {
                 if(l_event.type == sf::Event::Closed)
                 {
-                    auto& [_, __, actualEvents] = binding;
                     actualEvents.push_back(l_event);
                 }
             },
@@ -114,7 +195,6 @@ void EventManager::HandleEvent(const sf::Event& l_event)
             {
                 if(l_event.type == sf::Event::MouseMoved)
                 {
-                    auto& [_, __, actualEvents] = binding;
                     actualEvents.push_back(l_event);
                 }
             }}, event);
@@ -124,12 +204,11 @@ void EventManager::HandleEvent(const sf::Event& l_event)
 
 void EventManager::Update(StateType l_state)
 {
-    auto& [bindings, callbacksContainer] = *m_impl;
+    auto& [bindingsAndActualEvents, callbacksContainer] = *m_impl;
 
-    for(auto& binding : bindings)
+    for(auto& [binding, actualEvents] : bindingsAndActualEvents)
     {
-        const auto& [action, events, _] = binding;
-        auto& [__, ___, actualEvents] = binding;
+        const auto& [action, events] = binding;
 
         if(events.size() == actualEvents.size())
         {
@@ -150,9 +229,8 @@ void EventManager::Update(StateType l_state)
     }
 
     // clear actual events after processing
-    for(auto& binding : bindings)
+    for(auto& [_, actualEvents] : bindingsAndActualEvents)
     {
-        auto& [_, __, actualEvents] = binding;
         actualEvents.clear();
     }
 }

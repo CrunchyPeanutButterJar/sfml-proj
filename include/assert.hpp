@@ -6,7 +6,7 @@
 #include <string>
 #include <tuple>
 
-template<typename... Args>
+template<bool critical, typename... Args>
 inline void ensure_impl(bool condition, const char* file, int line, Args&&... args)
 {
     if (!condition)
@@ -19,12 +19,18 @@ inline void ensure_impl(bool condition, const char* file, int line, Args&&... ar
             fprintf(stderr, args...);
         }
         fprintf(stderr, "\n");
-        exit(EXIT_FAILURE);
+
+        if constexpr (critical)
+        {
+            exit(EXIT_FAILURE);
+        }
     }
 }
 
+#define LOG_ERROR(condition, ...) ensure_impl<false>((condition), __FILE__, __LINE__, ##__VA_ARGS__)
+
 #ifdef DEBUG_BUILD
-#define ENSURE(condition, ...) ensure_impl((condition), __FILE__, __LINE__, ##__VA_ARGS__)
+#define ENSURE(condition, ...) ensure_impl<true>((condition), __FILE__, __LINE__, ##__VA_ARGS__)
 #else
 #define ENSURE(condition, ...) ((void)0) // No-op in release builds
 #endif
