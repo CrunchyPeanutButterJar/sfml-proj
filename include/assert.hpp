@@ -29,6 +29,8 @@ inline void ensure_impl(bool condition, const char* file, int line, Args&&... ar
 
 #define LOG_ERROR(condition, ...) ensure_impl<false>((condition), __FILE__, __LINE__, ##__VA_ARGS__)
 
+#define ASSERT(condition, ...) ensure_impl<true>((condition), __FILE__, __LINE__, ##__VA_ARGS__)
+
 #ifdef DEBUG_BUILD
 #define ENSURE(condition, ...) ensure_impl<true>((condition), __FILE__, __LINE__, ##__VA_ARGS__)
 #else

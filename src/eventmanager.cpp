@@ -5,6 +5,7 @@
 
 #include <assert.hpp>
 
+#include <array>
 #include <phatomtype.hpp>
 #include <string>
 #include <tuple>
@@ -85,8 +86,6 @@ SerializableBindings buildDefaultBindings()
 {
     SerializableBindings bindings;
 
-    bindings.emplace_back("Key_Escape", SimplifiedEvents{KeyPressedEvent{sf::Keyboard::Escape}});
-
     bindings.emplace_back("Game_MoveUp", SimplifiedEvents{KeyPressedEvent{sf::Keyboard::Up}});
     bindings.emplace_back("Game_MoveDown", SimplifiedEvents{KeyPressedEvent{sf::Keyboard::Down}});
     bindings.emplace_back("Game_MoveRight", SimplifiedEvents{KeyPressedEvent{sf::Keyboard::Right}});
@@ -97,13 +96,22 @@ SerializableBindings buildDefaultBindings()
     bindings.emplace_back("Game_MoveRight", SimplifiedEvents{KeyPressedEvent{sf::Keyboard::D}});
     bindings.emplace_back("Game_MoveLeft", SimplifiedEvents{KeyPressedEvent{sf::Keyboard::A}});
 
+    return bindings;
+}
+
+SerializableBindings buildNonCustomizableBindings()
+{
+    SerializableBindings bindings;
+
+    bindings.emplace_back("Key_Escape", SimplifiedEvents{KeyPressedEvent{sf::Keyboard::Escape}});
+
     bindings.emplace_back("Mouse_Moved", SimplifiedEvents{MouseMovedEvent{}});
     bindings.emplace_back("Mouse_ButtonPressed", SimplifiedEvents{MouseButtonPressedEvent{sf::Mouse::Left}});
     bindings.emplace_back("Mouse_ButtonPressed", SimplifiedEvents{MouseButtonPressedEvent{sf::Mouse::Right}});
 
     bindings.emplace_back("Window_Close", SimplifiedEvents{ClosedEvent{}});
     bindings.emplace_back("Window_ToggleFullscreen", SimplifiedEvents{KeyPressedEvent{sf::Keyboard::F5}});
-
+    
     return bindings;
 }
 
@@ -112,19 +120,31 @@ class EventManager::Impl : public std::pair<BindingsAndEvents, CallbacksContaine
 EventManager::EventManager() : m_impl(std::make_unique<Impl>())
 {
     auto& [bindingsAndEvents, _] = *m_impl;
+    const auto nonCustomizableBindings = buildNonCustomizableBindings();
 
-    if(auto serializedBindings = loadFromBindingsFile())
+    if(auto customizedSerializedBindings = loadFromBindingsFile())
     {
-        bindingsAndEvents = toBindingsAndEvents(*serializedBindings);
+        auto& serializedBindings = *customizedSerializedBindings;
+        for(const auto& defaultBinding : nonCustomizableBindings)
+        {
+          serializedBindings.emplace_back(defaultBinding);
+        }
+
+        bindingsAndEvents = toBindingsAndEvents(serializedBindings);
     }
     else
     {
-        const auto defaultBindings = buildDefaultBindings();
+        const auto defaultCustomizableBindings = buildDefaultBindings();
+        auto defaultBindings = defaultCustomizableBindings;
+        for(const auto& defaultBinding : nonCustomizableBindings)
+        {
+            defaultBindings.emplace_back(defaultBinding);
+        }
+
         bindingsAndEvents = toBindingsAndEvents(defaultBindings);
         std::ofstream configFile(BindingsFilePath.data());
 
-        const auto jsonString =
-            rfl::json::write < rfl::AddTagsToVariants>(defaultBindings);
+        const auto jsonString = rfl::json::write < rfl::AddTagsToVariants>(defaultCustomizableBindings);
         configFile << jsonString;
         LOG_ERROR(!configFile.fail(), "Failed to write default bindings to file %s", BindingsFilePath);
         configFile.close();

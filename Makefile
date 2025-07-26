@@ -25,7 +25,7 @@ runDebug: sfml-app
 	./sfml-app
 
 clean:
-	rm -rf $(BUILD_DIR) sfml-app
+	rm -rf $(BUILD_DIR) sfml-app bindings.json
 
 sfml-app: $(OBJ_FILES)
 	$(CC) -o sfml-app $^ $(LDFLAGS) $(LDLIBS)
