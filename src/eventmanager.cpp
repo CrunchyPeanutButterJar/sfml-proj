@@ -51,7 +51,7 @@ std::optional<SerializableBindings> loadFromBindingsFile()
     std::string jsonString = buffer.str();
     configFile.close();
 
-    auto result = rfl::json::read<SerializableBindings>(jsonString);
+    auto result = rfl::json::read<SerializableBindings, rfl::AddTagsToVariants>(jsonString);
     LOG_ERROR(result, "Failed to read bindings from file %s", BindingsFilePath);
     
     if(!result)
@@ -123,7 +123,8 @@ EventManager::EventManager() : m_impl(std::make_unique<Impl>())
         bindingsAndEvents = toBindingsAndEvents(defaultBindings);
         std::ofstream configFile(BindingsFilePath.data());
 
-        const auto jsonString = rfl::json::write(defaultBindings);
+        const auto jsonString =
+            rfl::json::write < rfl::AddTagsToVariants>(defaultBindings);
         configFile << jsonString;
         LOG_ERROR(!configFile.fail(), "Failed to write default bindings to file %s", BindingsFilePath);
         configFile.close();
