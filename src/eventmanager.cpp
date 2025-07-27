@@ -18,10 +18,13 @@
 #include <rfl/json.hpp>
 #include <rfl/rfl.hpp>
 
-using KeyPressedEvent = PhantomType<sf::Keyboard::Key, struct KeyPressedEventTag>;
-using MouseButtonPressedEvent = PhantomType<sf::Mouse::Button, struct MouseButtonPressedEventTag>;
+using KeyPressedEventEnumType = int;
+using MouseButtonPressedEventEnumType = int;
+
+using KeyPressedEvent = PhantomType<KeyPressedEventEnumType, struct KeyPressedEventTag>;
+using MouseButtonPressedEvent = PhantomType<KeyPressedEventEnumType, struct MouseButtonPressedEventTag>;
 struct ClosedEvent{};
-struct MouseMovedEvent{};
+struct MouseMovedEvent{}; 
 
 using SimplifiedEvent = std::variant<KeyPressedEvent, MouseButtonPressedEvent, MouseMovedEvent, ClosedEvent>;
 
