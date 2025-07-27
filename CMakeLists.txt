@@ -21,10 +21,9 @@ add_custom_command(TARGET sfml-app POST_BUILD
 if(CMAKE_BUILD_TYPE STREQUAL "Debug")
     message(STATUS "🔍 Build en mode Debug")
     add_compile_definitions(DEBUG_MODE)
+endif()
 
 target_compile_options(sfml-app PRIVATE
     $<$<CONFIG:Debug>:-Wextra -g -DDEBUG_BUILD -O0>
     $<$<CONFIG:Release>:-O3>
 ) 
-
-endif()
