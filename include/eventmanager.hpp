@@ -5,6 +5,8 @@
 
 #include <statemanager.hpp>
 
+#include <any>
+
 #include <functional>
 #include <memory>
 #include <string>
@@ -36,5 +38,11 @@ private:
     class Impl;
     std::unique_ptr<Impl> m_impl;
 };
+
+//exposed for tests
+std::any buildBindings();
+std::any deserializeBindings(const std::string& l_jsonString);
+std::string serializeBindings(const std::any& l_serializableBindings);
+bool bindingsAreEquivalent(const std::any& l_first, const std::any& l_second);
 
 #endif

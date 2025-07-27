@@ -26,6 +26,9 @@ using MouseButtonPressedEvent = PhantomType<KeyPressedEventEnumType, struct Mous
 struct ClosedEvent{};
 struct MouseMovedEvent{}; 
 
+bool operator==(ClosedEvent, ClosedEvent) { return true; }
+bool operator==(MouseMovedEvent, MouseMovedEvent) { return true;}
+
 using SimplifiedEvent = std::variant<KeyPressedEvent, MouseButtonPressedEvent, MouseMovedEvent, ClosedEvent>;
 
 using SimplifiedEvents = std::vector<SimplifiedEvent>;
@@ -83,6 +86,7 @@ SerializableBindings toSerializableBindings(const BindingsAndEvents& bindingsAnd
     std::vector<Binding> serializableBindings;
     std::ranges::copy( bindingsAndEvents | std::views::transform([](const auto& be) { return std::get<0>(be);}), std::back_inserter(serializableBindings));
     return serializableBindings;
+    // return bindingsAndEvents | std::views::transform([](const auto& be) { return std::get<0>(be);}) | std::ranges::to<std::vector>();
 }
 
 SerializableBindings buildDefaultBindings()
@@ -116,6 +120,29 @@ SerializableBindings buildNonCustomizableBindings()
     bindings.emplace_back("Window_ToggleFullscreen", SimplifiedEvents{KeyPressedEvent{sf::Keyboard::F5}});
     
     return bindings;
+}
+
+std::any buildBindings()
+{
+    return buildDefaultBindings();
+}
+
+bool bindingsAreEquivalent(const std::any& l_first, const std::any& l_second)
+{
+    const auto& firstBindings = std::any_cast<const SerializableBindings&>(l_first);
+    const auto& secondBindings = std::any_cast<const SerializableBindings&>(l_second);
+
+    return firstBindings == secondBindings;
+}
+
+std::any deserializeBindings(const std::string &l_jsonString)
+{
+    return rfl::json::read<SerializableBindings, rfl::AddTagsToVariants>(l_jsonString).value();
+}
+
+std::string serializeBindings(const std::any& l_serializableBindings)
+{
+    return rfl::json::write<rfl::AddTagsToVariants>(std::any_cast<const SerializableBindings&>(l_serializableBindings));
 }
 
 class EventManager::Impl : public std::pair<BindingsAndEvents, CallbacksContainer> {};

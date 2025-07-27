@@ -1,16 +1,36 @@
 cmake_minimum_required(VERSION 3.10)
+set(CMAKE_CXX_STANDARD 23)
+
+set(CMAKE_C_COMPILER clang)
+set(CMAKE_CXX_COMPILER clang++)
+
 project(sfml-app)
 
+set(MAIN_FILE "${CMAKE_CURRENT_SOURCE_DIR}/src/main.cpp")
 file(GLOB SOURCES src/*.cpp)
-add_compile_options(-std=c++20 -Wall)
 
-add_executable(sfml-app ${SOURCES})
-target_include_directories(sfml-app PRIVATE ${CMAKE_SOURCE_DIR}/include)
+list(REMOVE_ITEM SOURCES "${MAIN_FILE}")
+
+add_library(core STATIC ${SOURCES})
+target_include_directories(core PUBLIC ${CMAKE_SOURCE_DIR}/include)
+target_link_libraries(core PUBLIC sfml::sfml reflectcpp::reflectcpp)
+
+target_compile_options(core PUBLIC
+  -std=c++23
+  -Wall
+)
+
+target_link_options(core PUBLIC
+  -lc++
+  -lc++abi
+)
+
+add_executable(sfml-app ${MAIN_FILE}) 
 
 find_package(SFML REQUIRED)
 find_package(reflectcpp REQUIRED)
 
-target_link_libraries(sfml-app PRIVATE sfml::sfml reflectcpp::reflectcpp) 
+target_link_libraries(sfml-app PRIVATE core) 
 
 add_custom_command(TARGET sfml-app POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy_directory
@@ -27,3 +47,11 @@ target_compile_options(sfml-app PRIVATE
     $<$<CONFIG:Debug>:-Wextra -g -DDEBUG_BUILD -O0>
     $<$<CONFIG:Release>:-O3>
 ) 
+
+find_package(GTest REQUIRED)
+enable_testing()
+
+add_executable(reflectcpp_integration_tests tests/reflectcpp_integration_tests.cpp)
+target_link_libraries(reflectcpp_integration_tests PRIVATE core GTest::gtest_main)
+
+add_test(NAME integration_tests_with_cppreflect COMMAND reflectcpp_integration_tests WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR})
