@@ -17,6 +17,7 @@
 
 #include <rfl/json.hpp>
 #include <rfl/rfl.hpp>
+#include <cor3ntin/rangesnext/to.hpp>
 
 using KeyPressedEventEnumType = int;
 using MouseButtonPressedEventEnumType = int;
@@ -83,10 +84,7 @@ BindingsAndEvents toBindingsAndEvents(const SerializableBindings& bindings)
 
 SerializableBindings toSerializableBindings(const BindingsAndEvents& bindingsAndEvents)
 {
-    std::vector<Binding> serializableBindings;
-    std::ranges::copy( bindingsAndEvents | std::views::transform([](const auto& be) { return std::get<0>(be);}), std::back_inserter(serializableBindings));
-    return serializableBindings;
-    // return bindingsAndEvents | std::views::transform([](const auto& be) { return std::get<0>(be);}) | std::ranges::to<std::vector>();
+    return bindingsAndEvents | std::views::transform([](const auto& be) { return std::get<0>(be);}) |  cor3ntin::rangesnext::to<std::vector<Binding>>();
 }
 
 SerializableBindings buildDefaultBindings()

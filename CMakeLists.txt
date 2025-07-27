@@ -6,6 +6,10 @@ set(CMAKE_CXX_COMPILER clang++)
 
 project(sfml-app)
 
+if(CMAKE_CXX_COMPILER_VERSION VERSION_LESS "18.0")
+  message(FATAL_ERROR "Clang 18 requis pour ce projet.")
+endif()
+
 set(MAIN_FILE "${CMAKE_CURRENT_SOURCE_DIR}/src/main.cpp")
 file(GLOB SOURCES src/*.cpp)
 
@@ -14,6 +18,10 @@ list(REMOVE_ITEM SOURCES "${MAIN_FILE}")
 add_library(core STATIC ${SOURCES})
 target_include_directories(core PUBLIC ${CMAKE_SOURCE_DIR}/include)
 target_link_libraries(core PUBLIC sfml::sfml reflectcpp::reflectcpp)
+
+add_subdirectory(external/rangesnext EXCLUDE_FROM_ALL)
+target_link_libraries(core PRIVATE rangesnext)
+target_include_directories(core PRIVATE external/rangesnext/include)
 
 target_compile_options(core PUBLIC
   -std=c++23
