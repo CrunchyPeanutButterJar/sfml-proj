@@ -72,14 +72,7 @@ std::optional<SerializableBindings> loadFromBindingsFile()
 
 BindingsAndEvents toBindingsAndEvents(const SerializableBindings& bindings)
 {
-    BindingsAndEvents result;
-
-    for(const auto& [action, events] : bindings)
-    {
-        result.emplace_back(std::make_tuple(action, events), Events{});
-    }
-
-    return result;
+    return bindings | std::views::transform([](const auto& el) { return std::make_tuple(el, Events{});}) | cor3ntin::rangesnext::to<BindingsAndEvents>();
 }
 
 SerializableBindings toSerializableBindings(const BindingsAndEvents& bindingsAndEvents)
@@ -122,7 +115,11 @@ SerializableBindings buildNonCustomizableBindings()
 
 std::any buildBindings()
 {
-    return buildDefaultBindings();
+    auto bindings = buildDefaultBindings();
+    const auto nonCustomizableBindings = buildNonCustomizableBindings();
+    std::copy(nonCustomizableBindings.begin(), nonCustomizableBindings.end(), std::back_inserter(bindings));
+
+    return bindings;
 }
 
 bool bindingsAreEquivalent(const std::any& l_first, const std::any& l_second)
