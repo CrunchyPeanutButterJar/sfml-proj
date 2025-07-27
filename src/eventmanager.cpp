@@ -6,7 +6,7 @@
 #include <assert.hpp>
 
 #include <array>
-#include <phatomtype.hpp>
+#include <phantomtype.hpp>
 #include <string>
 #include <tuple>
 #include <ranges>
@@ -200,9 +200,6 @@ void EventManager::RemoveCallback(StateType l_state, const std::string& l_action
 
 template<class... Ts>
 struct overloaded : Ts... { using Ts::operator()...; };
-
-template<class... Ts>
-overloaded(Ts...) -> overloaded<Ts...>;
 
 void EventManager::HandleEvent(const sf::Event& l_event)
 {
