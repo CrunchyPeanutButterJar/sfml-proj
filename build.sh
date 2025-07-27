@@ -42,7 +42,7 @@ fi
 
 echo "⚙️ Build en mode $BUILD_TYPE"
 
-if $CONAN_STEP; then
+if [[ "$CONAN_STEP" == "true" || ! -d $BUILD_DIR ]]; then
   conan install . \
       --output-folder=$BUILD_DIR \
       --build=missing \
