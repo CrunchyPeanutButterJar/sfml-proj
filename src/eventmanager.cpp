@@ -16,7 +16,7 @@
 #include <sstream>
 
 #include <rfl/json.hpp>
-#include <rfl/rfl.hpp>
+#include <rfl.hpp>
 #include <cor3ntin/rangesnext/to.hpp>
 
 using KeyPressedEventEnumType = int;
