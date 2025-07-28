@@ -19,17 +19,18 @@ add_library(core STATIC ${SOURCES})
 target_include_directories(core PUBLIC ${CMAKE_SOURCE_DIR}/include)
 target_link_libraries(core PUBLIC sfml::sfml reflectcpp::reflectcpp)
 
-add_subdirectory(external/rangesnext EXCLUDE_FROM_ALL)
-target_link_libraries(core PRIVATE rangesnext)
-target_include_directories(core PRIVATE external/rangesnext/include)
+target_link_libraries(core PRIVATE)
+target_include_directories(core PRIVATE)
 
 target_compile_options(core PUBLIC
   -std=c++23
+  -stdlib=libc++
   -Wall
 )
 
 target_link_options(core PUBLIC
   -lc++
+  -stdlib=libc++
   -lc++abi
 )
 
