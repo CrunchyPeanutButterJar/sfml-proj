@@ -114,11 +114,7 @@ SerializableBindings buildNonCustomizableBindings()
 
 std::any buildBindings()
 {
-    auto bindings = buildDefaultBindings();
-    const auto nonCustomizableBindings = buildNonCustomizableBindings();
-    std::copy(nonCustomizableBindings.begin(), nonCustomizableBindings.end(), std::back_inserter(bindings));
-
-    return bindings;
+    return std::array{buildDefaultBindings(), buildNonCustomizableBindings()} | std::ranges::views::join | std::ranges::to<std::vector>();
 }
 
 bool bindingsAreEquivalent(const std::any& l_first, const std::any& l_second)
@@ -148,22 +144,14 @@ EventManager::EventManager() : m_impl(std::make_unique<Impl>())
 
     if(auto customizedSerializedBindings = loadFromBindingsFile())
     {
-        auto& serializedBindings = *customizedSerializedBindings;
-        for(const auto& defaultBinding : nonCustomizableBindings)
-        {
-          serializedBindings.emplace_back(defaultBinding);
-        }
+        const auto serializedBindings = std::array{*customizedSerializedBindings, nonCustomizableBindings} | std::ranges::views::join | std::ranges::to<std::vector>();
 
         bindingsAndEvents = toBindingsAndEvents(serializedBindings);
     }
     else
     {
         const auto defaultCustomizableBindings = buildDefaultBindings();
-        auto defaultBindings = defaultCustomizableBindings;
-        for(const auto& defaultBinding : nonCustomizableBindings)
-        {
-            defaultBindings.emplace_back(defaultBinding);
-        }
+        auto defaultBindings = std::array{defaultCustomizableBindings, nonCustomizableBindings} | std::ranges::views::join | std::ranges::to<std::vector>();
 
         bindingsAndEvents = toBindingsAndEvents(defaultBindings);
         std::ofstream configFile(BindingsFilePath.data());
