@@ -13,9 +13,7 @@ void StateManager::SwitchTo(StateType l_state)
     
     if (itr == m_states.end())
     {
-        m_states.emplace_back(l_state, m_stateFactory[l_state]());
-        m_states.back().second->Activate();
-        return;
+        itr = m_states.insert(m_states.end(), {l_state, m_stateFactory[l_state]()});
     }
 
     std::iter_swap(itr, m_states.end() - 1);
