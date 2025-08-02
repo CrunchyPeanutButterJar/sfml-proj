@@ -11,7 +11,7 @@ public:
     PausedState(StateManager& l_stateManager);
     ~PausedState() override;
 
-    void Update(const sf::Time& l_elapsed) override {};
+    void Update(const sf::Time& /*l_elapsed*/) override {};
     void Draw() override;
 
     void Activate() override {};
