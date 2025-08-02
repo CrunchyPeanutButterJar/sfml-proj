@@ -27,6 +27,7 @@ target_compile_options(core PUBLIC
   -stdlib=libc++
   -Wall
   -Werror
+  -Wextra
 )
 
 target_link_options(core PUBLIC
@@ -55,7 +56,7 @@ if(CMAKE_BUILD_TYPE STREQUAL "Debug")
 endif()
 
 target_compile_options(sfml-app PRIVATE
-    $<$<CONFIG:Debug>:-Wextra -g -DDEBUG_BUILD -O0>
+    $<$<CONFIG:Debug>:-g -DDEBUG_BUILD -O0>
     $<$<CONFIG:Release>:-O3>
 ) 
 
