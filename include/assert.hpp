@@ -1,25 +1,40 @@
 #ifndef ASSERT_HPP
 #define ASSERT_HPP
 
-#include <stdio.h>
 #include <stdlib.h>
 #include <string>
 #include <tuple>
 
+#include <fmt/format.h>
+
+inline void _vlog(FILE* f, const char* file, int line, fmt::string_view fmt, fmt::format_args args)
+{
+    fmt::print(f, "[LOG] {}:{}: {}\n", file, line, fmt::vformat(fmt, args));
+}
+
+template <typename... T>
+void _log(FILE* f, const char* file, int line, fmt::format_string<T...> fmt, T&&... args)
+{
+    _vlog(f, file, line, fmt, fmt::make_format_args(args...));
+}
+
+inline void _assertion_failed_vlog(const char* file, int line, fmt::string_view fmt, fmt::format_args args) 
+{
+    fmt::print(stderr, "[ERROR]: {}:{}: {}\n", file, line, fmt::vformat(fmt, args));
+}
+
+template <typename... T>
+void _assertion_failed_log(const char* file, int line, fmt::format_string<T...> fmt, T&&... args)
+{
+  _assertion_failed_vlog(file, line, fmt, fmt::make_format_args(args...));
+}
+
 template<bool critical, typename... Args>
-inline void ensure_impl(bool condition, const char* file, int line, Args&&... args)
+inline void ensure_impl(bool condition, const char* file, int line, fmt::format_string<Args...> fmt, Args&&... args)
 {
     if (!condition)
     {
-        fprintf(stderr, "Assertion failed: %s:%d:", file, line);
-        if constexpr (sizeof...(args) > 0)
-        { 
-            using FirstArgType = std::decay_t<decltype((std::get<0>(std::forward_as_tuple(args...))))>;
-            static_assert(std::is_same_v<FirstArgType, const char*>, "Formatted string must be a const char*");
-            fprintf(stderr, args...);
-        }
-        fprintf(stderr, "\n");
-
+        _assertion_failed_log(file, line, fmt, args...);
         if constexpr (critical)
         {
             exit(EXIT_FAILURE);
@@ -30,6 +45,10 @@ inline void ensure_impl(bool condition, const char* file, int line, Args&&... ar
 #define LOG_ERROR(condition, ...) ensure_impl<false>((condition), __FILE__, __LINE__, ##__VA_ARGS__)
 
 #define ASSERT(condition, ...) ensure_impl<true>((condition), __FILE__, __LINE__, ##__VA_ARGS__)
+
+#define FAILURE(...) _assertion_failed_log(__FILE__, __LINE__, ##__VA_ARGS__), exit(EXIT_FAILURE)
+
+#define LOG(...) _log(stdout, __FILE__, __LINE__, ##__VA_ARGS__)
 
 #ifdef DEBUG_BUILD
 #define ENSURE(condition, ...) ensure_impl<true>((condition), __FILE__, __LINE__, ##__VA_ARGS__)

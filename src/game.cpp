@@ -27,18 +27,21 @@ static sf::Vector2u loadResolutionFromConfigFile()
         if(auto result = rfl::json::read<Resolution, rfl::AddTagsToVariants>(jsonConfig))
         {
             auto resolution = result.value();
+            LOG("Loaded Config with width = {} and height = {}", resolution.first, resolution.second);
+
             return {resolution.first, resolution.second};
         }
-        ASSERT(false, "Error while parsing invalid file : %s", ConfigFileName.c_str());
+        FAILURE("Error while parsing invalid file : {}", ConfigFileName);
     }
     else
     {
         const Resolution defaultResolution{800, 600};
 
         std::ofstream config{ConfigFileName};
-        LOG_ERROR(config.good(), "Error while writing to file : %s", ConfigFileName.c_str());
+        LOG_ERROR(config.good(), "Error while writing to file : {}", ConfigFileName);
         config << rfl::json::write<rfl::AddTagsToVariants>(defaultResolution);
         
+        LOG("Loaded default Config with width = {} and height = {}", defaultResolution.first, defaultResolution.second);
         return {defaultResolution.first, defaultResolution.second};
     }
 } 
