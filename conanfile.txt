@@ -1,0 +1,12 @@
+[requires]
+reflect-cpp/0.19.0
+sfml/2.6.2
+gtest/1.14.0
+fmt/11.2.0
+
+[tool_requires]
+cmake/3.27.0
+
+[generators]
+CMakeToolchain
+CMakeDeps
