@@ -4,6 +4,7 @@
 #include <fstream>
 
 #include <assert.hpp>
+#include <utilities.hpp>
 
 #include <array>
 #include <phantomtype.hpp>
@@ -41,11 +42,11 @@ using BindingsAndEvents = std::vector<std::tuple<Binding, Events>>;
 using Callbacks = std::unordered_map<std::string, Callback>;
 using CallbacksContainer = std::unordered_map<StateType, Callbacks>;
 
-static constexpr std::string_view BindingsFilePath{"bindings.json"};
+static const std::string BindingsFilePath{Utils::GetWorkingDirectory() + "bindings.json"};
 
 std::optional<SerializableBindings> loadFromBindingsFile()
 {
-    std::ifstream configFile(BindingsFilePath.data());
+    std::ifstream configFile(BindingsFilePath.c_str());
     
     if(!configFile.good())
     {
@@ -65,6 +66,8 @@ std::optional<SerializableBindings> loadFromBindingsFile()
     {
         return std::nullopt;
     }
+
+    LOG("Reading from binding file {}", BindingsFilePath);
 
     return result.value();
 }
