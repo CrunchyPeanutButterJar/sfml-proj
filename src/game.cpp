@@ -1,6 +1,8 @@
+#include "utilities.hpp"
 #include <game.hpp>
 
 #include <assert.hpp>
+#include <utilities.hpp>
 
 #include <fstream>
 #include <rfl/AddTagsToVariants.hpp>
@@ -14,7 +16,7 @@ using Resolution = std::pair<uint32_t, uint32_t>;
 
 static sf::Vector2u loadResolutionFromConfigFile()
 {
-    static const std::string ConfigFileName = "config.json";
+    static const std::string ConfigFileName = Utils::GetWorkingDirectory() + "config.json";
 
     std::ifstream config{ConfigFileName};
     if(config.good())
@@ -27,7 +29,7 @@ static sf::Vector2u loadResolutionFromConfigFile()
         if(auto result = rfl::json::read<Resolution, rfl::AddTagsToVariants>(jsonConfig))
         {
             auto resolution = result.value();
-            LOG("Loaded Config with width = {} and height = {}", resolution.first, resolution.second);
+            LOG("Loaded Config file {} with width = {} and height = {}", ConfigFileName, resolution.first, resolution.second);
 
             return {resolution.first, resolution.second};
         }
