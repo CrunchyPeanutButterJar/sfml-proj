@@ -3,6 +3,7 @@
 
 #include <SFML/Graphics.hpp>
 
+#include <SFML/Graphics/Rect.hpp>
 #include <eventmanager.hpp>
 
 class Window
@@ -23,6 +24,7 @@ public:
     void Draw(sf::Drawable& l_drawable);
     sf::RenderWindow* GetRenderWindow();
     EventManager& GetEventManager();
+    sf::FloatRect GetViewSpace() const;
 
 private:
     void Setup(const std::string& l_title, const sf::Vector2u& l_size);

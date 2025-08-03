@@ -2,6 +2,7 @@
 #define BASESTATE_HPP
 
 #include <SFML/System/Time.hpp>
+#include <SFML/Graphics/View.hpp>
 
 class StateManager;
 
@@ -25,10 +26,13 @@ public:
 
 protected:
     StateManager& m_stateManager;
+    sf::View m_view;
 
 private:
     bool m_transparent{false};
     bool m_transcendent{false};
+
+friend class StateManager;
 };
 
 #endif

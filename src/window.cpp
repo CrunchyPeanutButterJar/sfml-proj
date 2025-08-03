@@ -51,6 +51,16 @@ EventManager& Window::GetEventManager()
     return m_eventManager;
 }
 
+sf::FloatRect Window::GetViewSpace() const
+{
+    const sf::Vector2f viewCenter = m_window.getView().getCenter();
+    const sf::Vector2f viewSize = m_window.getView().getSize();
+    const sf::Vector2f viewSizeHalf{viewSize.x / 2, viewSize.y / 2};
+
+    return {viewCenter - viewSizeHalf, viewSize};
+}
+
+
 void Window::Update(StateType l_state)
 {
     sf::Event event;

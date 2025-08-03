@@ -2,6 +2,7 @@
 
 #include <gamestate.hpp>
 #include <pausedstate.hpp>
+#include <window.hpp>
 
 #include <algorithm>
 
@@ -53,6 +54,7 @@ void StateManager::Draw()
     auto itr = std::prev(m_states.end(), rIndex + 1);
     for(; itr != m_states.end(); ++itr)
     {
+        std::get<0>(GetContext()).GetRenderWindow()->setView(itr->second->m_view);
         itr->second->Draw();
     }
 }
@@ -77,7 +79,12 @@ void StateManager::ProcessRequests()
 template<typename StateImpl>
 void StateManager::RegisterState(StateType l_stateType)
 {
-    m_stateFactory[l_stateType] = [&]() -> StatePtr { return std::make_unique<StateImpl>(*this); };
+    m_stateFactory[l_stateType] = [&]() -> StatePtr 
+    {
+        auto state =  std::make_unique<StateImpl>(*this); 
+        static_cast<BaseState*>(state.get())->m_view = std::get<0>(GetContext()).GetRenderWindow()->getDefaultView();
+        return state;
+    };
 }
 
 StateManager::StateManager(SharedContext l_sharedContext) : m_context{l_sharedContext}
