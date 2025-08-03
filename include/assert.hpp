@@ -9,7 +9,7 @@
 
 inline void _vlog(FILE* f, const char* file, int line, fmt::string_view fmt, fmt::format_args args)
 {
-    fmt::print(f, "[LOG] {}:{}: {}\n", file, line, fmt::vformat(fmt, args));
+    fmt::print(f, "[INFO] {}:{}: {}\n", file, line, fmt::vformat(fmt, args));
 }
 
 template <typename... T>
