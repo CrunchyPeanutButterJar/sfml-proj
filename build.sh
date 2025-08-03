@@ -7,7 +7,7 @@ DO_CLEAN=false
 CONAN_STEP=false
 
 # 🔍 Analyse des options
-while getopts ":dcf" opt; do
+while getopts ":dcfr" opt; do
   case $opt in
     d)
       BUILD_TYPE="Debug"
@@ -19,9 +19,15 @@ while getopts ":dcf" opt; do
       echo "🔄 Étape Conan forcée."
       CONAN_STEP=true
       ;;
+    r)
+      echo "Lancement du binaire"
+      cd ./$BUILD_DIR
+      ./sfml-app
+      exit 0
+      ;;
     \?)
       echo "❌ Option invalide: -$OPTARG"
-      echo "Usage: $0 [-d] [-c] [-f](pour forcer l'étape Conan)"
+      echo "Usage: $0 [-d] [-c] [-f](pour forcer l'étape Conan) [-r](pour lancer le binaire)"
       exit 1
       ;;
   esac
@@ -36,8 +42,6 @@ if $DO_CLEAN; then
         echo "ℹ️ Le dossier a été supprimé. donc Rien à nettoyer."
     fi
     exit 0
-elif [[ "$1" == "--debug" ]]; then
-    BUILD_TYPE="Debug"
 fi
 
 echo "⚙️ Build en mode $BUILD_TYPE"
