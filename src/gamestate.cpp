@@ -108,3 +108,7 @@ void GameState::Activate()
 void GameState::Deactivate()
 {
 }
+
+void GameState::OnCreate()
+{
+}

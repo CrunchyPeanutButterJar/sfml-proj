@@ -82,7 +82,9 @@ void StateManager::RegisterState(StateType l_stateType)
     m_stateFactory[l_stateType] = [&]() -> StatePtr 
     {
         auto state =  std::make_unique<StateImpl>(*this); 
-        static_cast<BaseState*>(state.get())->m_view = std::get<0>(GetContext()).GetRenderWindow()->getDefaultView();
+        state->m_view = std::get<0>(GetContext()).GetRenderWindow()->getDefaultView();
+        state->OnCreate();
+        
         return state;
     };
 }

@@ -20,6 +20,8 @@ public:
     void Activate() override;
     void Deactivate() override;
 
+    void OnCreate() override;
+
 private:
     Textbox m_textbox;
     World m_world;

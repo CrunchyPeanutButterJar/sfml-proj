@@ -17,6 +17,8 @@ public:
     void Activate() override {};
     void Deactivate() override {};
 
+    void OnCreate() override {};
+
 private:
     sf::RectangleShape m_backdrop;
 };

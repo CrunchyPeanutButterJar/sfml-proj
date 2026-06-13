@@ -18,6 +18,8 @@ public:
     virtual void Activate() = 0;
     virtual void Deactivate() = 0;
 
+    virtual void OnCreate() = 0;
+
     inline void SetTransparent(bool l_transparent) { m_transparent = l_transparent; }
     inline bool IsTransparent() const { return m_transparent; }
 
