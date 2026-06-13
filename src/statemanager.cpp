@@ -54,7 +54,7 @@ void StateManager::Draw()
     auto itr = std::prev(m_states.end(), rIndex + 1);
     for(; itr != m_states.end(); ++itr)
     {
-        std::get<0>(GetContext()).GetRenderWindow()->setView(itr->second->m_view);
+        GetContext().m_window.GetRenderWindow()->setView(itr->second->m_view);
         itr->second->Draw();
     }
 }
@@ -82,14 +82,14 @@ void StateManager::RegisterState(StateType l_stateType)
     m_stateFactory[l_stateType] = [&]() -> StatePtr 
     {
         auto state =  std::make_unique<StateImpl>(*this); 
-        state->m_view = std::get<0>(GetContext()).GetRenderWindow()->getDefaultView();
+        state->m_view = GetContext().m_window.GetRenderWindow()->getDefaultView();
         state->OnCreate();
-        
+
         return state;
     };
 }
 
-StateManager::StateManager(SharedContext l_sharedContext) : m_context{l_sharedContext}
+StateManager::StateManager(SharedContext l_sharedContext) : m_context{std::move(l_sharedContext)}
 {
     RegisterState<GameState>(StateType::Game);
     RegisterState<PausedState>(StateType::Paused);

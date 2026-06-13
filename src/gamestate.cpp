@@ -42,9 +42,9 @@ static void moveSnake(Snake& l_snake)
     }
 }
 
-GameState::GameState(StateManager& l_stateManager): BaseState(l_stateManager), m_world(std::get<0>(m_stateManager.GetContext()).GetWindowSize(), m_textbox), m_snake(m_world.GetBlockSize())
+GameState::GameState(StateManager& l_stateManager): BaseState(l_stateManager), m_world(m_stateManager.GetContext().m_window.GetWindowSize(), m_textbox), m_snake(m_world.GetBlockSize())
 {
-    m_textbox.Setup(5, 14, 350, sf::Vector2f(std::get<0>(m_stateManager.GetContext()).GetWindowSize().x/2 - 175, 0));
+    m_textbox.Setup(5, 14, 350, sf::Vector2f(m_stateManager.GetContext().m_window.GetWindowSize().x/2 - 175, 0));
     time_t seed = time(nullptr);
     srand(static_cast<unsigned int>(seed));
 

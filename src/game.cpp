@@ -50,7 +50,7 @@ static sf::Vector2u loadResolutionFromConfigFile()
 
 Game::Game() :
 m_window{"snake", loadResolutionFromConfigFile()},
-m_stateManager{std::make_tuple(std::ref(m_window), std::ref(m_window.GetEventManager()))}
+m_stateManager{{m_window, m_window.GetEventManager()}}
 {
     m_stateManager.SwitchTo(StateType::Game);
 }

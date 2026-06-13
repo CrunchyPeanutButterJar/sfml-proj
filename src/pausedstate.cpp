@@ -28,6 +28,6 @@ PausedState::~PausedState()
 
 void PausedState::Draw()
 {
-    auto* window = std::get<0>(m_stateManager.GetContext()).GetRenderWindow();
+    auto* window = m_stateManager.GetContext().m_window.GetRenderWindow();
     window->draw(m_backdrop);
 }

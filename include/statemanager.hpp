@@ -30,7 +30,11 @@ using StateFactory = std::unordered_map<StateType, std::function<StatePtr(void)>
 
 using StateTypeContainer = std::unordered_set<StateType>;
 
-using SharedContext = std::tuple<Window&, EventManager&>;
+struct SharedContext
+{
+    Window& m_window;
+    EventManager& m_eventManager;
+};
 
 class StateManager
 {
