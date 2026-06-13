@@ -18,7 +18,9 @@ void StateManager::SwitchTo(StateType l_state)
     }
 
     std::iter_swap(itr, m_states.end() - 1);
-    m_states.back().second->Activate();
+    auto& currentState = m_states.back().second;
+    currentState->Activate();
+    GetContext().m_window.GetRenderWindow()->setView(currentState->GetView());
 }
 
 StateType StateManager::GetCurrentState() const
@@ -54,7 +56,7 @@ void StateManager::Draw()
     auto itr = std::prev(m_states.end(), rIndex + 1);
     for(; itr != m_states.end(); ++itr)
     {
-        GetContext().m_window.GetRenderWindow()->setView(itr->second->m_view);
+        GetContext().m_window.GetRenderWindow()->setView(itr->second->GetView());
         itr->second->Draw();
     }
 }

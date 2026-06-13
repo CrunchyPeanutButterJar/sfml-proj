@@ -26,6 +26,8 @@ public:
     inline void SetTranscendent(bool l_transcendent) { m_transcendent = l_transcendent; }
     inline bool IsTranscendent() const { return m_transcendent; }
 
+    inline sf::View GetView() const { return m_view;}
+
 protected:
     StateManager& m_stateManager;
     sf::View m_view;
