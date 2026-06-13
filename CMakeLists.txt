@@ -19,9 +19,6 @@ add_library(core STATIC ${SOURCES})
 target_include_directories(core PUBLIC ${CMAKE_SOURCE_DIR}/include)
 target_link_libraries(core PUBLIC sfml::sfml reflectcpp::reflectcpp fmt::fmt)
 
-target_link_libraries(core PRIVATE)
-target_include_directories(core PRIVATE)
-
 target_compile_options(core PUBLIC
   -std=c++23
   -stdlib=libc++
