@@ -1,5 +1,7 @@
+#include <sstream>
 #include <utilities.hpp>
 #include <cctype>
+#include <fstream>
 
 namespace Utils
 {
@@ -39,6 +41,19 @@ std::vector<std::vector<std::string>> Tokenize(std::istringstream l_stream, char
     }
 
     return result;
+}
+
+std::optional<std::istringstream> readFile(const std::string& l_fileName)
+{
+    std::ifstream file{l_fileName};
+    if (!file)
+    {
+        return {};
+    }
+    
+    std::string fileContent{std::istreambuf_iterator<char>(file), std::istreambuf_iterator<char>()};
+
+    return std::istringstream{std::move(fileContent)};
 }
 
 };
