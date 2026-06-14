@@ -19,7 +19,6 @@ class EventManager;
 enum class StateType
 {
     Game = 1,
-    Paused
 };
 
 

@@ -4,9 +4,6 @@
 #include <SFML/System/Time.hpp>
 
 #include <basestate.hpp>
-#include <snake.hpp>
-#include <textbox.hpp>
-#include <world.hpp>
 
 class GameState : public BaseState
 {
@@ -23,9 +20,6 @@ public:
     void OnCreate() override;
 
 private:
-    Textbox m_textbox;
-    World m_world;
-    Snake m_snake;
     sf::Time m_elapsed;
 };
 

@@ -1,7 +1,6 @@
 #include <statemanager.hpp>
 
 #include <gamestate.hpp>
-#include <pausedstate.hpp>
 #include <window.hpp>
 
 #include <algorithm>
@@ -94,7 +93,6 @@ void StateManager::RegisterState(StateType l_stateType)
 StateManager::StateManager(SharedContext l_sharedContext) : m_context{std::move(l_sharedContext)}
 {
     RegisterState<GameState>(StateType::Game);
-    RegisterState<PausedState>(StateType::Paused);
 }
 
 SharedContext& StateManager::GetContext()
