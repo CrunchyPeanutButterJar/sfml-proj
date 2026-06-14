@@ -43,9 +43,9 @@ std::vector<std::vector<std::string>> Tokenize(std::istringstream l_stream, char
     return result;
 }
 
-std::optional<std::istringstream> readFile(const std::string& l_fileName)
+std::optional<std::istringstream> ReadFile(const std::string& l_filePath)
 {
-    std::ifstream file{l_fileName};
+    std::ifstream file{l_filePath};
     if (!file)
     {
         return {};
