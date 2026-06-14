@@ -17,7 +17,8 @@ list(REMOVE_ITEM SOURCES "${MAIN_FILE}")
 
 add_library(core STATIC ${SOURCES})
 target_include_directories(core PUBLIC ${CMAKE_SOURCE_DIR}/include)
-target_link_libraries(core PUBLIC sfml::sfml reflectcpp::reflectcpp fmt::fmt)
+target_link_libraries(core PRIVATE sfml::sfml reflectcpp::reflectcpp)
+target_link_libraries(core PUBLIC fmt::fmt)
 
 target_compile_options(core PUBLIC
   -std=c++23

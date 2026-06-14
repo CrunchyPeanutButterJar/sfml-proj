@@ -1,6 +1,7 @@
 #ifndef TEXTUREMANAGER_HPP
 #define TEXTUREMANAGER_HPP
 
+#include <textureManager.fwd.hpp>
 #include <resourceManager.hpp>
 #include <SFML/Graphics/Texture.hpp>
 

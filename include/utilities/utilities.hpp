@@ -62,7 +62,7 @@ namespace Utils
       {
         std::istringstream iss(l_token);
         Type value;
-        iss >> value;
+        LOG_ERROR(iss >> value, "Failed to parse token str {} to type {}", l_token, typeid(Type).name());
         return value;
       };
 

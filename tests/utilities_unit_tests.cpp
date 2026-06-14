@@ -38,7 +38,7 @@ TEST(typed_transform, transform_token_typed_api)
     using namespace ::testing;
 
     std::ostringstream ss;
-    ss << "vec3d   1.0    2.0    3.14    \nage   18    \nname joe  \nfamilyName    Rustom    ";
+    ss << "vec3d   1.0    2.0    3.14 \n\n\n    \nage   18 \n\n\n\n\n   \nname joe  \nfamilyName    Rustom    ";
 
     auto lines = Utils::Tokenize(std::istringstream(ss.str()));
     ASSERT_EQ(lines.size(), 4);

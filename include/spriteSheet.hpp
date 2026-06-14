@@ -1,0 +1,53 @@
+#ifndef SPRITESHEET_HPP
+#define SPRITESHEET_HPP
+
+#include <SFML/Graphics/Rect.hpp>
+#include <SFML/Graphics/RenderWindow.hpp>
+#include <SFML/Graphics/Sprite.hpp>
+#include <SFML/System/Vector2.hpp>
+#include <directions.hpp>
+#include <textureManager.fwd.hpp>
+#include <baseAnimation.fwd.hpp>
+
+#include <unordered_map>
+#include <memory>
+
+using AnimationPtr = std::unique_ptr<BaseAnimation>;
+using Animations =  std::unordered_map<std::string, AnimationPtr>;
+
+class SpriteSheet
+{
+public:
+    SpriteSheet(TextureManager& l_textureManager);
+    ~SpriteSheet();
+
+    bool loadSheet(const std::string& l_filePath);
+
+    void cropSprite(const sf::IntRect& l_rect);
+
+    bool hasAnimation(const std::string& l_name) const;
+    bool setAnimation(const std::string& l_name, bool l_play = false, bool l_Loop = false);
+
+    void setSpriteSize(const sf::Vector2i& l_size); 
+    void setSpritePosition(const sf::Vector2f& l_pos);
+    void setDirection(Direction l_dir);
+
+    BaseAnimation *getCurrentAnimation() const;
+    sf::Vector2i getSpriteSize() const; 
+    sf::Vector2f getSpritePosition() const;
+    Direction getDirection() const;
+
+    void update(float l_dt);
+    void draw(sf::RenderWindow* l_window);
+
+private:
+    sf::Sprite m_sprite;
+    sf::Vector2i m_spriteSize;
+    sf::Vector2f m_spriteScale{1.f, 1.f};
+    Direction m_direction{Direction::Right};
+    Animations m_animations;
+    BaseAnimation* m_currentAnimation{nullptr};
+    TextureManager& m_textureManager;
+};
+
+#endif

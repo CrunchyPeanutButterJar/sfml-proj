@@ -20,6 +20,11 @@ ResourceManager(const std::string& l_pathFileName)
         for(auto& line : tokens)
         {
             const auto [alias, path] = Utils::ConsumeTokens<std::string, std::string>(line);
+            
+            if(m_paths.find(alias) != m_paths.end())
+            {
+                LOG("Duplicate alias {} found in file {}. Overriden value", alias, l_pathFileName);
+            }
             m_paths[alias] = path;
         }
 
