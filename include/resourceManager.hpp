@@ -13,7 +13,7 @@ public:
 
 ResourceManager(const std::string& l_pathFileName)
 {
-    if(auto fileContent = Utils::ReadFile(Utils::GetWorkingDirectory() + l_pathFileName))
+    if(auto fileContent = Utils::ReadFile(Utils::GetConfigDirectory() + l_pathFileName))
     {
         auto tokens = Utils::Tokenize(std::move(*fileContent)); // Alias Path
 

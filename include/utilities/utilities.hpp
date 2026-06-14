@@ -39,6 +39,16 @@ namespace Utils
     }
     #endif
 
+    inline std::string GetConfigDirectory()
+    {
+      return GetWorkingDirectory() + "config/";
+    }
+
+    inline std::string GetResourcesDirectory()
+    {
+      return GetWorkingDirectory() + "resources/";
+    }
+
     std::optional<std::istringstream> ReadFile(const std::string& l_filePath);
     std::vector<std::vector<std::string>> Tokenize(std::istringstream l_stream, char l_delimiter = ' ', char l_commentChar = '#');
     

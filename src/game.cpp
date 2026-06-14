@@ -15,7 +15,7 @@ using Resolution = std::pair<uint32_t, uint32_t>;
 
 static sf::Vector2u loadResolutionFromConfigFile()
 {
-    static const std::string ConfigFileName = Utils::GetWorkingDirectory() + "config.json";
+    static const std::string ConfigFileName = Utils::GetConfigDirectory() + "config.json";
 
     std::ifstream config{ConfigFileName};
     if(config.good())

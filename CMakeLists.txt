@@ -47,6 +47,12 @@ add_custom_command(TARGET sfml-app POST_BUILD
             $<TARGET_FILE_DIR:sfml-app>/resources
     COMMENT "📁 Copie du dossier resources vers le dossier du binaire")
 
+add_custom_command(TARGET sfml-app POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_directory
+            ${CMAKE_SOURCE_DIR}/config
+            $<TARGET_FILE_DIR:sfml-app>/config
+    COMMENT "📁 Copie du dossier config vers le dossier du binaire")
+
 if(CMAKE_BUILD_TYPE STREQUAL "Debug")
     message(STATUS "🔍 Build en mode Debug")
     add_compile_definitions(DEBUG_MODE)

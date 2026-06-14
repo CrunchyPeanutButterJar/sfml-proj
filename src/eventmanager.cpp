@@ -42,7 +42,7 @@ using BindingsAndEvents = std::vector<std::tuple<Binding, Events>>;
 using Callbacks = std::unordered_map<std::string, Callback>;
 using CallbacksContainer = std::unordered_map<StateType, Callbacks>;
 
-static const std::string BindingsFilePath{Utils::GetWorkingDirectory() + "bindings.json"};
+static const std::string BindingsFilePath{Utils::GetConfigDirectory() + "bindings.json"};
 
 std::optional<SerializableBindings> loadFromBindingsFile()
 {

@@ -2,7 +2,7 @@
 #include <textureManager.hpp>
 #include <utilities/utilities.hpp>
 
-TextureManager::TextureManager() : ResourceManager{"resources/textures.cfg"} {}
+TextureManager::TextureManager() : ResourceManager{"textures.cfg"} {}
 
 std::unique_ptr<sf::Texture> TextureManager::load(const std::string& l_path)
 {
