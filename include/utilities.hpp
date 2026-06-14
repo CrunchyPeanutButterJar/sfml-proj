@@ -3,6 +3,8 @@
 
 #include <assert.hpp>
 #include <string>
+#include <sstream>
+#include <vector>
 
 namespace Utils
 {
@@ -34,6 +36,8 @@ namespace Utils
         FAILURE("There should not a be problem here...");
     }
     #endif
+
+    std::vector<std::vector<std::string>> Tokenize(std::istringstream l_stream, char l_delimiter = ' ', char l_commentChar = '#');
 };
 
 #endif
