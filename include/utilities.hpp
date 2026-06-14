@@ -44,8 +44,10 @@ namespace Utils
     std::vector<std::vector<std::string>> Tokenize(std::istringstream l_stream, char l_delimiter = ' ', char l_commentChar = '#');
     
     template<typename... T>
-    std::tuple<T...> ReadTokens(const std::vector<std::string>& l_tokens)
+    std::tuple<T...> ConsumeTokens(std::vector<std::string>& l_tokens)
     {
+      std::reverse(l_tokens.begin(), l_tokens.end());
+
       static constexpr auto ToType = 
       []<typename Type>(const std::string& l_token, Type*) -> Type
       {
@@ -55,27 +57,31 @@ namespace Utils
         return value;
       };
 
-      static constexpr auto ToTuple =
-      [] <std::size_t... Is>(const std::vector<std::string>& l_tokens, std::index_sequence<Is...>) -> std::tuple<T...>
+      static constexpr auto ConsumeBack = 
+      [] (std::vector<std::string>& l_vector)
       {
-        return std::make_tuple(ToType(l_tokens[Is], (T*) nullptr)...);
+        auto back = l_vector.back();
+        l_vector.pop_back();
+        return back;
       };
 
-      return ToTuple(l_tokens, std::make_index_sequence<sizeof...(T)>());
+      static constexpr auto ToTuple =
+      [] (std::vector<std::string>& l_tokens) -> std::tuple<T...>
+      {
+        return std::make_tuple(ToType(ConsumeBack(l_tokens), (T*) nullptr)...);
+      };
+
+      auto tuple = ToTuple(l_tokens);
+
+      std::reverse(l_tokens.begin(), l_tokens.end());
+
+      return tuple;
     }
 
-    template <typename T>
-    T ReadTokenKey(const std::vector<std::string>& l_tokens)
+    template<typename... T>
+    std::tuple<T...> ConsumeTokens(std::vector<std::string>&& l_tokens)
     {
-      auto [key] = ReadTokens<T>(l_tokens);
-      return key;
-    }
-
-    template <typename... T>
-    std::tuple<T...> ReadTokenValues(std::vector<std::string> l_tokens)
-    {
-      l_tokens.erase(l_tokens.begin());
-      return ReadTokens<T...>(l_tokens); 
+      return ConsumeTokens<T...>(l_tokens);
     }
 };
 

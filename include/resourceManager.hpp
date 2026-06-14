@@ -17,9 +17,9 @@ ResourceManager(const std::string& l_pathFileName)
     {
         auto tokens = Utils::Tokenize(std::move(*fileContent)); // Alias Path
 
-        for(const auto& line : tokens)
+        for(auto& line : tokens)
         {
-            const auto [alias, path] = Utils::ReadTokens<std::string, std::string>(line);
+            const auto [alias, path] = Utils::ConsumeTokens<std::string, std::string>(line);
             m_paths[alias] = path;
         }
 

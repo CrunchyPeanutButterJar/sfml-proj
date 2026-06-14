@@ -20,6 +20,19 @@ TEST(split_into_lines, split_into_lines_is_correctly_split)
     ));
 }
 
+template<typename... T>
+auto ConsumeTokens(std::vector<std::string>& l_tokens)
+{
+    Utils::ConsumeTokens<std::string>(l_tokens); // discard key
+    return Utils::ConsumeTokens<T...>(l_tokens);
+}
+
+template <typename... T>
+auto ConsumeTokens(std::vector<std::string>&& l_tokens)
+{
+    return ::ConsumeTokens<T...>(l_tokens);
+}
+
 TEST(typed_transform, transform_token_typed_api)
 {
     using namespace ::testing;
@@ -30,18 +43,18 @@ TEST(typed_transform, transform_token_typed_api)
     auto lines = Utils::Tokenize(std::istringstream(ss.str()));
     ASSERT_EQ(lines.size(), 4);
 
-    auto [x, y, z] = Utils::ReadTokenValues<float, float, float>(lines[0]);
+    auto [x, y, z] = ConsumeTokens<float, float, float>(std::move(lines[0]));
     EXPECT_FLOAT_EQ(x, 1.0f);
     EXPECT_FLOAT_EQ(y, 2.0f);
     EXPECT_FLOAT_EQ(z, 3.14f);
 
-    auto [age] = Utils::ReadTokenValues<int>(lines[1]);
+    auto [age] = ConsumeTokens<int>(lines[1]);
     EXPECT_EQ(age, 18);
-    
-    auto [name] = Utils::ReadTokenValues<std::string>(lines[2]);
+
+    auto [name] = ConsumeTokens<std::string>(lines[2]);
     EXPECT_EQ(name, "joe");
 
-    auto [familyName] = Utils::ReadTokenValues<std::string>(lines[3]);
+    auto [familyName] = ConsumeTokens<std::string>(lines[3]);
     EXPECT_EQ(familyName, "Rustom");
 }
 
