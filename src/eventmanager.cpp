@@ -3,11 +3,11 @@
 #include <iostream>
 #include <fstream>
 
-#include <assert.hpp>
-#include <utilities.hpp>
+#include <utilities/assert.hpp>
+#include <utilities/utilities.hpp>
 
 #include <array>
-#include <phantomtype.hpp>
+#include <utilities/phantomtype.hpp>
 #include <string>
 #include <tuple>
 #include <ranges>

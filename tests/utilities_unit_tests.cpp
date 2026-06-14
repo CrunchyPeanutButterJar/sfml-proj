@@ -1,6 +1,6 @@
 #include <gtest/gtest.h>
 #include <gmock/gmock.h>
-#include <utilities.hpp>
+#include <utilities/utilities.hpp>
 #include <sstream>
 
 TEST(split_into_lines, split_into_lines_is_correctly_split)

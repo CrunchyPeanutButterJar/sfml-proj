@@ -6,8 +6,6 @@
 
 #include <SFML/Window/Keyboard.hpp>
 
-#include <functional>
-
 GameState::GameState(StateManager& l_stateManager): BaseState(l_stateManager)
 {
 }

@@ -1,8 +1,7 @@
-#include "utilities.hpp"
 #include <game.hpp>
 
-#include <assert.hpp>
-#include <utilities.hpp>
+#include <utilities/assert.hpp>
+#include <utilities/utilities.hpp>
 
 #include <fstream>
 #include <rfl/AddTagsToVariants.hpp>

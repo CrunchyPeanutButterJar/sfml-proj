@@ -1,10 +1,9 @@
 #ifndef UTILITIES_HPP
 #define UTILITIES_HPP
 
-#include <assert.hpp>
+#include <utilities/assert.hpp>
 #include <string>
 #include <sstream>
-#include <utility>
 #include <vector>
 #include <optional>
 #include <tuple>

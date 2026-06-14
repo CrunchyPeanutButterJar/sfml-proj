@@ -1,6 +1,8 @@
 #ifndef PHANTOMTYPE_HPP
 #define PHANTOMTYPE_HPP
 
+#include <utility>
+
 template<typename UnderlyingType, typename PhantomTypeParam>
 class PhantomType
 {

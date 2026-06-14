@@ -1,6 +1,6 @@
 #include <SFML/Graphics/Texture.hpp>
 #include <textureManager.hpp>
-#include <utilities.hpp>
+#include <utilities/utilities.hpp>
 
 TextureManager::TextureManager() : ResourceManager{"resources/textures.cfg"} {}
 
