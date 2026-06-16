@@ -122,7 +122,7 @@ bool SpriteSheet::setAnimation(const std::string& l_name, bool l_play, bool l_lo
 
     if (!found || itr->second.get() == m_currentAnimation)
     {
-      LOG_ERROR(found, "Attempt to set an invalid animation : {}", l_name);
+      ASSERT_NON_FATAL(found, "Attempt to set an invalid animation : {}", l_name);
       return false;
     }
 

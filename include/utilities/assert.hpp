@@ -40,7 +40,7 @@ inline void ensure_impl(bool condition, const char* file, int line, fmt::format_
     }
 }
 
-#define LOG_ERROR(condition, ...) ensure_impl<false>((condition), __FILE__, __LINE__, ##__VA_ARGS__)
+#define ASSERT_NON_FATAL(condition, ...) ensure_impl<false>((condition), __FILE__, __LINE__, ##__VA_ARGS__)
 
 #define ASSERT(condition, ...) ensure_impl<true>((condition), __FILE__, __LINE__, ##__VA_ARGS__)
 
@@ -49,9 +49,9 @@ inline void ensure_impl(bool condition, const char* file, int line, fmt::format_
 #define LOG(...) _log(stdout, __FILE__, __LINE__, ##__VA_ARGS__)
 
 #ifdef DEBUG_BUILD
-#define ENSURE(condition, ...) ensure_impl<true>((condition), __FILE__, __LINE__, ##__VA_ARGS__)
+#define ASSERT_DEBUG_BUILD(condition, ...) ensure_impl<true>((condition), __FILE__, __LINE__, ##__VA_ARGS__)
 #else
-#define ENSURE(condition, ...) ((void)0) // No-op in release builds
+#define ASSERT_DEBUG_BUILD(condition, ...) ((void)0) // No-op in release builds
 #endif
 
 #endif

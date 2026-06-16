@@ -71,7 +71,7 @@ namespace Utils
         std::istringstream iss(l_token);
         Type value;
         iss >> value;
-        LOG_ERROR(!iss.fail(), "Failed to parse token str {} to type {}", l_token, typeName);
+        ASSERT_NON_FATAL(!iss.fail(), "Failed to parse token str {} to type {}", l_token, typeName);
         return value;
       };
 
