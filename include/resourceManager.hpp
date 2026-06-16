@@ -39,7 +39,7 @@ std::shared_ptr<T> acquire(const std::string& l_alias)
     auto it = m_resources.find(l_alias);
     std::shared_ptr<T> resource;
 
-    if(it == m_resources.end() || it->second->lock() == nullptr)
+    if(it == m_resources.end() || it->second.lock() == nullptr)
     {
         auto resourcePathIt = m_paths.find(l_alias);
         if (resourcePathIt == m_paths.end())
@@ -57,13 +57,12 @@ std::shared_ptr<T> acquire(const std::string& l_alias)
 
         resource = std::move(tmp);
 
-        it = m_resources.insert_or_assign(l_alias, resource);
+        it = m_resources.insert_or_assign(l_alias, resource).first;
     }
 
-    return it->second;
+    return it->second.lock();
 }
 
-protected:
 std::unique_ptr<T> load(const std::string& l_path)
 {
     return static_cast<Derived*>(this)->load(l_path);

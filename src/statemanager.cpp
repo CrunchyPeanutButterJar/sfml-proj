@@ -13,7 +13,7 @@ void StateManager::SwitchTo(StateType l_state)
     
     if (itr == m_states.end())
     {
-        itr = m_states.insert(m_states.end(), {l_state, m_stateFactory[l_state]()});
+        itr = m_states.insert(m_states.end(), {l_state, m_stateFactory[l_state](this)});
     }
 
     std::iter_swap(itr, m_states.end() - 1);
@@ -80,10 +80,10 @@ void StateManager::ProcessRequests()
 template<typename StateImpl>
 void StateManager::RegisterState(StateType l_stateType)
 {
-    m_stateFactory[l_stateType] = [&]() -> StatePtr 
+    m_stateFactory[l_stateType] = [](StateManager* stateManager) -> StatePtr 
     {
-        auto state =  std::make_unique<StateImpl>(*this); 
-        state->m_view = GetContext().m_window.GetRenderWindow()->getDefaultView();
+        auto state =  std::make_unique<StateImpl>(*stateManager); 
+        state->m_view = stateManager->GetContext().m_window.GetRenderWindow()->getDefaultView();
         state->OnCreate();
 
         return state;

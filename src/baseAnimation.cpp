@@ -5,6 +5,16 @@ void BaseAnimation::play()
     m_playing = true;
 }
 
+void BaseAnimation::loop()
+{
+    m_loop = true;
+}
+
+void BaseAnimation::stopLoop()
+{
+    m_loop = false;
+}
+
 void BaseAnimation::pause()
 {
     m_playing = false;
@@ -38,15 +48,6 @@ void BaseAnimation::update(float l_dt)
     frameStep();
     cropSprite();
     m_elapsedTime-=m_frameTime;
-}
-
-void BaseAnimation::setFrame(Frame l_frame)
-{
-    if( (l_frame >= m_frameStart && l_frame <= m_frameEnd) ||
-        (l_frame >= m_frameEnd && l_frame <= m_frameStart))
-    {
-        m_frameCurrent = l_frame;
-    }
 }
 
 Frame BaseAnimation::getFrame() const

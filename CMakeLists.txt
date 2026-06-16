@@ -1,14 +1,15 @@
 cmake_minimum_required(VERSION 3.10)
 set(CMAKE_CXX_STANDARD 23)
 
-set(CMAKE_C_COMPILER clang)
-set(CMAKE_CXX_COMPILER clang++)
-
 project(sfml-app)
 
 if(CMAKE_CXX_COMPILER_VERSION VERSION_LESS "18.0")
   message(FATAL_ERROR "Clang 18 requis pour ce projet.")
 endif()
+
+find_package(SFML REQUIRED)
+find_package(reflectcpp REQUIRED)
+find_package(fmt REQUIRED)
 
 set(MAIN_FILE "${CMAKE_CURRENT_SOURCE_DIR}/src/main.cpp")
 file(GLOB SOURCES src/*.cpp)
@@ -17,8 +18,7 @@ list(REMOVE_ITEM SOURCES "${MAIN_FILE}")
 
 add_library(core STATIC ${SOURCES})
 target_include_directories(core PUBLIC ${CMAKE_SOURCE_DIR}/include)
-target_link_libraries(core PRIVATE sfml::sfml reflectcpp::reflectcpp)
-target_link_libraries(core PUBLIC fmt::fmt)
+target_link_libraries(core PUBLIC sfml::sfml reflectcpp::reflectcpp fmt::fmt)
 
 target_compile_options(core PUBLIC
   -std=c++23
@@ -28,6 +28,14 @@ target_compile_options(core PUBLIC
   -Wextra
 )
 
+target_compile_options(core PUBLIC
+    $<$<CONFIG:Debug>:-g -DDEBUG_BUILD -O0 -fsanitize=address -fno-omit-frame-pointer>
+    $<$<CONFIG:Release>:-O3>
+) 
+
+target_link_options(core PUBLIC
+    $<$<CONFIG:Debug>:-g -fsanitize=address -fno-omit-frame-pointer>)
+
 target_link_options(core PUBLIC
   -lc++
   -stdlib=libc++
@@ -35,10 +43,6 @@ target_link_options(core PUBLIC
 )
 
 add_executable(sfml-app ${MAIN_FILE}) 
-
-find_package(SFML REQUIRED)
-find_package(reflectcpp REQUIRED)
-find_package(fmt REQUIRED)
 
 target_link_libraries(sfml-app PRIVATE core) 
 
@@ -56,13 +60,7 @@ add_custom_command(TARGET sfml-app POST_BUILD
 
 if(CMAKE_BUILD_TYPE STREQUAL "Debug")
     message(STATUS "🔍 Build en mode Debug")
-    add_compile_definitions(DEBUG_MODE)
 endif()
-
-target_compile_options(sfml-app PRIVATE
-    $<$<CONFIG:Debug>:-g -DDEBUG_BUILD -O0>
-    $<$<CONFIG:Release>:-O3>
-) 
 
 find_package(GTest REQUIRED)
 enable_testing()

@@ -49,6 +49,12 @@ namespace Utils
       return GetWorkingDirectory() + "resources/";
     }
 
+    template<typename T>
+    std::string printTypeName()
+    {
+      return __PRETTY_FUNCTION__;
+    }
+
     std::optional<std::istringstream> ReadFile(const std::string& l_filePath);
     std::vector<std::vector<std::string>> Tokenize(std::istringstream l_stream, char l_delimiter = ' ', char l_commentChar = '#');
     
@@ -60,9 +66,12 @@ namespace Utils
       static constexpr auto ToType = 
       []<typename Type>(const std::string& l_token, Type*) -> Type
       {
+        static const std::string typeName = printTypeName<Type>();
+
         std::istringstream iss(l_token);
         Type value;
-        LOG_ERROR(iss >> value, "Failed to parse token str {} to type {}", l_token, typeid(Type).name());
+        iss >> value;
+        LOG_ERROR(!iss.fail(), "Failed to parse token str {} to type {}", l_token, typeName);
         return value;
       };
 
@@ -91,6 +100,18 @@ namespace Utils
     std::tuple<T...> ConsumeTokens(std::vector<std::string>&& l_tokens)
     {
       return ConsumeTokens<T...>(l_tokens);
+    }
+
+    template <typename... T>
+    std::tuple<T...> ConsumeTokens(std::vector<std::vector<std::string>>& l_tokensCollection) 
+    {
+      auto& tokens = l_tokensCollection[0];
+      auto tuple = ConsumeTokens<T...>(tokens);
+      if(tokens.empty())
+      {
+        l_tokensCollection.erase(l_tokensCollection.begin());
+      }
+      return tuple;
     }
 };
 

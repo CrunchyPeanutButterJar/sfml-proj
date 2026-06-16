@@ -4,6 +4,7 @@
 #include <SFML/System/Time.hpp>
 
 #include <basestate.hpp>
+#include <spriteSheet.hpp>
 
 class GameState : public BaseState
 {
@@ -21,6 +22,7 @@ public:
 
 private:
     sf::Time m_elapsed;
+    SpriteSheet m_sprite;
 };
 
 #endif

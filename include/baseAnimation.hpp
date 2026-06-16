@@ -1,7 +1,7 @@
 #ifndef BASEANIMATION_HPP
 #define BASEANIMATION_HPP
 
-#include <baseAnimation.fwd.hpp>
+#include <SFML/Graphics/Texture.hpp>
 #include <spriteSheet.fwd.hpp>
 
 #include <vector>
@@ -20,11 +20,12 @@ public:
     void pause();
     void stop();
     void reset();
+    void loop();
+    void stopLoop();
 
     virtual void update(float l_dt);
-    virtual void readInput(std::vector<std::string> &l_tokens) = 0;
+    virtual void readInput(std::vector<std::vector<std::string>> &l_tokens) = 0;
 
-    void setFrame(Frame l_frame);
     Frame getFrame() const;
 
     bool nextFrame();
@@ -48,6 +49,7 @@ protected:
   bool m_playing{false};
   std::string m_name;
   SpriteSheet *m_spriteSheet;
+  sf::Texture* m_texture;
 };
 
 #endif

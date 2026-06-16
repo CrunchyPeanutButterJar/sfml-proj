@@ -2,25 +2,21 @@
 #include <SFML/Graphics/RenderWindow.hpp>
 #include <spriteSheet.hpp>
 #include <animation.hpp>
+#include <textureManager.hpp>
 #include <utilities/assert.hpp>
 #include <utilities/utilities.hpp>
+#include <utility>
 
-SpriteSheet::SpriteSheet(TextureManager& l_textureManager) : m_textureManager(l_textureManager) {}
-
-SpriteSheet::~SpriteSheet() = default;
+SpriteSheet::SpriteSheet(TextureManager& l_textureManager) : m_textureManager(&l_textureManager) {}
 
 bool SpriteSheet::loadSheet(const std::string& l_filePath)
 {
     if(auto fstream = Utils::ReadFile(l_filePath))
     {
-        auto lines = Utils::Tokenize(std::move(*fstream));
-        std::reverse(lines.begin(), lines.end());
+        auto tokens = Utils::Tokenize(std::move(*fstream));
 
-        while(!lines.empty())
+        while(!tokens.empty())
         {
-            auto tokens = lines.back();
-            lines.pop_back();
-
             auto [key] = Utils::ConsumeTokens<std::string>(tokens);
             if(key == "Size")
             {
@@ -29,6 +25,32 @@ bool SpriteSheet::loadSheet(const std::string& l_filePath)
             else if(key == "Scale")
             {
                 std::tie(m_spriteScale.x, m_spriteScale.y) = Utils::ConsumeTokens<float, float>(tokens);
+            }
+            else if(key == "AnimationsStart")
+            {
+                std::string animationType;
+                while(std::tie(animationType) = Utils::ConsumeTokens<std::string>(tokens), animationType != "AnimationsEnd")
+                {
+                    auto [animationName] = Utils::ConsumeTokens<std::string>(tokens);
+                    ASSERT(animationType == "Animation", "Invalid animation type {}", animationType);
+                    auto animationPtr = std::make_unique<Animation>();
+                    animationPtr->readInput(tokens);
+                    auto [textureAlias] = Utils::ConsumeTokens<std::string>(tokens);
+
+                    auto texturePtr = m_textureManager->acquire(textureAlias);
+
+                    animationPtr->m_spriteSheet = this;
+                    animationPtr->m_texture = texturePtr.get();
+                    animationPtr->m_name = animationName;
+                    
+                    m_animations.emplace(std::make_pair(animationName, std::move(animationPtr)));
+                    setAnimation(animationName);
+                    m_textures.push_back(std::move(texturePtr));
+                }
+            }
+            else
+            {
+                FAILURE("Invalid Key {} read in config file {}", key, l_filePath);
             }
         }
 
@@ -47,6 +69,14 @@ void SpriteSheet::setSpriteSize(const sf::Vector2i& l_size)
 void SpriteSheet::setSpritePosition(const sf::Vector2f& l_pos)
 {
     m_sprite.setPosition(l_pos);
+}
+
+void SpriteSheet::nextAnimation()
+{
+    static size_t current = 0;
+
+    auto it = std::next(m_animations.begin(), current++%m_animations.size());
+    setAnimation(it->first, true, false);
 }
 
 void SpriteSheet::setDirection(Direction l_dir)
@@ -85,11 +115,6 @@ void SpriteSheet::cropSprite(const sf::IntRect& l_rect)
     m_sprite.setTextureRect(l_rect);
 }
 
-bool SpriteSheet::hasAnimation(const std::string &l_name) const
-{
-    return m_animations.find(l_name) != m_animations.end();
-}
-
 bool SpriteSheet::setAnimation(const std::string& l_name, bool l_play, bool l_loop)
 {
     auto itr = m_animations.find(l_name);
@@ -107,6 +132,7 @@ bool SpriteSheet::setAnimation(const std::string& l_name, bool l_play, bool l_lo
     }
 
     m_currentAnimation = itr->second.get();
+    m_sprite.setTexture(*m_currentAnimation->m_texture);
 
     m_currentAnimation->m_loop = l_loop;
     if(l_play)

@@ -1,6 +1,13 @@
 Size 128 128
 Scale 1.0 1.0
 
+AnimationsStart
 #type Name StartFrame EndFrame Row FrameTime FrameActionStart FrameActionEnd TextureName
-Animation Idle 0 6 0 0.2 -1 -1 SamuraiIdle
-Animation Walk 0 6 0 0.2 -1 -1 SamuraiWalk
+Animation Idle 0 5 0 0.2 -1 -1 SamuraiIdle
+Animation Walk 0 7 0 0.2 -1 -1 SamuraiWalk
+Animation Run 0 7 0 0.2 -1 -1 SamuraiRun
+Animation Attack1 0 5 0 0.2 -1 -1 SamuraiAttack1
+Animation Attack2 0 3 0 0.2 -1 -1 SamuraiAttack2
+Animation Attack3 0 2 0 0.2 -1 -1 SamuraiAttack3
+Animation Dead 0 2 0 0.2 -1 -1 SamuraiDead
+AnimationsEnd

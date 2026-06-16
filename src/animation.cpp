@@ -32,7 +32,7 @@ void Animation::frameStep()
     }
 }
 
-void Animation::readInput(std::vector<std::string>& l_tokens)
+void Animation::readInput(std::vector<std::vector<std::string>>& l_tokens)
 {
     std::tie
     (

@@ -9,7 +9,7 @@ public:
     Animation() = default;
     ~Animation() = default;
 
-    void readInput(std::vector<std::string> &tokens) override;
+    void readInput(std::vector<std::vector<std::string>> &tokens) override;
 
 protected:
     void frameStep() override;

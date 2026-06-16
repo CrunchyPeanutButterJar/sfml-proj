@@ -2,12 +2,12 @@
 #define STATEMANAGER_HPP
 
 #include <basestate.hpp>
+#include <textureManager.hpp>
 
 #include <SFML/System/Time.hpp>
 
 #include <functional>
 #include <memory>
-#include <tuple>
 #include <unordered_map>
 #include <unordered_set>
 #include <utility>
@@ -25,7 +25,7 @@ enum class StateType
 using StatePtr = std::unique_ptr<BaseState>;
 using StateContainer = std::vector<std::pair<StateType, StatePtr>>;
 
-using StateFactory = std::unordered_map<StateType, std::function<StatePtr(void)>>;
+using StateFactory = std::unordered_map<StateType, std::function<StatePtr(StateManager*)>>;
 
 using StateTypeContainer = std::unordered_set<StateType>;
 
@@ -33,6 +33,7 @@ struct SharedContext
 {
     Window& m_window;
     EventManager& m_eventManager;
+    TextureManager m_textureManager;
 };
 
 class StateManager

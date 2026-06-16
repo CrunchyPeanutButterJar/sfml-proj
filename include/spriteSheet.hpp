@@ -4,10 +4,11 @@
 #include <SFML/Graphics/Rect.hpp>
 #include <SFML/Graphics/RenderWindow.hpp>
 #include <SFML/Graphics/Sprite.hpp>
+#include <SFML/Graphics/Texture.hpp>
 #include <SFML/System/Vector2.hpp>
 #include <directions.hpp>
 #include <textureManager.fwd.hpp>
-#include <baseAnimation.fwd.hpp>
+#include <baseAnimation.hpp>
 
 #include <unordered_map>
 #include <memory>
@@ -19,14 +20,13 @@ class SpriteSheet
 {
 public:
     SpriteSheet(TextureManager& l_textureManager);
-    ~SpriteSheet();
 
     bool loadSheet(const std::string& l_filePath);
 
     void cropSprite(const sf::IntRect& l_rect);
 
-    bool hasAnimation(const std::string& l_name) const;
     bool setAnimation(const std::string& l_name, bool l_play = false, bool l_Loop = false);
+    void nextAnimation();//temp for testing purposes
 
     void setSpriteSize(const sf::Vector2i& l_size); 
     void setSpritePosition(const sf::Vector2f& l_pos);
@@ -47,7 +47,8 @@ private:
     Direction m_direction{Direction::Right};
     Animations m_animations;
     BaseAnimation* m_currentAnimation{nullptr};
-    TextureManager& m_textureManager;
+    TextureManager* m_textureManager;
+    std::vector<std::shared_ptr<sf::Texture>> m_textures;
 };
 
 #endif

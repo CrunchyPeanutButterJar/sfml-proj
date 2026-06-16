@@ -10,7 +10,13 @@ class TextureManager : public ResourceManager<TextureManager, sf::Texture>
 public:
     TextureManager();
 
-protected:
+    TextureManager(const TextureManager&) = delete;
+    TextureManager& operator=(const TextureManager&) = delete;
+    
+    TextureManager(TextureManager&&) = default;
+    TextureManager& operator=(TextureManager&&) = default;
+
+public:
     std::unique_ptr<sf::Texture> load(const std::string &l_path);
 };
 

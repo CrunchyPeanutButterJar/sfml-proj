@@ -49,7 +49,7 @@ static sf::Vector2u loadResolutionFromConfigFile()
 
 Game::Game() :
 m_window{"MyGame", loadResolutionFromConfigFile()},
-m_stateManager{{m_window, m_window.GetEventManager()}}
+m_stateManager{{m_window, m_window.GetEventManager(), TextureManager{}}}
 {
     m_stateManager.SwitchTo(StateType::Game);
 }
