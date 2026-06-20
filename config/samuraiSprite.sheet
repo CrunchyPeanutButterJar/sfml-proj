@@ -3,11 +3,14 @@ Scale 1.0 1.0
 
 AnimationsStart
 #type Name StartFrame EndFrame Row FrameTime FrameActionStart FrameActionEnd TextureName
-Animation Idle 0 5 0 0.2 -1 -1 SamuraiIdle
-Animation Walk 0 7 0 0.2 -1 -1 SamuraiWalk
-Animation Run 0 7 0 0.2 -1 -1 SamuraiRun
-Animation Attack1 0 5 0 0.2 -1 -1 SamuraiAttack1
-Animation Attack2 0 3 0 0.2 -1 -1 SamuraiAttack2
-Animation Attack3 0 2 0 0.2 -1 -1 SamuraiAttack3
-Animation Dead 0 2 0 0.2 -1 -1 SamuraiDead
+Animation Attack3 0 2 0 0.2 -1 -1 SamuraiSpriteSheet
+Animation Attack2 0 3 1 0.2 -1 -1 SamuraiSpriteSheet
+Animation Attack1 0 5 2 0.2 -1 -1 SamuraiSpriteSheet
+Animation Walk 0 7 3 0.2 -1 -1 SamuraiSpriteSheet
+Animation Shield 0 1 4 0.2 -1 -1 SamuraiSpriteSheet
+Animation Run 0 7 5 0.2 -1 -1 SamuraiSpriteSheet
+Animation Jump 0 11 6 0.2 -1 -1 SamuraiSpriteSheet
+Animation Idle 0 5 7 0.2 -1 -1 SamuraiSpriteSheet
+Animation Hurt 0 1 8 0.2 -1 -1 SamuraiSpriteSheet
+Animation Dead 0 2 9 0.2 -1 -1 SamuraiSpriteSheet
 AnimationsEnd
