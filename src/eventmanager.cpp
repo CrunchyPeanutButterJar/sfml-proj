@@ -77,11 +77,6 @@ BindingsAndEvents toBindingsAndEvents(const SerializableBindings& bindings)
     return bindings | std::views::transform([](const auto& el) { return std::make_tuple(el, Events{});}) | std::ranges::to<BindingsAndEvents>();
 }
 
-SerializableBindings toSerializableBindings(const BindingsAndEvents& bindingsAndEvents)
-{
-    return bindingsAndEvents | std::views::transform([](const auto& be) { return std::get<0>(be);}) |  std::ranges::to<std::vector<Binding>>();
-}
-
 SerializableBindings buildDefaultBindings()
 {
     SerializableBindings bindings;
