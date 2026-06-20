@@ -5,34 +5,34 @@
 
 #include <fmt/format.h>
 
-inline void _vlog(FILE* f, const char* file, int line, fmt::string_view fmt, fmt::format_args args)
+inline void _vlog(FILE* f, const char* file, const char* function, int line, fmt::string_view fmt, fmt::format_args args)
 {
-    fmt::print(f, "[INFO] {}:{}: {}\n", file, line, fmt::vformat(fmt, args));
+    fmt::print(f, "[INFO] {}:{} #{} {}\n", file, line, function, fmt::vformat(fmt, args));
 }
 
 template <typename... T>
-void _log(FILE* f, const char* file, int line, fmt::format_string<T...> fmt, T&&... args)
+void _log(FILE* f, const char* file, const char* function, int line, fmt::format_string<T...> fmt, T&&... args)
 {
-    _vlog(f, file, line, fmt, fmt::make_format_args(args...));
+    _vlog(f, file, function, line, fmt, fmt::make_format_args(args...));
 }
 
-inline void _assertion_failed_vlog(const char* file, int line, fmt::string_view fmt, fmt::format_args args) 
+inline void _assertion_failed_vlog(const char* file, const char* function, int line, fmt::string_view fmt, fmt::format_args args) 
 {
-    fmt::print(stderr, "[ERROR]: {}:{}: {}\n", file, line, fmt::vformat(fmt, args));
+    fmt::print(stderr, "[ERROR]: {}:{} #{} {}\n", file, line, function, fmt::vformat(fmt, args));
 }
 
 template <typename... T>
-void _assertion_failed_log(const char* file, int line, fmt::format_string<T...> fmt, T&&... args)
+void _assertion_failed_log(const char* file,const char* function, int line, fmt::format_string<T...> fmt, T&&... args)
 {
-  _assertion_failed_vlog(file, line, fmt, fmt::make_format_args(args...));
+  _assertion_failed_vlog(file, function, line, fmt, fmt::make_format_args(args...));
 }
 
 template<bool critical, typename... Args>
-inline void ensure_impl(bool condition, const char* file, int line, fmt::format_string<Args...> fmt, Args&&... args)
+inline void ensure_impl(bool condition, const char* file, const char* function, int line, fmt::format_string<Args...> fmt, Args&&... args)
 {
     if (!condition)
     {
-        _assertion_failed_log(file, line, fmt, args...);
+        _assertion_failed_log(file, function, line, fmt, args...);
         if constexpr (critical)
         {
             exit(EXIT_FAILURE);
@@ -40,16 +40,16 @@ inline void ensure_impl(bool condition, const char* file, int line, fmt::format_
     }
 }
 
-#define ASSERT_NON_FATAL(condition, ...) ensure_impl<false>((condition), __FILE__, __LINE__, ##__VA_ARGS__)
+#define ASSERT_NON_FATAL(condition, ...) ensure_impl<false>((condition), __FILE__, __func__, __LINE__, ##__VA_ARGS__)
 
-#define ASSERT(condition, ...) ensure_impl<true>((condition), __FILE__, __LINE__, ##__VA_ARGS__)
+#define ASSERT(condition, ...) ensure_impl<true>((condition), __FILE__, __func__, __LINE__, ##__VA_ARGS__)
 
-#define FAILURE(...) _assertion_failed_log(__FILE__, __LINE__, ##__VA_ARGS__), exit(EXIT_FAILURE)
+#define FAILURE(...) _assertion_failed_log(__FILE__, __func__, __LINE__, ##__VA_ARGS__), exit(EXIT_FAILURE)
 
-#define LOG(...) _log(stdout, __FILE__, __LINE__, ##__VA_ARGS__)
+#define LOG(...) _log(stdout, __FILE__, __func__, __LINE__, ##__VA_ARGS__)
 
 #ifdef DEBUG_BUILD
-#define ASSERT_DEBUG_BUILD(condition, ...) ensure_impl<true>((condition), __FILE__, __LINE__, ##__VA_ARGS__)
+#define ASSERT_DEBUG_BUILD(condition, ...) ensure_impl<true>((condition), __FILE__, __func__, __LINE__, ##__VA_ARGS__)
 #else
 #define ASSERT_DEBUG_BUILD(condition, ...) ((void)0) // No-op in release builds
 #endif
