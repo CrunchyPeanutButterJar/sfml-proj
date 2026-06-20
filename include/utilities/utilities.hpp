@@ -56,13 +56,27 @@ namespace Utils
     }
 
     std::optional<std::istringstream> ReadFile(const std::string& l_filePath);
-    std::vector<std::vector<std::string>> Tokenize(std::istringstream l_stream, char l_delimiter = ' ', char l_commentChar = '#');
-    
-    template<typename... T>
-    std::tuple<T...> ConsumeTokens(std::vector<std::string>& l_tokens)
-    {
-      std::reverse(l_tokens.begin(), l_tokens.end());
 
+    class Tokens
+    {
+    public:
+        Tokens(std::istringstream ss, char l_delimiter = ' ', char l_commentChar = '#');
+
+        std::optional<std::string> advance();
+		    bool empty();
+
+    private:
+        bool currentMatch();
+
+		std::string m_currentStr;
+		std::istringstream m_ss;
+		const char m_delimiter;
+		const char m_commentChar;
+    };
+
+    template<typename... T>
+    std::tuple<T...> ConsumeTokens(Tokens& l_tokens)
+    {
       static constexpr auto ToType = 
       []<typename Type>(const std::string& l_token, Type*) -> Type
       {
@@ -75,42 +89,22 @@ namespace Utils
         return value;
       };
 
-      static constexpr auto ConsumeBack = 
-      [] (std::vector<std::string>& l_vector)
+      static constexpr auto ConsumeToken = 
+      [] (Tokens& l_tokens)
       {
-        auto back = l_vector.back();
-        l_vector.pop_back();
-        return back;
+		auto token = l_tokens.advance();
+		ASSERT(token.has_value(), "Failed to consume token");
+		return token.value();
       };
 
       static constexpr auto ToTuple =
-      [] (std::vector<std::string>& l_tokens) -> std::tuple<T...>
+      [] (Tokens& l_tokens) -> std::tuple<T...>
       {
-        return std::make_tuple(ToType(ConsumeBack(l_tokens), (T*) nullptr)...);
+        return std::make_tuple(ToType(ConsumeToken(l_tokens), (T*) nullptr)...);
       };
 
       auto tuple = ToTuple(l_tokens);
 
-      std::reverse(l_tokens.begin(), l_tokens.end());
-
-      return tuple;
-    }
-
-    template<typename... T>
-    std::tuple<T...> ConsumeTokens(std::vector<std::string>&& l_tokens)
-    {
-      return ConsumeTokens<T...>(l_tokens);
-    }
-
-    template <typename... T>
-    std::tuple<T...> ConsumeTokens(std::vector<std::vector<std::string>>& l_tokensCollection) 
-    {
-      auto& tokens = l_tokensCollection[0];
-      auto tuple = ConsumeTokens<T...>(tokens);
-      if(tokens.empty())
-      {
-        l_tokensCollection.erase(l_tokensCollection.begin());
-      }
       return tuple;
     }
 };

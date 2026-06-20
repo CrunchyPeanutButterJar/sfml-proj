@@ -13,7 +13,7 @@ bool SpriteSheet::loadSheet(const std::string& l_filePath)
 {
     if(auto fstream = Utils::ReadFile(l_filePath))
     {
-        auto tokens = Utils::Tokenize(std::move(*fstream));
+        Utils::Tokens tokens{std::move(*fstream)};
 
         while(!tokens.empty())
         {

@@ -15,11 +15,11 @@ ResourceManager(const std::string& l_pathFileName)
 {
     if(auto fileContent = Utils::ReadFile(Utils::GetConfigDirectory() + l_pathFileName))
     {
-        auto tokens = Utils::Tokenize(std::move(*fileContent)); // Alias Path
+        Utils::Tokens tokens{std::move(*fileContent)}; // Alias Path
 
-        for(auto& line : tokens)
+        while(!tokens.empty())
         {
-            const auto [alias, path] = Utils::ConsumeTokens<std::string, std::string>(line);
+            const auto [alias, path] = Utils::ConsumeTokens<std::string, std::string>(tokens);
             
             if(m_paths.find(alias) != m_paths.end())
             {

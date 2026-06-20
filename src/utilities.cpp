@@ -6,41 +6,65 @@
 namespace Utils
 {
 
-static std::string trim(const std::string& s) {
-    auto start = s.begin();
-    while (start != s.end() && std::isspace(*start)) start++;
+Tokens::Tokens(std::istringstream ss, char l_delimiter, char l_commentChar) : m_ss{std::move(ss)}, m_delimiter{l_delimiter}, m_commentChar{l_commentChar} {}
 
-    auto end = s.end();
-    do { end--; } while (end != start && std::isspace(*end));
-
-    return std::string(start, end + 1);
-}
-
-std::vector<std::vector<std::string>> Tokenize(std::istringstream l_stream, char l_delimiter, char l_commentChar)
+bool Tokens::currentMatch()
 {
-    std::vector<std::vector<std::string>> result;
-    std::string line;
-
-    while (std::getline(l_stream, line))
+    constexpr auto trim =
+    [](std::string& s, const std::string& chars = " \t\n\r") 
     {
-        if (line.empty()) continue;
+        s.erase(0, s.find_first_not_of(chars));//ltrim
+        if (auto pos = s.find_last_not_of(chars); pos != std::string::npos) s.erase(pos + 1);//rtrim
+    };
 
-        if (line[0] == l_commentChar) continue;
-
-        std::vector<std::string> tokens;
+    constexpr auto read = 
+    [](auto& l_ss, const std::string& l_delimiters) -> std::string
+    {
         std::string token;
-        std::istringstream lineStream(line);
-
-        while (std::getline(lineStream, token, l_delimiter))
+        char c;
+        while(l_ss.get(c) && !l_delimiters.contains(c))
         {
-            token = trim(token);
-            if (!token.empty()) tokens.push_back(token);
+            token.push_back(c);
         }
 
-        if (!tokens.empty()) result.push_back(tokens);
+        return token;
+    };
+
+    if(!m_currentStr.empty())
+    {
+        return true;
     }
 
-    return result;
+    if(m_ss.eof())
+    {
+        return false;
+    }
+    
+    m_currentStr = read(m_ss, {m_delimiter, '\n'});//new line always a delimiter
+    trim(m_currentStr);
+    if(!m_currentStr.empty() && m_currentStr[0] == m_commentChar)
+    {
+        std::getline(m_ss, m_currentStr, '\n');
+        m_currentStr.clear();
+    }
+    return currentMatch();
+}
+
+bool Tokens::empty()
+{
+    return !currentMatch();
+}
+
+std::optional<std::string> Tokens::advance()
+{
+    if(currentMatch())
+    {
+        std::string result = std::move(m_currentStr);
+        m_currentStr.clear();
+        return result;
+    }
+
+    return std::nullopt;
 }
 
 std::optional<std::istringstream> ReadFile(const std::string& l_filePath)

@@ -3,58 +3,47 @@
 #include <utilities/utilities.hpp>
 #include <sstream>
 
-TEST(split_into_lines, split_into_lines_is_correctly_split)
+TEST(Tokenizer, consume_typed_tokens)
 {
     using namespace ::testing;
 
     std::ostringstream ss;
-    ss << "line1   x    y    z    \n#line2    \nline3  \nline4    ";
+    ss << "vec3d   1.0    2.0    3.14 \n\n\n    \nage   18 \n\n\n\n\n   #this is a comment do ignoree     this line       \nname joe\nfamilyName    Rustom    ";
 
-    auto lines = Utils::Tokenize(std::istringstream(ss.str()));
-    ASSERT_EQ(lines.size(), 3);
-    EXPECT_THAT(lines, 
-    ElementsAre(
-        ElementsAre("line1", "x", "y", "z"),
-        ElementsAre("line3"),
-        ElementsAre("line4")
-    ));
-}
+    Utils::Tokens tokens{std::istringstream(ss.str())};
 
-template<typename... T>
-auto ConsumeTokens(std::vector<std::string>& l_tokens)
-{
-    Utils::ConsumeTokens<std::string>(l_tokens); // discard key
-    return Utils::ConsumeTokens<T...>(l_tokens);
-}
+    float x,y,z;
 
-template <typename... T>
-auto ConsumeTokens(std::vector<std::string>&& l_tokens)
-{
-    return ::ConsumeTokens<T...>(l_tokens);
-}
-
-TEST(typed_transform, transform_token_typed_api)
-{
-    using namespace ::testing;
-
-    std::ostringstream ss;
-    ss << "vec3d   1.0    2.0    3.14 \n\n\n    \nage   18 \n\n\n\n\n   \nname joe  \nfamilyName    Rustom    ";
-
-    auto lines = Utils::Tokenize(std::istringstream(ss.str()));
-    ASSERT_EQ(lines.size(), 4);
-
-    auto [x, y, z] = ConsumeTokens<float, float, float>(std::move(lines[0]));
+    std::tie(std::ignore, x, y, z) = ConsumeTokens<std::string, float, float, float>(tokens);
     EXPECT_FLOAT_EQ(x, 1.0f);
     EXPECT_FLOAT_EQ(y, 2.0f);
     EXPECT_FLOAT_EQ(z, 3.14f);
 
-    auto [age] = ConsumeTokens<int>(lines[1]);
+    int age;
+
+    std::tie(std::ignore, age) = ConsumeTokens<std::string, int>(tokens);
     EXPECT_EQ(age, 18);
 
-    auto [name] = ConsumeTokens<std::string>(lines[2]);
+    std::string name;
+
+    std::tie(std::ignore, name) = ConsumeTokens<std::string, std::string>(tokens);
     EXPECT_EQ(name, "joe");
 
-    auto [familyName] = ConsumeTokens<std::string>(lines[3]);
+    std::string familyName;
+    
+    std::tie(std::ignore, familyName) = ConsumeTokens<std::string, std::string>(tokens);
     EXPECT_EQ(familyName, "Rustom");
+
+    EXPECT_TRUE(tokens.empty());
 }
 
+TEST(Tokenizer, ignore_whole_comment_line)
+{
+    using namespace ::testing;
+
+    std::ostringstream ss;
+    ss << "      \n\n\n\n\n\n\n#this is a comment       \n\n\n\n\n";
+
+    Utils::Tokens tokens{std::istringstream(ss.str())};
+    EXPECT_TRUE(tokens.empty());
+}

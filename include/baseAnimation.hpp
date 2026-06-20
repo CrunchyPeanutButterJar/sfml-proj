@@ -2,6 +2,7 @@
 #define BASEANIMATION_HPP
 
 #include <SFML/Graphics/Texture.hpp>
+#include <utilities/utilities.hpp>
 #include <spriteSheet.fwd.hpp>
 
 #include <vector>
@@ -24,7 +25,7 @@ public:
     void stopLoop();
 
     virtual void update(float l_dt);
-    virtual void readInput(std::vector<std::vector<std::string>> &l_tokens) = 0;
+    virtual void readInput(Utils::Tokens& l_tokens) = 0;
 
     Frame getFrame() const;
 
