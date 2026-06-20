@@ -44,12 +44,14 @@ inline void ensure_impl(bool condition, const char* file, const char* function, 
 
 #define ASSERT(condition, ...) ensure_impl<true>((condition), __FILE__, __func__, __LINE__, ##__VA_ARGS__)
 
-#define FAILURE(...) _assertion_failed_log(__FILE__, __func__, __LINE__, ##__VA_ARGS__), exit(EXIT_FAILURE)
+#define FAILURE_NON_FATAL(...) ASSERT_NON_FATAL(false, ##__VA_ARGS__)
+
+#define FAILURE(...) ASSERT(false, ##__VA_ARGS__)
 
 #define LOG(...) _log(stdout, __FILE__, __func__, __LINE__, ##__VA_ARGS__)
 
 #ifdef DEBUG_BUILD
-#define ASSERT_DEBUG_BUILD(condition, ...) ensure_impl<true>((condition), __FILE__, __func__, __LINE__, ##__VA_ARGS__)
+#define ASSERT_DEBUG_BUILD(condition, ...) ASSERT(condition, ##__VA_ARGS__)
 #else
 #define ASSERT_DEBUG_BUILD(condition, ...) ((void)0) // No-op in release builds
 #endif

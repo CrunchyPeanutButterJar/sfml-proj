@@ -33,6 +33,7 @@ static sf::Vector2u loadResolutionFromConfigFile()
             return {resolution.first, resolution.second};
         }
         FAILURE("Error while parsing invalid file : {}", ConfigFileName);
+        return {};
     }
     else
     {

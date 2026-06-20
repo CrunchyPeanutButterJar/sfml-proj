@@ -36,6 +36,7 @@ namespace Utils
             return std::string(cwd) + std::string("/");
         }
         FAILURE("There should not a be problem here...");
+        return {};
     }
     #endif
 
@@ -75,37 +76,51 @@ namespace Utils
     };
 
     template<typename... T>
-    std::tuple<T...> ConsumeTokens(Tokens& l_tokens)
+    std::optional<std::tuple<T...>> ConsumeTokens(Tokens& l_tokens)
     {
+      bool error = false;
+
       static constexpr auto ToType = 
-      []<typename Type>(const std::string& l_token, Type*) -> Type
+      []<typename Type>(const std::string& l_token, bool& l_error, Type*) -> Type
       {
         static const std::string typeName = printTypeName<Type>();
 
         std::istringstream iss(l_token);
         Type value;
         iss >> value;
-        ASSERT_NON_FATAL(!iss.fail(), "Failed to parse token str {} to type {}", l_token, typeName);
+        if(iss.fail())
+        {
+          FAILURE_NON_FATAL( "Failed to parse token str {} to type {}", l_token, typeName);
+          l_error = true;
+        }
         return value;
       };
 
       static constexpr auto ConsumeToken = 
-      [] (Tokens& l_tokens)
+      [] (Tokens& l_tokens, bool& l_error)
       {
-		auto token = l_tokens.advance();
-		ASSERT(token.has_value(), "Failed to consume token");
-		return token.value();
+        auto token = l_tokens.advance();
+        if(!token.has_value())
+        {
+          FAILURE_NON_FATAL( "Failed to consume token");
+          l_error = true;
+        }
+        return token.value();
       };
 
       static constexpr auto ToTuple =
-      [] (Tokens& l_tokens) -> std::tuple<T...>
+      [] (Tokens& l_tokens, bool& l_error) -> std::tuple<T...>
       {
-        return std::make_tuple(ToType(ConsumeToken(l_tokens), (T*) nullptr)...);
+        return std::make_tuple(ToType(ConsumeToken(l_tokens, l_error), l_error, (T*) nullptr)...);
       };
 
-      auto tuple = ToTuple(l_tokens);
-
-      return tuple;
+      auto tuple = ToTuple(l_tokens, error);
+      if(!error)
+      {
+        return tuple;
+      }
+      
+      return std::nullopt;
     }
 };
 

@@ -19,7 +19,10 @@ ResourceManager(const std::string& l_pathFileName)
 
         while(!tokens.empty())
         {
-            const auto [alias, path] = Utils::ConsumeTokens<std::string, std::string>(tokens);
+            auto tuple = Utils::ConsumeTokens<std::string, std::string>(tokens);
+            ASSERT(tuple.has_value(), "Error reading from ressource file {}", l_pathFileName);
+
+            const auto [alias, path] = *tuple;
             
             if(m_paths.find(alias) != m_paths.end())
             {

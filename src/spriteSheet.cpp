@@ -17,25 +17,25 @@ bool SpriteSheet::loadSheet(const std::string& l_filePath)
 
         while(!tokens.empty())
         {
-            auto [key] = Utils::ConsumeTokens<std::string>(tokens);
+            auto [key] = *Utils::ConsumeTokens<std::string>(tokens);
             if(key == "Size")
             {
-                std::tie(m_spriteSize.x, m_spriteSize.y) = Utils::ConsumeTokens<int, int>(tokens);
+                std::tie(m_spriteSize.x, m_spriteSize.y) = *Utils::ConsumeTokens<int, int>(tokens);
             }
             else if(key == "Scale")
             {
-                std::tie(m_spriteScale.x, m_spriteScale.y) = Utils::ConsumeTokens<float, float>(tokens);
+                std::tie(m_spriteScale.x, m_spriteScale.y) = *Utils::ConsumeTokens<float, float>(tokens);
             }
             else if(key == "AnimationsStart")
             {
                 std::string animationType;
-                while(std::tie(animationType) = Utils::ConsumeTokens<std::string>(tokens), animationType != "AnimationsEnd")
+                while(std::tie(animationType) = *Utils::ConsumeTokens<std::string>(tokens), animationType != "AnimationsEnd")
                 {
-                    auto [animationName] = Utils::ConsumeTokens<std::string>(tokens);
+                    auto [animationName] = *Utils::ConsumeTokens<std::string>(tokens);
                     ASSERT(animationType == "Animation", "Invalid animation type {}", animationType);
                     auto animationPtr = std::make_unique<Animation>();
                     animationPtr->readInput(tokens);
-                    auto [textureAlias] = Utils::ConsumeTokens<std::string>(tokens);
+                    auto [textureAlias] = *Utils::ConsumeTokens<std::string>(tokens);
 
                     auto texturePtr = m_textureManager->acquire(textureAlias);
 

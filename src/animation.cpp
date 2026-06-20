@@ -34,6 +34,10 @@ void Animation::frameStep()
 
 void Animation::readInput(Utils::Tokens& l_tokens)
 {
+    auto tuple = Utils::ConsumeTokens<Frame, Frame, Frame, float, int, int>(l_tokens);
+
+    ASSERT(tuple.has_value(), "Error reading Animation from config file");
+
     std::tie
     (
         m_frameStart,
@@ -42,5 +46,5 @@ void Animation::readInput(Utils::Tokens& l_tokens)
         m_frameTime,
         m_frameActionStart,
         m_frameActionEnd
-    ) = Utils::ConsumeTokens<Frame, Frame, Frame, float, int, int>(l_tokens);
+    ) = *tuple;
 }

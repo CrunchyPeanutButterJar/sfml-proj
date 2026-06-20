@@ -14,24 +14,24 @@ TEST(Tokenizer, consume_typed_tokens)
 
     float x,y,z;
 
-    std::tie(std::ignore, x, y, z) = ConsumeTokens<std::string, float, float, float>(tokens);
+    std::tie(std::ignore, x, y, z) = *ConsumeTokens<std::string, float, float, float>(tokens);
     EXPECT_FLOAT_EQ(x, 1.0f);
     EXPECT_FLOAT_EQ(y, 2.0f);
     EXPECT_FLOAT_EQ(z, 3.14f);
 
     int age;
 
-    std::tie(std::ignore, age) = ConsumeTokens<std::string, int>(tokens);
+    std::tie(std::ignore, age) = *ConsumeTokens<std::string, int>(tokens);
     EXPECT_EQ(age, 18);
 
     std::string name;
 
-    std::tie(std::ignore, name) = ConsumeTokens<std::string, std::string>(tokens);
+    std::tie(std::ignore, name) = *ConsumeTokens<std::string, std::string>(tokens);
     EXPECT_EQ(name, "joe");
 
     std::string familyName;
     
-    std::tie(std::ignore, familyName) = ConsumeTokens<std::string, std::string>(tokens);
+    std::tie(std::ignore, familyName) = *ConsumeTokens<std::string, std::string>(tokens);
     EXPECT_EQ(familyName, "Rustom");
 
     EXPECT_TRUE(tokens.empty());
