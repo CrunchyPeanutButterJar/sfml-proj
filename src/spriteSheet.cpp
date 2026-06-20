@@ -38,6 +38,7 @@ bool SpriteSheet::loadSheet(const std::string& l_filePath)
                     auto [textureAlias] = *Utils::ConsumeTokens<std::string>(tokens);
 
                     auto texturePtr = m_textureManager->acquire(textureAlias);
+                    ASSERT(texturePtr != nullptr, "Could not load texture {}", textureAlias);
 
                     animationPtr->m_spriteSheet = this;
                     animationPtr->m_texture = texturePtr.get();
