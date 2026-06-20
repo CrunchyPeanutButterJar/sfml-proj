@@ -26,7 +26,7 @@ ResourceManager(const std::string& l_pathFileName)
             
             if(m_paths.find(alias) != m_paths.end())
             {
-                LOG("Duplicate alias {} found in file {}. Overriden value", alias, l_pathFileName);
+                FAILURE_NON_FATAL("Duplicate alias {} found in file {}. Overriden value", alias, l_pathFileName);
             }
             m_paths[alias] = path;
         }
@@ -47,14 +47,14 @@ std::shared_ptr<T> acquire(const std::string& l_alias)
         auto resourcePathIt = m_paths.find(l_alias);
         if (resourcePathIt == m_paths.end())
         {
-            LOG("Invalid resource alias {}", l_alias);
+            FAILURE_NON_FATAL("Invalid resource alias {}", l_alias);
             return nullptr;
         }
 
         auto tmp = load(resourcePathIt->second);
         if(tmp == nullptr)
         {
-            LOG("Failed to load resource {} at {}", l_alias, resourcePathIt->second);
+            FAILURE_NON_FATAL("Failed to load resource {} at {}", l_alias, resourcePathIt->second);
             return nullptr;
         }
 
