@@ -1,6 +1,6 @@
 #include <gtest/gtest.h>
 #include <gmock/gmock.h>
-#include <utilities/utilities.hpp>
+#include <utils/utilities.hpp>
 #include <sstream>
 
 TEST(Tokenizer, consume_typed_tokens)

@@ -1,5 +1,5 @@
 #include <animation.hpp>
-#include <utilities/utilities.hpp>
+#include <utils/utilities.hpp>
 #include <spriteSheet.hpp>
 #include <SFML/Graphics/Rect.hpp>
 

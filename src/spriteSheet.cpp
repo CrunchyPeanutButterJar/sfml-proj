@@ -3,8 +3,8 @@
 #include <spriteSheet.hpp>
 #include <animation.hpp>
 #include <textureManager.hpp>
-#include <utilities/assert.hpp>
-#include <utilities/utilities.hpp>
+#include <utils/assert.hpp>
+#include <utils/utilities.hpp>
 #include <utility>
 
 SpriteSheet::SpriteSheet(TextureManager& l_textureManager) : m_textureManager(&l_textureManager) {}

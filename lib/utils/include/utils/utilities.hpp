@@ -1,7 +1,7 @@
 #ifndef UTILITIES_HPP
 #define UTILITIES_HPP
 
-#include <utilities/assert.hpp>
+#include <utils/assert.hpp>
 #include <string>
 #include <sstream>
 #include <vector>

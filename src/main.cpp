@@ -1,6 +1,6 @@
 #include <game.hpp>
-#include <utilities/assert.hpp>
-#include <utilities/utilities.hpp>
+#include <utils/assert.hpp>
+#include <utils/utilities.hpp>
 
 int main(int /*argc*/, char* /*argv*/[])
 {

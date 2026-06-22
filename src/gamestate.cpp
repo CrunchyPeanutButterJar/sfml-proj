@@ -1,4 +1,3 @@
-//#include <utilities/utilities.hpp>
 #include <SFML/System/Time.hpp>
 #include <gamestate.hpp>
 

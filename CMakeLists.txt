@@ -8,8 +8,31 @@ if(CMAKE_CXX_COMPILER_VERSION VERSION_LESS "18.0")
 endif()
 
 find_package(SFML REQUIRED)
-find_package(reflectcpp REQUIRED)
-find_package(fmt REQUIRED)
+
+add_compile_options(
+    -std=c++23
+    -stdlib=libc++
+    -Wall
+    -Werror
+    -Wextra
+    $<$<CONFIG:Debug>:-g>
+    $<$<CONFIG:Debug>:-DDEBUG_BUILD>
+    $<$<CONFIG:Debug>:-O0>
+    $<$<CONFIG:Debug>:-fsanitize=address>
+    $<$<CONFIG:Debug>:-fno-omit-frame-pointer>
+    $<$<CONFIG:Release>:-O3>
+)
+
+add_link_options(
+  -lc++
+  -stdlib=libc++
+  -lc++abi
+  $<$<CONFIG:Debug>:-g>
+  $<$<CONFIG:Debug>:-fsanitize=address>
+  $<$<CONFIG:Debug>:-fno-omit-frame-pointer>
+)
+
+add_subdirectory(lib/utils)
 
 set(MAIN_FILE "${CMAKE_CURRENT_SOURCE_DIR}/src/main.cpp")
 file(GLOB SOURCES src/*.cpp)
@@ -18,29 +41,7 @@ list(REMOVE_ITEM SOURCES "${MAIN_FILE}")
 
 add_library(core STATIC ${SOURCES})
 target_include_directories(core PUBLIC ${CMAKE_SOURCE_DIR}/include)
-target_link_libraries(core PUBLIC sfml::sfml reflectcpp::reflectcpp fmt::fmt)
-
-target_compile_options(core PUBLIC
-  -std=c++23
-  -stdlib=libc++
-  -Wall
-  -Werror
-  -Wextra
-)
-
-target_compile_options(core PUBLIC
-    $<$<CONFIG:Debug>:-g -DDEBUG_BUILD -O0 -fsanitize=address -fno-omit-frame-pointer>
-    $<$<CONFIG:Release>:-O3>
-) 
-
-target_link_options(core PUBLIC
-    $<$<CONFIG:Debug>:-g -fsanitize=address -fno-omit-frame-pointer>)
-
-target_link_options(core PUBLIC
-  -lc++
-  -stdlib=libc++
-  -lc++abi
-)
+target_link_libraries(core PUBLIC sfml::sfml utils)
 
 add_executable(sfml-app ${MAIN_FILE}) 
 
@@ -61,15 +62,3 @@ add_custom_command(TARGET sfml-app POST_BUILD
 if(CMAKE_BUILD_TYPE STREQUAL "Debug")
     message(STATUS "🔍 Build en mode Debug")
 endif()
-
-find_package(GTest REQUIRED)
-enable_testing()
-
-add_executable(reflectcpp_integration_tests tests/reflectcpp_integration_tests.cpp)
-target_link_libraries(reflectcpp_integration_tests PRIVATE core GTest::gtest_main)
-
-add_executable(utilities_unit_tests tests/utilities_unit_tests.cpp)
-target_link_libraries(utilities_unit_tests PRIVATE core GTest::gtest_main)
-
-add_test(NAME integration_tests_with_cppreflect COMMAND reflectcpp_integration_tests WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR})
-add_test(NAME utilities_unit_tests COMMAND utilities_unit_tests WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR})

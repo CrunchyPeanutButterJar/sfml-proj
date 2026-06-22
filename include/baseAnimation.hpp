@@ -2,7 +2,7 @@
 #define BASEANIMATION_HPP
 
 #include <SFML/Graphics/Texture.hpp>
-#include <utilities/utilities.hpp>
+#include <utils/utilities.hpp>
 #include <spriteSheet.fwd.hpp>
 
 #include <vector>

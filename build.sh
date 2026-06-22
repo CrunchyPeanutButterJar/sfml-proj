@@ -77,4 +77,6 @@ cmake .. \
 
 cmake --build .
 
-ctest
+for path in $(find . -name *CTest*.cmake); do
+  ctest --test-dir $(dirname $path)
+done

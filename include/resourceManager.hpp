@@ -1,8 +1,8 @@
 #ifndef RESOURCEMANAGER_HPP
 #define RESOURCEMANAGER_HPP
 
-#include <utilities/assert.hpp>
-#include <utilities/utilities.hpp>
+#include <utils/assert.hpp>
+#include <utils/utilities.hpp>
 #include <memory>
 #include <unordered_map>
 

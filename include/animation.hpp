@@ -1,7 +1,7 @@
 #ifndef ANIMATION_HPP
 #define ANIMATION_HPP
 
-#include "utilities/utilities.hpp"
+#include <utils/utilities.hpp>
 #include <baseAnimation.hpp>
 
 class Animation : public BaseAnimation
