@@ -47,3 +47,27 @@ TEST(Tokenizer, ignore_whole_comment_line)
     Utils::Tokens tokens{std::istringstream(ss.str())};
     EXPECT_TRUE(tokens.empty());
 }
+
+
+TEST(Tokenizer, consume_tokens_return_nullopt_in_case_of_failure)
+{
+    using namespace ::testing;
+    
+    {
+        std::ostringstream ss;
+        ss << "      \n\n\n\n\n\n\n#this is a comment       \n\n\n\n\n";
+
+        Utils::Tokens tokens{std::istringstream(ss.str())};
+        auto result = ConsumeTokens<int, float, double>(tokens);
+        EXPECT_FALSE(result.has_value());
+    }
+
+    {
+        std::ostringstream ss;
+        ss << "      \n\n\n\n\n\n\n joeeee tempppp       \n\n\n\n\n";
+
+        Utils::Tokens tokens{std::istringstream(ss.str())};
+        auto result = ConsumeTokens<int, float, double>(tokens);
+        EXPECT_FALSE(result.has_value());
+    }
+}

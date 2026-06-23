@@ -97,13 +97,14 @@ namespace Utils
       };
 
       static constexpr auto ConsumeToken = 
-      [] (Tokens& l_tokens, bool& l_error)
+      [] (Tokens& l_tokens, bool& l_error) -> std::string
       {
         auto token = l_tokens.advance();
         if(!token.has_value())
         {
           FAILURE_NON_FATAL( "Failed to consume token");
           l_error = true;
+          return "";
         }
         return token.value();
       };
