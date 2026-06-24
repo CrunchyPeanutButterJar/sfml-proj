@@ -34,7 +34,7 @@ public:
     EventManager& operator=(EventManager&&);
 
 private:
-    class Impl;
+    struct Impl;
     std::unique_ptr<Impl> m_impl;
 };
 
