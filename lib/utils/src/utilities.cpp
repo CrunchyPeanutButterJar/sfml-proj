@@ -80,4 +80,23 @@ std::optional<std::istringstream> ReadFile(const std::string& l_filePath)
     return std::istringstream{std::move(fileContent)};
 }
 
+size_t pgcd(size_t l_n1, size_t l_n2)
+{
+    size_t n1 = std::max(l_n1, l_n2);
+    size_t n2 = std::min(l_n1, l_n2);
+
+    size_t r = n1 % n2;
+
+    if(r == 0)
+    {
+        return n2;
+    }
+
+    return pgcd(n2, r);
+}
+
+size_t ppcm(size_t l_n1, size_t l_n2)
+{
+    return l_n1 * l_n2 / pgcd(l_n1, l_n2);
+}
 };

@@ -3,6 +3,7 @@
 
 #include <SFML/Window/Event.hpp>
 
+#include <eventmanager.fwd.hpp>
 #include <statemanager.hpp>
 
 #include <any>

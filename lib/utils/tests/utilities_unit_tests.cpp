@@ -71,3 +71,28 @@ TEST(Tokenizer, consume_tokens_return_nullopt_in_case_of_failure)
         EXPECT_FALSE(result.has_value());
     }
 }
+
+TEST(number_theory, euclid_division_pgcd_ppcm) 
+{
+    using namespace ::testing;
+
+    size_t n1 = 90;
+    size_t n2 = 24;
+
+    EXPECT_EQ(Utils::pgcd(n1, n2), Utils::pgcd(n2, n1));
+    EXPECT_EQ(Utils::pgcd(n1, n2), 6);
+
+    EXPECT_EQ(Utils::ppcm(n1, n2), Utils::ppcm(n2, n1));
+    EXPECT_EQ(Utils::ppcm(n1, n2), 360);
+
+    size_t w = 1920;
+    size_t h = 1080;
+
+    size_t d = Utils::pgcd(1920, 1080);
+    size_t a = w/d;
+    size_t b = h/d;
+    EXPECT_EQ(a, 16);
+    EXPECT_EQ(b, 9);
+
+    EXPECT_EQ(Utils::pgcd(55,1), 1);
+}

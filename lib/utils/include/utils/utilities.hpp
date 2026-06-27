@@ -66,6 +66,23 @@ namespace Utils
         std::optional<std::string> advance();
 		    bool empty();
 
+        template<typename T>
+        std::optional<T> head()
+        {
+          if(!currentMatch())
+          {
+            return std::nullopt;
+          }
+          std::istringstream iss(m_currentStr);
+          T value;
+          iss >> value;
+          if(iss.fail())
+          {
+            return std::nullopt;
+          }
+          return value;
+        }
+
     private:
         bool currentMatch();
 
@@ -123,6 +140,21 @@ namespace Utils
       
       return std::nullopt;
     }
+
+    template<typename T>
+    std::optional<T> ConsumeToken(Tokens& l_tokens)
+    {
+      if(auto tuple = ConsumeTokens<T>(l_tokens))
+      {
+        return std::get<0>(*tuple);
+      }
+
+      return std::nullopt;
+    }
+
+    size_t ppcm(size_t n1, size_t n2);
+    
+    size_t pgcd(size_t n1, size_t n2);
 };
 
 #endif

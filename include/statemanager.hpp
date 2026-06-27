@@ -1,6 +1,7 @@
 #ifndef STATEMANAGER_HPP
 #define STATEMANAGER_HPP
 
+#include <sharedContext.hpp>
 #include <basestate.hpp>
 #include <textureManager.hpp>
 
@@ -13,8 +14,6 @@
 #include <utility>
 #include <vector>
 
-class Window;
-class EventManager;
 
 enum class StateType
 {
@@ -28,13 +27,6 @@ using StateContainer = std::vector<std::pair<StateType, StatePtr>>;
 using StateFactory = std::unordered_map<StateType, std::function<StatePtr(StateManager*)>>;
 
 using StateTypeContainer = std::unordered_set<StateType>;
-
-struct SharedContext
-{
-    Window& m_window;
-    EventManager& m_eventManager;
-    TextureManager m_textureManager;
-};
 
 class StateManager
 {

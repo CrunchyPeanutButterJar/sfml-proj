@@ -9,7 +9,8 @@ class StateManager;
 class BaseState
 {
 public:
-    inline BaseState(StateManager& l_stateManager) : m_stateManager(l_stateManager) {}
+    BaseState(StateManager& l_stateManager);
+
     virtual ~BaseState() = default;
 
     virtual void Update(const sf::Time& l_elapsed) = 0;

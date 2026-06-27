@@ -3,6 +3,7 @@
 
 #include <SFML/System/Time.hpp>
 
+#include <map.hpp>
 #include <basestate.hpp>
 #include <spriteSheet.hpp>
 
@@ -23,6 +24,7 @@ public:
 private:
     sf::Time m_elapsed;
     SpriteSheet m_sprite;
+    Map m_gameMap;
 };
 
 #endif
