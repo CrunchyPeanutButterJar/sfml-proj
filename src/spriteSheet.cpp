@@ -114,6 +114,7 @@ BaseAnimation* SpriteSheet::getCurrentAnimation() const
 void SpriteSheet::cropSprite(const sf::IntRect& l_rect)
 {
     m_sprite.setTextureRect(l_rect);
+    m_sprite.setScale(m_spriteScale);
 }
 
 bool SpriteSheet::setAnimation(const std::string& l_name, bool l_play, bool l_loop)
