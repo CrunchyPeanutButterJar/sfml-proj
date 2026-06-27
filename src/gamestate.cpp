@@ -26,6 +26,15 @@ m_gameMap{m_stateManager.GetContext(), *this}
     auto& sprite = this->m_sprite;
 
     eventManager.AddCallback(StateType::Game, "Game_MoveRight", [&sprite](const auto&) -> void {sprite.nextAnimation();});
+    eventManager.AddCallback(StateType::Game, "Game_MoveLeft", 
+    [&sprite](const auto&) -> void
+    {
+        static bool moveLeft = true;
+        Direction newDirection = moveLeft ? Direction::Left : Direction::Right;
+        sprite.setDirection(newDirection);
+        moveLeft = !moveLeft;
+    });
+
     m_gameMap.loadMap(Utils::GetConfigDirectory() + "map.map");
 }
 

@@ -7,11 +7,13 @@ void Animation::cropSprite()
 {
     auto [width, height] = m_spriteSheet->getSpriteSize();
 
+    Direction currentDirection = m_spriteSheet->getDirection();
+
     sf::IntRect rect
     {
-        width * (int)getFrame(),
+        width * (currentDirection == Direction::Right? (int)getFrame() : (int) getFrame() + 1),
         height * (int)m_frameRow,
-        width,
+        currentDirection == Direction::Right? width : -width,
         height
     };
 
