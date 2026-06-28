@@ -1,6 +1,7 @@
 #include <gtest/gtest.h>
 #include <gmock/gmock.h>
 #include <utils/utilities.hpp>
+#include <utils/bitmask.hpp>
 #include <sstream>
 
 TEST(Tokenizer, consume_typed_tokens)
@@ -95,4 +96,47 @@ TEST(number_theory, euclid_division_pgcd_ppcm)
     EXPECT_EQ(b, 9);
 
     EXPECT_EQ(Utils::pgcd(55,1), 1);
+}
+
+TEST(bitmask, smoke_test)
+{
+    const Bitset PositionComponent = 1 << 0;
+    const Bitset SpriteComponent = 1 << 1;
+    const Bitset MovableComponent = 1 << 2;
+    const Bitset StateComponent = 1 << 3;
+
+    Bitmask mask{PositionComponent | SpriteComponent | MovableComponent | StateComponent};
+    EXPECT_TRUE(mask.getBit(0));
+    EXPECT_TRUE(mask.getBit(1));
+    EXPECT_TRUE(mask.getBit(2));
+    EXPECT_TRUE(mask.getBit(3));
+
+    mask.clear();
+    EXPECT_FALSE(mask.getBit(0));
+    EXPECT_FALSE(mask.getBit(1));
+    EXPECT_FALSE(mask.getBit(2));
+    EXPECT_FALSE(mask.getBit(3));
+
+    mask.toggleBit(1);
+    EXPECT_FALSE(mask.getBit(0));
+    EXPECT_TRUE(mask.getBit(1));
+    EXPECT_FALSE(mask.getBit(2));
+    EXPECT_FALSE(mask.getBit(3));
+    
+    mask.toggleBit(1);
+    EXPECT_FALSE(mask.getBit(0));
+    EXPECT_FALSE(mask.getBit(1));
+    EXPECT_FALSE(mask.getBit(2));
+    EXPECT_FALSE(mask.getBit(3));
+
+    Bitmask moveAndPosition{};
+    moveAndPosition.setMask(MovableComponent | PositionComponent);
+
+    Bitmask moveAndState{};
+    moveAndState.setMask(MovableComponent | StateComponent);
+
+    EXPECT_TRUE(moveAndPosition.matches(moveAndState, MovableComponent));
+    EXPECT_TRUE(moveAndState.matches(moveAndPosition, MovableComponent));
+
+    EXPECT_FALSE(moveAndPosition.matches(moveAndState));
 }
