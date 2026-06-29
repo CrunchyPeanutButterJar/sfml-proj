@@ -1,4 +1,5 @@
 #include <SFML/Window/Keyboard.hpp>
+#include <SFML/Window/WindowBase.hpp>
 #include <eventmanager.hpp>
 
 #include <iostream>
@@ -34,6 +35,45 @@ bool operator==(ClosedEvent, ClosedEvent) { return true; }
 bool operator==(MouseMovedEvent, MouseMovedEvent) { return true;}
 
 using SimplifiedEvent = std::variant<KeyPressedEvent, MouseButtonPressedEvent, MouseMovedEvent, ClosedEvent>;
+
+template<class... Ts>
+struct overloaded : Ts... { using Ts::operator()...; };
+
+struct hash
+{
+    size_t operator()(const KeyPressedEvent& l_event) const
+    {
+        return std::hash<KeyPressedEventEnumType>{}(l_event.get());
+    }
+
+    size_t operator()(const MouseButtonPressedEvent& l_event) const
+    {
+        return std::hash<MouseButtonPressedEventEnumType>{}(l_event.get());
+    }
+
+    size_t operator()(const ClosedEvent&) const
+    {
+        return 1;
+    }
+
+    size_t operator()(const MouseMovedEvent&) const
+    {
+        return 2; 
+    }
+
+    size_t operator()(const SimplifiedEvent& l_event) const
+    {
+        size_t index = l_event.index();
+        return std::visit(
+        [index](const auto& l_arg)
+        {
+            std::size_t h1 = hash{}(l_arg);
+            std::size_t h2 = std::hash<std::size_t>{}(index);
+            return h1 ^ (h2 + 0x9e3779b9 + (h1 << 6) + (h1 >> 2));
+        }
+        , l_event);
+    }
+};
 
 using SimplifiedEvents = std::vector<SimplifiedEvent>;
 
@@ -183,73 +223,44 @@ void EventManager::RemoveCallback(StateType l_state, const std::string& l_action
     callbacks.erase(l_action);
 }
 
-template<class... Ts>
-struct overloaded : Ts... { using Ts::operator()...; };
-
-struct AreEquivalent
-{
-    bool operator()(const sf::Event::KeyEvent& l_e1, const sf::Event::KeyEvent& l_e2) const
-    {
-        return  l_e1.code == l_e2.code &&
-                l_e1.scancode == l_e2.scancode &&
-                l_e1.alt == l_e2.alt &&
-                l_e1.control == l_e2.control &&
-                l_e1.shift == l_e2.shift &&
-                l_e1.system == l_e2.system;
-    }
-
-    bool operator()(const sf::Event::MouseButtonEvent& l_e1, const sf::Event::MouseButtonEvent& l_e2) const
-    {
-        return l_e1.button == l_e2.button;
-    }
-};
-
-template<typename T>
-const T& readEventData(const sf::Event& l_event, T sf::Event::* l_dataMemberAccessor)
-{
-    return l_event.*l_dataMemberAccessor;
-}
-
-static bool isEventOfType(const sf::Event& l_event, sf::Event::EventType l_type)
-{
-    return l_event.type == l_type;
-}
-
 void EventManager::HandleEvent(const sf::Event& l_event)
 {
-    static constexpr auto findPressedEvent = 
-    []<typename T>(ActualEvents& l_events, const sf::Event& l_event, sf::Event::EventType l_eventType, T sf::Event::* l_dataMemberAccessor)
-    {
-        auto it = std::find_if(l_events.begin(), l_events.end(),
-        [&](const auto& l_currentEvent)
-        {
-            if(isEventOfType(l_currentEvent, l_eventType))
-            {
-                return AreEquivalent{}(readEventData(l_currentEvent, l_dataMemberAccessor), readEventData(l_event, l_dataMemberAccessor));
-            }
-            return false;
-        });
-        return it;
-    };
-
     auto& actualEvents = std::get<1>(m_impl->m_tuple);
-
-    if(isEventOfType(l_event, sf::Event::KeyReleased))
-    {
-        if(auto it = findPressedEvent(actualEvents, l_event, sf::Event::KeyPressed, &sf::Event::key); it!=actualEvents.end())
-        {
-            actualEvents.erase(it);
-        }
-    }
-    else if(isEventOfType(l_event, sf::Event::MouseButtonReleased))
-    {
-        if(auto it = findPressedEvent(actualEvents, l_event, sf::Event::MouseButtonPressed, &sf::Event::mouseButton); it != actualEvents.end())
-        {
-            actualEvents.erase(it);
-        }
-    }
-
     actualEvents.push_back(l_event);
+}
+
+void EventManager::HandleRealtimeEvents()
+{
+    using Set = std::unordered_set<SimplifiedEvent, hash>;
+
+    auto& [bindings, actualEvents, _] = m_impl->m_tuple;
+    auto uniqueBindings = bindings | std::ranges::views::transform([](const auto& l_pair){return std::get<1>(l_pair);}) | std::ranges::views::join | std::ranges::to<Set>();
+
+    for(const auto& binding : uniqueBindings)
+    {
+        std::visit(overloaded{
+        [&actualEvents](const KeyPressedEvent& l_event)
+        {
+            if(sf::Keyboard::isKeyPressed((sf::Keyboard::Key)l_event.get()))
+            {
+                sf::Event rtEvent;
+                rtEvent.type = sf::Event::KeyPressed;
+                rtEvent.key.code  = (sf::Keyboard::Key)l_event.get();
+                actualEvents.emplace_back(std::move(rtEvent));
+            }
+        },
+        [&actualEvents](const MouseButtonPressedEvent& l_event)
+        {
+            if(sf::Mouse::isButtonPressed((sf::Mouse::Button)l_event.get()))
+            {
+                sf::Event rtEvent;
+                rtEvent.type = sf::Event::MouseButtonPressed;
+                rtEvent.mouseButton.button = (sf::Mouse::Button)l_event.get();
+                actualEvents.emplace_back(std::move(rtEvent));
+            }
+        },
+        [](const auto&){}}, binding);
+    }
 }
 
 static bool simplifiedEventMatchesActualEvent(const SimplifiedEvent& l_simpleEvent, const sf::Event& l_event)
@@ -275,62 +286,37 @@ static bool simplifiedEventMatchesActualEvent(const SimplifiedEvent& l_simpleEve
     }, l_simpleEvent);
 }
 
-using ActualEventsIndices = std::set<size_t, std::greater<size_t>>;
-
-static bool simplifiedEventMatchesActualEvent(const SimplifiedEvent& l_simpleEvent, const ActualEvents& l_events, ActualEventsIndices& l_matchedEventsIds)
+static bool simplifiedEventMatchesActualEvent(const SimplifiedEvent& l_simpleEvent, const ActualEvents& l_events)
 {
-    for(size_t i = 0; i <l_events.size(); ++i)
-    {
-        if (simplifiedEventMatchesActualEvent(l_simpleEvent, l_events[i]))
-        {
-            l_matchedEventsIds.insert(i);
-            return true;
-        }
-    }
-    return false;
+    return std::any_of(l_events.begin(), l_events.end(), [&l_simpleEvent](const sf::Event& l_event){return simplifiedEventMatchesActualEvent(l_simpleEvent, l_event);});
 }
 
-void EventManager::Update(StateType l_state)
+void EventManager::Update(StateType l_state, const sf::WindowBase& l_window)
 {
+    HandleRealtimeEvents();
     auto& [bindings, actualEvents, callbacksContainer] = m_impl->m_tuple;
-
-    ActualEventsIndices toRemove;
 
     for(const auto& [action, binding] : bindings)
     {
-        auto copy = toRemove;
-        if(std::all_of(binding.begin(), binding.end(), [&actualEvents, &copy](const auto& l_expectedEvent){return simplifiedEventMatchesActualEvent(l_expectedEvent, actualEvents, copy);}))
+        if(std::all_of(binding.begin(), binding.end(), [&actualEvents](const auto& l_expectedEvent){return simplifiedEventMatchesActualEvent(l_expectedEvent, actualEvents);}))
         {
             const auto& stateCallbacks = callbacksContainer[l_state];
             auto it = stateCallbacks.find(action);
             if(it != stateCallbacks.end())
             {
-                it->second(actualEvents);
+                it->second(l_window);
             }
 
             const auto& otherCallbacks = callbacksContainer[StateType{0}];
             auto otherIt = otherCallbacks.find(action);
             if(otherIt != otherCallbacks.end())
             {
-                otherIt->second(actualEvents);
+                otherIt->second(l_window);
             }
-
-            toRemove = copy;
         }
     }
 
-    for(size_t i = 0; i < actualEvents.size(); i++)
-    {
-        if(actualEvents[i].type != sf::Event::KeyPressed && actualEvents[i].type != sf::Event::MouseButtonPressed)
-        {
-            toRemove.insert(i);
-        }
-    }
-
-    for(auto id : toRemove)
-    {
-        actualEvents.erase(std::next(actualEvents.begin(), id));
-    }
+    actualEvents.clear();
 }
 
 EventManager::~EventManager() = default;

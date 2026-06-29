@@ -81,8 +81,11 @@ void Window::Update(StateType l_state)
             m_eventManager.HandleEvent(event);
         }
     }
-    
-    m_eventManager.Update(l_state);
+
+    if(m_isFocused)
+    {
+        m_eventManager.Update(l_state, m_window);
+    }
 }
 
 void Window::ToggleFullscreen()

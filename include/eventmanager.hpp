@@ -2,6 +2,7 @@
 #define EVENTMANAGER_HPP
 
 #include <SFML/Window/Event.hpp>
+#include <SFML/Window/WindowBase.hpp>
 
 #include <eventmanager.fwd.hpp>
 #include <statemanager.hpp>
@@ -13,14 +14,13 @@
 #include <string>
 #include <vector>
 
-using Events = std::vector<sf::Event>;
-using Callback = std::function<void(const Events&)>;
+using Callback = std::function<void(const sf::WindowBase&)>;
 
 class EventManager
 {
 public:
     void HandleEvent(const sf::Event& l_event);
-    void Update(StateType l_state);
+    void Update(StateType l_state, const sf::WindowBase& l_wind);
 
     bool AddCallback(StateType l_state, const std::string& l_action, Callback l_callback);
     void RemoveCallback(StateType l_state, const std::string& l_action);
@@ -33,6 +33,9 @@ public:
 
     EventManager(EventManager&&);
     EventManager& operator=(EventManager&&);
+
+private:
+    void HandleRealtimeEvents();
 
 private:
     struct Impl;

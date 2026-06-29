@@ -34,6 +34,12 @@ m_gameMap{m_stateManager.GetContext(), *this}
         sprite.setDirection(newDirection);
         moveLeft = !moveLeft;
     });
+    eventManager.AddCallback(StateType::Game,"Mouse_Moved",
+    [&sprite](const auto& l_window)
+    {
+        auto [x, y] = sf::Mouse::getPosition(l_window);
+        sprite.setSpritePosition({(float)x, (float)y});
+    });
 
     m_gameMap.loadMap(Utils::GetConfigDirectory() + "map.map");
 }
