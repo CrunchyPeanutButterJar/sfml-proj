@@ -50,6 +50,16 @@ bool Tokens::currentMatch()
     return currentMatch();
 }
 
+void Tokens::skipLine()
+{
+    if(currentMatch())
+    {
+        std::getline(m_ss, m_currentStr, '\n');
+        m_currentStr.clear();
+    }
+}
+
+
 bool Tokens::empty()
 {
     return !currentMatch();

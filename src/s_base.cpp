@@ -1,0 +1,46 @@
+#include <s_base.hpp>
+#include <algorithm>
+
+S_Base::S_Base(System l_id, SystemManager& l_sysManager):
+m_systemManager{l_sysManager},
+m_id{l_id} {}
+
+bool S_Base::addEntity(EntityId l_entity)
+{
+    if(hasEntity(l_entity))
+    {
+        return false;
+    }
+    m_entities.emplace_back(l_entity);
+    return true;
+}
+
+bool S_Base::hasEntity(EntityId l_entity)
+{
+    return std::find(m_entities.begin(), m_entities.end(), l_entity) != m_entities.end();
+}
+
+bool S_Base::removeEntity(EntityId l_entity)
+{
+    auto itr = std::find(m_entities.begin(), m_entities.end(), l_entity);
+    if(itr == m_entities.end())
+    {
+        return false;
+    }
+    m_entities.erase(itr);
+    return true;
+}
+
+System S_Base::getId() const
+{
+    return m_id;
+}
+
+bool S_Base::fitsRequirements(Bitmask l_bits)
+{
+    return std::any_of(m_requiredComponents.begin(), m_requiredComponents.end(),
+    [l_bits](const Bitmask& l_requirement)
+    {
+        return l_requirement.matches(l_bits, l_bits.getMask());
+    });
+}

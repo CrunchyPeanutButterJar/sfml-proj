@@ -65,6 +65,7 @@ namespace Utils
 
         std::optional<std::string> advance();
 		    bool empty();
+        void skipLine();
 
         template<typename T>
         std::optional<T> head()

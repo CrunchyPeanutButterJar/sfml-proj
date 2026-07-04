@@ -28,13 +28,13 @@ public:
     bool setAnimation(const std::string& l_name, bool l_play = false, bool l_Loop = false);
     void nextAnimation();//temp for testing purposes
 
-    void setSpriteSize(const sf::Vector2i& l_size); 
+    void setSpriteSize(const sf::Vector2u& l_size); 
     void setSpritePosition(const sf::Vector2f& l_pos);
     void setDirection(Direction l_dir);
 
     BaseAnimation *getCurrentAnimation() const;
-    sf::Vector2i getSpriteSize() const; 
-    sf::Vector2f getSpritePosition() const;
+    const sf::Vector2u& getSpriteSize() const; 
+    const sf::Vector2f& getSpritePosition() const;
     Direction getDirection() const;
 
     void update(float l_dt);
@@ -42,7 +42,7 @@ public:
 
 private:
     sf::Sprite m_sprite;
-    sf::Vector2i m_spriteSize;
+    sf::Vector2u m_spriteSize;
     sf::Vector2f m_spriteScale{1.f, 1.f};
     Direction m_direction{Direction::Right};
     Animations m_animations;

@@ -3,6 +3,8 @@
 #include <window.hpp>
 #include <utils/assert.hpp>
 #include <utils/utilities.hpp>
+#include <entitymanager.hpp>
+#include <c_position.hpp>
 
 Map::Map(SharedContext& l_context, BaseState& l_currentState):
 m_context(l_context),
@@ -78,6 +80,33 @@ void Map::loadMap(const std::string& l_path)
                     TileInfo& tileInfo = it->second;
                     ASSERT_NON_FATAL(m_tileMap.emplace(convertCoordinates(iRow, iCol), Tile{&tileInfo}).second,
                 "Overriding existing tile at coordinates ({}, {})", iRow, iCol);
+                }
+            }
+            tokens.advance();
+        }
+        else if(key == "EntitiesStart")
+        {
+            std::string temp;
+            while(temp = *tokens.head<std::string>(), temp != "EntitiesEnd")
+            {
+                auto name = *ConsumeToken<std::string>(tokens);
+                auto& entities = m_context.m_entityManager;
+                int entity = m_context.m_entityManager.addEntity(name);
+                if(entity < 0 )
+                {
+                    FAILURE_NON_FATAL("Failed to load entity {}", name);
+                    tokens.skipLine();
+                    continue;
+                }
+                if(name == "player.entity")
+                {
+                    m_playerId = entity;
+                }
+
+                auto* position = entities.getComponent<C_Position>(entity, Component::Position);
+                if(position)
+                {
+                    position->readInput(tokens);
                 }
             }
             tokens.advance();
@@ -170,4 +199,10 @@ void Map::draw()
         }
     }
 
+}
+
+EntityId Map::getPlayerId()
+{
+    ASSERT(m_playerId.has_value(), "did not load player id");
+    return *m_playerId;
 }

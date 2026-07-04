@@ -73,6 +73,17 @@ TEST(Tokenizer, consume_tokens_return_nullopt_in_case_of_failure)
     }
 }
 
+TEST(Tokenizer, skips_line_correctly)
+{
+    std::ostringstream ss;
+    ss << "      \n\n\n\n\n\n\n  this is a   line       \n\n  joe   \n\n\n";
+    Utils::Tokens tokens{std::istringstream{ss.str()}};
+    tokens.skipLine();
+    auto token = ConsumeToken<std::string>(tokens);
+    ASSERT_TRUE(token.has_value());
+    EXPECT_EQ(*token, "joe");
+}
+
 TEST(number_theory, euclid_division_pgcd_ppcm) 
 {
     using namespace ::testing;

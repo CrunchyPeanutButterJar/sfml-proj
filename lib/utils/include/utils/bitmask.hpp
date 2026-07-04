@@ -7,7 +7,7 @@ using Bitset = uint32_t;
 
 class Bitmask
 {
-private:
+public:
   using Position = uint8_t;
 
 public:

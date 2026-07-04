@@ -3,6 +3,8 @@
 
 #include <SFML/Graphics.hpp>
 
+#include <entitymanager.hpp>
+#include <systemmanager.hpp>
 #include <statemanager.hpp>
 #include <window.hpp>
 
@@ -27,6 +29,9 @@ private:
 
     Window m_window;
     StateManager m_stateManager;
+    EntityManager m_entityManager;
+    SystemManager m_systemManager; // to handle cyclic dependency systemmanager <-> entityManager
+    TextureManager m_textureManager;
 };
 
 #endif

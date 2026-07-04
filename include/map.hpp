@@ -1,11 +1,13 @@
 #ifndef MAP_HPP
 #define MAP_HPP
 
+#include <ecs_types.hpp>
 #include <tiles.hpp>
 #include <unordered_map>
 #include <basestate.hpp>
 #include <sharedContext.hpp>
 #include <SFML/System/Vector2.hpp>
+#include <optional>
 
 using TileSheet = std::unordered_map<TileId, TileInfo>;
 using TileMap = std::unordered_map<TileId, Tile>;
@@ -17,6 +19,7 @@ public:
     void loadMap(const std::string& l_path);
     void update(float l_dt);
     void draw();
+    EntityId getPlayerId();
 
 private:
     void loadTileset(const std::string& l_path);
@@ -32,6 +35,7 @@ private:
     sf::Vector2u m_mapSize;
     sf::Sprite m_background;
     std::shared_ptr<sf::Texture> m_backgroundTexture;
+    std::optional<EntityId> m_playerId;
 };
 
 #endif

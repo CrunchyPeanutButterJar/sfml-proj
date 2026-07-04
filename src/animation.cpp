@@ -2,10 +2,13 @@
 #include <utils/utilities.hpp>
 #include <spriteSheet.hpp>
 #include <SFML/Graphics/Rect.hpp>
+#include <c_base.hpp> 
 
 void Animation::cropSprite()
 {
-    auto [width, height] = m_spriteSheet->getSpriteSize();
+    auto [uwidth, uheight] = m_spriteSheet->getSpriteSize();
+    int width = (int) uwidth;
+    int height = (int) uheight;
 
     Direction currentDirection = m_spriteSheet->getDirection();
 

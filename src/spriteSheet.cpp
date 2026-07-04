@@ -20,7 +20,7 @@ bool SpriteSheet::loadSheet(const std::string& l_filePath)
             auto [key] = *Utils::ConsumeTokens<std::string>(tokens);
             if(key == "Size")
             {
-                std::tie(m_spriteSize.x, m_spriteSize.y) = *Utils::ConsumeTokens<int, int>(tokens);
+                std::tie(m_spriteSize.x, m_spriteSize.y) = *Utils::ConsumeTokens<unsigned int, unsigned int>(tokens);
             }
             else if(key == "Scale")
             {
@@ -61,7 +61,7 @@ bool SpriteSheet::loadSheet(const std::string& l_filePath)
     return false;
 }
 
-void SpriteSheet::setSpriteSize(const sf::Vector2i& l_size)
+void SpriteSheet::setSpriteSize(const sf::Vector2u& l_size)
 {
     m_spriteSize = l_size;
     m_sprite.setOrigin(m_spriteSize.x/2, m_spriteSize.y);
@@ -91,12 +91,12 @@ void SpriteSheet::setDirection(Direction l_dir)
     m_currentAnimation->cropSprite();
 }
 
-sf::Vector2i SpriteSheet::getSpriteSize() const
+const sf::Vector2u& SpriteSheet::getSpriteSize() const
 {
     return m_spriteSize;
 }
 
-sf::Vector2f SpriteSheet::getSpritePosition() const
+const sf::Vector2f& SpriteSheet::getSpritePosition() const
 {
     return m_sprite.getPosition();
 }

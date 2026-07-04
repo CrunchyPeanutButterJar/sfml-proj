@@ -23,7 +23,6 @@ public:
 
 private:
     sf::Time m_elapsed;
-    SpriteSheet m_sprite;
     Map m_gameMap;
 };
 
