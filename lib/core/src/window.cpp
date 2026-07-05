@@ -1,7 +1,5 @@
 #include <core/window.hpp>
 
-#include <functional>
-
 using namespace core;
 
 Window::Window()

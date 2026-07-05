@@ -4,7 +4,6 @@
 #include <utils/assert.hpp>
 #include <string>
 #include <sstream>
-#include <vector>
 #include <optional>
 #include <tuple>
 

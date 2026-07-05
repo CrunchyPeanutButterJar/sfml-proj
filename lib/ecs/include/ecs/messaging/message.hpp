@@ -1,8 +1,6 @@
 #ifndef ECS_MESSAGING_MESSAGE_HPP
 #define ECS_MESSAGING_MESSAGE_HPP
 
-#include <variant>
-#include <utility>
 #include <SFML/System/Vector2.hpp>
 
 namespace ecs::messaging

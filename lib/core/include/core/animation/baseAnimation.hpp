@@ -5,8 +5,6 @@
 #include <utils/utilities.hpp>
 #include <core/graphics/spriteSheet.fwd.hpp>
 
-#include <vector>
-
 namespace core::animation
 {
 
