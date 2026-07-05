@@ -7,6 +7,8 @@ if(CMAKE_CXX_COMPILER_VERSION VERSION_LESS "18.0")
   message(FATAL_ERROR "Clang 18 requis pour ce projet.")
 endif()
 
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+
 add_compile_options(
     -std=c++23
     -stdlib=libc++

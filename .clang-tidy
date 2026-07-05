@@ -1,0 +1,40 @@
+---
+# Enable all default checks, then filter using wildcards (- removes a check)
+Checks: >
+  -*,
+  bugprone-*,
+  cppcoreguidelines-*,
+  readability-*
+  -readability-braces-around-statements
+
+# Turn all matching warnings into hard compilation/build errors
+WarningsAsErrors: 'bugprone-*,performance-*'
+
+# Process headers matching this regex (usually your project headers, avoiding system headers)
+HeaderFilterRegex: 'include/.*|src/.*'
+
+# Keep searching parent directories if a setting isn't found here
+InheritParentConfig: true
+
+# Fine-tune specific checks using Key-Value pairs
+CheckOptions:
+  # Enforce curly braces for all loops and conditionals
+  - key:             readability-braces-around-statements.ShortStatementLines
+    value:           '1'
+    
+  # Enforce modern smart pointer generation functions
+  - key:             modernize-replace-auto-ptr.IncludeStyle
+    value:           'llvm'
+    
+  # Control strictness for function exit paths that shouldn't throw exceptions
+  - key:             bugprone-exception-escape.FunctionsThatShouldNotThrow
+    value:           'main,catch'
+
+  # Configure style rules for naming variables, classes, and functions
+  - key:             readability-identifier-naming.ClassCase
+    value:           'CamelCase'
+  - key:             readability-identifier-naming.VariableCase
+    value:           'lower_case'
+  - key:             readability-identifier-naming.FunctionCase
+    value:           'camelBack'
+...

@@ -5,9 +5,10 @@ BUILD_DIR="build"
 BUILD_TYPE="Release"
 DO_CLEAN=false
 CONAN_STEP=false
+DO_CLANG_TIDY=false
 
 # 🔍 Analyse des options
-while getopts ":dcfr" opt; do
+while getopts ":dcfrt" opt; do
   case $opt in
     d)
       BUILD_TYPE="Debug"
@@ -24,6 +25,10 @@ while getopts ":dcfr" opt; do
       cd ./$BUILD_DIR
       ./sfml-app
       exit 0
+      ;;
+    t)
+      echo "Lancement de clang-tidy"
+      DO_CLANG_TIDY=true
       ;;
     \?)
       echo "❌ Option invalide: -$OPTARG"
@@ -78,3 +83,9 @@ cmake .. \
 cmake --build .
 
 ctest
+
+cd ../
+
+if $DO_CLANG_TIDY; then
+  clang-tidy-18 -fix-errors -fix -header-filter=.* $(find ./lib/* ./src/* -name "*.cpp") -p build
+fi
