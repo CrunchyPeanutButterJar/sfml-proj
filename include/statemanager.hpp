@@ -1,7 +1,7 @@
 #ifndef STATEMANAGER_HPP
 #define STATEMANAGER_HPP
 
-#include <sharedContext.hpp>
+#include <shared_context.hpp>
 #include <basestate.hpp>
 #include <core/graphics/texture_manager.hpp>
 

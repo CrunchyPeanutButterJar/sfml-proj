@@ -1,5 +1,5 @@
-#ifndef ECS_ENTITY_ENTITYMANAGER_HPP
-#define ECS_ENTITY_ENTITYMANAGER_HPP
+#ifndef ECS_ENTITY_ENTITY_MANAGER_HPP
+#define ECS_ENTITY_ENTITY_MANAGER_HPP
 
 #include <core/graphics/texture_manager.fwd.hpp>
 #include <ecs/entity/c_base.hpp>

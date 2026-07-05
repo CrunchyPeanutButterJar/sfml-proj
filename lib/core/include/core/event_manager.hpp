@@ -1,5 +1,5 @@
-#ifndef CORE_EVENTMANAGER_HPP
-#define CORE_EVENTMANAGER_HPP
+#ifndef CORE_EVENT_MANAGER_HPP
+#define CORE_EVENT_MANAGER_HPP
 
 #include <SFML/Window/Event.hpp>
 #include <SFML/Window/WindowBase.hpp>

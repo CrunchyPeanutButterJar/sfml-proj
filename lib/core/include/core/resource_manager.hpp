@@ -1,5 +1,5 @@
-#ifndef CORE_RESOURCEMANAGER_HPP
-#define CORE_RESOURCEMANAGER_HPP
+#ifndef CORE_RESOURCE_MANAGER_HPP
+#define CORE_RESOURCE_MANAGER_HPP
 
 #include <memory>
 #include <unordered_map>

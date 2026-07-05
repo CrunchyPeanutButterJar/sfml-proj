@@ -1,3 +1,5 @@
+#include <algorithm>
+#include <ranges>
 #include <statemanager.hpp>
 
 #include <core/window.hpp>
@@ -31,8 +33,8 @@ auto StateManager::getCurrentState() const -> StateType
 
 void StateManager::update(const sf::Time& l_elapsed)
 {
-    auto ritr = std::find_if(m_states.rbegin(), m_states.rend(),
-                             [](const auto& el) { return !el.second->isTranscendent(); });
+    auto ritr = std::ranges::find_if(std::ranges::reverse_view(m_states),
+                                     [](const auto& el) { return !el.second->isTranscendent(); });
     if (ritr == m_states.rend())
     {
         return;

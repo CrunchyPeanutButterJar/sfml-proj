@@ -1,5 +1,5 @@
-#ifndef CORE_GRAPHICS_TEXTUREMANAGER_HPP
-#define CORE_GRAPHICS_TEXTUREMANAGER_HPP
+#ifndef CORE_GRAPHICS_TEXTURE_MANAGER_HPP
+#define CORE_GRAPHICS_TEXTURE_MANAGER_HPP
 
 #include <SFML/Graphics/Texture.hpp>
 #include <core/graphics/texture_manager.fwd.hpp>

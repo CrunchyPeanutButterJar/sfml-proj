@@ -1,5 +1,5 @@
-#ifndef SHAREDCONTEXT_HPP
-#define SHAREDCONTEXT_HPP
+#ifndef SHARED_CONTEXT_HPP
+#define SHARED_CONTEXT_HPP
 
 #include <core/graphics/texture_manager.fwd.hpp>
 #include <core/event_manager.fwd.hpp>

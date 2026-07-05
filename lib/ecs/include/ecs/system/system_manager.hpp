@@ -1,5 +1,5 @@
-#ifndef ECS_SYSTEM_SYSTEMMANAGER_HPP
-#define ECS_SYSTEM_SYSTEMMANAGER_HPP
+#ifndef ECS_SYSTEM_SYSTEM_MANAGER_HPP
+#define ECS_SYSTEM_SYSTEM_MANAGER_HPP
 
 #include <core/window.fwd.hpp>
 #include <ecs/ecs_types.hpp>

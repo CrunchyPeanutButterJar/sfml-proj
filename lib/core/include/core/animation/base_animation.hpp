@@ -1,5 +1,5 @@
-#ifndef CORE_ANIMATION_BASEANIMATION_HPP
-#define CORE_ANIMATION_BASEANIMATION_HPP
+#ifndef CORE_ANIMATION_BASE_ANIMATION_HPP
+#define CORE_ANIMATION_BASE_ANIMATION_HPP
 
 #include <SFML/Graphics/Texture.hpp>
 #include <core/graphics/spritesheet.fwd.hpp>

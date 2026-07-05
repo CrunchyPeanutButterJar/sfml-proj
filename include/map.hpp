@@ -5,7 +5,7 @@
 #include <core/graphics/tiles.hpp>
 #include <unordered_map>
 #include <basestate.hpp>
-#include <sharedContext.hpp>
+#include <shared_context.hpp>
 #include <SFML/System/Vector2.hpp>
 #include <optional>
 
