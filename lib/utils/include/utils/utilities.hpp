@@ -1,5 +1,5 @@
-#ifndef UTILITIES_HPP
-#define UTILITIES_HPP
+#ifndef UTILS_UTILITIES_HPP
+#define UTILS_UTILITIES_HPP
 
 #include <utils/assert.hpp>
 #include <string>
@@ -28,7 +28,7 @@ namespace Utils
     }
     #elif __linux__
     #include <unistd.h>
-    inline std::string GetWorkingDirectory()
+    inline std::string getWorkingDirectory()
     {
         char cwd[1024];
         if(getcwd(cwd, sizeof(cwd)) != nullptr)
@@ -40,14 +40,14 @@ namespace Utils
     }
     #endif
 
-    inline std::string GetConfigDirectory()
+    inline std::string getConfigDirectory()
     {
-      return GetWorkingDirectory() + "config/";
+      return getWorkingDirectory() + "config/";
     }
 
-    inline std::string GetResourcesDirectory()
+    inline std::string getResourcesDirectory()
     {
-      return GetWorkingDirectory() + "resources/";
+      return getWorkingDirectory() + "resources/";
     }
 
     template<typename T>
@@ -56,7 +56,7 @@ namespace Utils
       return __PRETTY_FUNCTION__;
     }
 
-    std::optional<std::istringstream> ReadFile(const std::string& l_filePath);
+    std::optional<std::istringstream> readFile(const std::string& l_filePath);
 
     class Tokens
     {
@@ -94,27 +94,27 @@ namespace Utils
     };
 
     template<typename... T>
-    std::optional<std::tuple<T...>> ConsumeTokens(Tokens& l_tokens)
+    std::optional<std::tuple<T...>> consumeTokens(Tokens& l_tokens)
     {
       bool error = false;
 
-      static constexpr auto ToType = 
+      static constexpr auto to_type = 
       []<typename Type>(const std::string& l_token, bool& l_error, Type*) -> Type
       {
-        static const std::string typeName = printTypeName<Type>();
+        static const std::string type_name = printTypeName<Type>();
 
         std::istringstream iss(l_token);
         Type value;
         iss >> value;
         if(iss.fail())
         {
-          FAILURE_NON_FATAL( "Failed to parse token str {} to type {}", l_token, typeName);
+          FAILURE_NON_FATAL( "Failed to parse token str {} to type {}", l_token, type_name);
           l_error = true;
         }
         return value;
       };
 
-      static constexpr auto ConsumeToken = 
+      static constexpr auto consume_token = 
       [] (Tokens& l_tokens, bool& l_error) -> std::string
       {
         auto token = l_tokens.advance();
@@ -127,13 +127,13 @@ namespace Utils
         return token.value();
       };
 
-      static constexpr auto ToTuple =
+      static constexpr auto to_tuple =
       [] (Tokens& l_tokens, bool& l_error) -> std::tuple<T...>
       {
-        return std::make_tuple(ToType(ConsumeToken(l_tokens, l_error), l_error, (T*) nullptr)...);
+        return std::make_tuple(to_type(consume_token(l_tokens, l_error), l_error, (T*) nullptr)...);
       };
 
-      auto tuple = ToTuple(l_tokens, error);
+      auto tuple = to_tuple(l_tokens, error);
       if(!error)
       {
         return tuple;
@@ -143,9 +143,9 @@ namespace Utils
     }
 
     template<typename T>
-    std::optional<T> ConsumeToken(Tokens& l_tokens)
+    std::optional<T> consumeToken(Tokens& l_tokens)
     {
-      if(auto tuple = ConsumeTokens<T>(l_tokens))
+      if(auto tuple = consumeTokens<T>(l_tokens))
       {
         return std::get<0>(*tuple);
       }

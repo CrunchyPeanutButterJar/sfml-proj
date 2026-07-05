@@ -1,5 +1,5 @@
-#ifndef SPRITESHEET_HPP
-#define SPRITESHEET_HPP
+#ifndef CORE_GRAPHICS_SPRITESHEET_HPP
+#define CORE_GRAPHICS_SPRITESHEET_HPP
 
 #include <SFML/Graphics/Rect.hpp>
 #include <SFML/Graphics/RenderWindow.hpp>
@@ -43,7 +43,7 @@ public:
 private:
     sf::Sprite m_sprite;
     sf::Vector2u m_spriteSize;
-    sf::Vector2f m_spriteScale{1.f, 1.f};
+    sf::Vector2f m_spriteScale{1.F, 1.F};
     Direction m_direction{Direction::Right};
     Animations m_animations;
     BaseAnimation* m_currentAnimation{nullptr};

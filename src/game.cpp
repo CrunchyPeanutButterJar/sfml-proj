@@ -15,7 +15,7 @@ using Resolution = std::pair<uint32_t, uint32_t>;
 
 static sf::Vector2u loadResolutionFromConfigFile()
 {
-    static const std::string ConfigFileName = Utils::GetConfigDirectory() + "config.json";
+    static const std::string ConfigFileName = Utils::getConfigDirectory() + "config.json";
 
     std::ifstream config{ConfigFileName};
     if(config.good())
@@ -23,9 +23,9 @@ static sf::Vector2u loadResolutionFromConfigFile()
         std::stringstream buffer;
         buffer << config.rdbuf();
 
-        std::string jsonConfig = buffer.str();
+        std::string json_config = buffer.str();
         
-        if(auto result = rfl::json::read<Resolution, rfl::AddTagsToVariants>(jsonConfig))
+        if(auto result = rfl::json::read<Resolution, rfl::AddTagsToVariants>(json_config))
         {
             auto resolution = result.value();
             LOG("Loaded Config file {} with width = {} and height = {}", ConfigFileName, resolution.first, resolution.second);
@@ -50,43 +50,43 @@ static sf::Vector2u loadResolutionFromConfigFile()
 
 Game::Game() :
 m_window{"MyGame", loadResolutionFromConfigFile()},
-m_stateManager{{m_window, m_window.GetEventManager(), m_entityManager, m_systemManager, m_textureManager}},
-m_entityManager{m_systemManager, m_stateManager.GetContext().m_textureManager},
+m_stateManager{{m_window, m_window.getEventManager(), m_entityManager, m_systemManager, m_textureManager}},
+m_entityManager{m_systemManager, m_stateManager.getContext().m_textureManager},
 m_systemManager{m_entityManager}
 {
-        m_stateManager.SwitchTo(StateType::Game);
+        m_stateManager.switchTo(StateType::Game);
 }
 
-void Game::Update()
+void Game::update()
 {
-    m_window.Update((EventManager::StateType)m_stateManager.GetCurrentState());
-    m_stateManager.Update(m_elapsed);
+    m_window.update((EventManager::StateType)m_stateManager.getCurrentState());
+    m_stateManager.update(m_elapsed);
 }
 
-void Game::LateUpdate()
+void Game::lateUpdate()
 {
-    m_stateManager.ProcessRequests();
-    RestartClock();
+    m_stateManager.processRequests();
+    restartClock();
 }
 
-sf::Time Game::GetElapsed()
+sf::Time Game::getElapsed()
 {
     return m_elapsed;
 }
 
-void Game::RestartClock()
+void Game::restartClock()
 {
     m_elapsed = m_clock.restart();
 }
 
-Window* Game::GetWindow()
+Window* Game::getWindow()
 {
     return &m_window;
 }
 
-void Game::Render()
+void Game::render()
 {
-    m_window.BeginDraw();
-    m_stateManager.Draw();
-    m_window.EndDraw();
+    m_window.beginDraw();
+    m_stateManager.draw();
+    m_window.endDraw();
 }

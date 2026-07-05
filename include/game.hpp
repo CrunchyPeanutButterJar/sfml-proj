@@ -14,16 +14,16 @@ public:
     Game();
     ~Game() = default;
 
-    void Update();
-    void LateUpdate();
-    void Render();
-    Window* GetWindow();
-    sf::Time GetElapsed();
+    void update();
+    void lateUpdate();
+    void render();
+    Window* getWindow();
+    sf::Time getElapsed();
 
 private:
-    void RestartClock();
+    void restartClock();
 
-private:
+
     sf::Clock m_clock;
     sf::Time m_elapsed;
 

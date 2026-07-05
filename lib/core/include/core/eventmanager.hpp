@@ -1,5 +1,5 @@
-#ifndef EVENTMANAGER_HPP
-#define EVENTMANAGER_HPP
+#ifndef CORE_EVENTMANAGER_HPP
+#define CORE_EVENTMANAGER_HPP
 
 #include <SFML/Window/Event.hpp>
 #include <SFML/Window/WindowBase.hpp>
@@ -20,12 +20,12 @@ class EventManager
 public:
     using StateType = unsigned int;
 
-public:
-    void HandleEvent(const sf::Event& l_event);
-    void Update(StateType l_state, const sf::WindowBase& l_wind);
 
-    bool AddCallback(StateType l_state, const std::string& l_action, Callback l_callback);
-    void RemoveCallback(StateType l_state, const std::string& l_action);
+    void handleEvent(const sf::Event& l_event);
+    void update(StateType l_state, const sf::WindowBase& l_wind);
+
+    bool addCallback(StateType l_state, const std::string& l_action, Callback l_callback);
+    void removeCallback(StateType l_state, const std::string& l_action);
 
     EventManager();
     ~EventManager();
@@ -33,13 +33,13 @@ public:
     EventManager(const EventManager&) = delete;
     EventManager& operator=(const EventManager&) = delete;
 
-    EventManager(EventManager&&);
-    EventManager& operator=(EventManager&&);
+    EventManager(EventManager&&) noexcept;
+    EventManager& operator=(EventManager&&) noexcept;
 
 private:
-    void HandleRealtimeEvents();
+    void handleRealtimeEvents();
 
-private:
+
     struct Impl;
     std::unique_ptr<Impl> m_impl;
 };

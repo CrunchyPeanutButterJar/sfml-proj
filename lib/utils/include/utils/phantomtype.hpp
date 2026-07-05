@@ -1,5 +1,5 @@
-#ifndef PHANTOMTYPE_HPP
-#define PHANTOMTYPE_HPP
+#ifndef UTILS_PHANTOMTYPE_HPP
+#define UTILS_PHANTOMTYPE_HPP
 
 #include <utility>
 

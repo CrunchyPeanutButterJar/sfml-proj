@@ -4,8 +4,9 @@ Checks: >
   -*,
   bugprone-*,
   cppcoreguidelines-*,
-  readability-*
-  -readability-braces-around-statements
+  readability-*,
+  -readability-braces-around-statements,
+  llvm-header-guard
 
 # Turn all matching warnings into hard compilation/build errors
 WarningsAsErrors: 'bugprone-*,performance-*'
@@ -37,4 +38,11 @@ CheckOptions:
     value:           'lower_case'
   - key:             readability-identifier-naming.FunctionCase
     value:           'camelBack'
+  - key:             readability-identifier-naming.MethodCase
+    value:           'camelBack'
+
+  - key: llvm-header-guard.HeaderGuardPrefix
+    value: ''                # no global prefix
+  - key: llvm-header-guard.HeaderGuardMacroSeparator
+    value: '_'               # join path components with underscores
 ...

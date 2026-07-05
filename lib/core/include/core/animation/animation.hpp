@@ -1,5 +1,5 @@
-#ifndef ANIMATION_HPP
-#define ANIMATION_HPP
+#ifndef CORE_ANIMATION_ANIMATION_HPP
+#define CORE_ANIMATION_ANIMATION_HPP
 
 #include <utils/utilities.hpp>
 #include <core/animation/baseAnimation.hpp>
@@ -8,7 +8,7 @@ class Animation : public BaseAnimation
 {
 public:
     Animation() = default;
-    ~Animation() = default;
+    ~Animation() override = default;
 
     void readInput(Utils::Tokens& l_tokens) override;
 

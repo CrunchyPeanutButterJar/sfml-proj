@@ -1,9 +1,11 @@
-#ifndef ECS_TYPES_HPP
-#define ECS_TYPES_HPP
+#ifndef ECS_ECS_TYPES_HPP
+#define ECS_ECS_TYPES_HPP
 
 using EntityId = unsigned int;
 
-#define N_COMPONENT_TYPES 32
+enum {
+N_COMPONENT_TYPES = 32
+};
 using ComponentType = unsigned int;
 
 enum class Component

@@ -31,15 +31,15 @@ using MouseButtonPressedEvent = PhantomType<KeyPressedEventEnumType, struct Mous
 struct ClosedEvent{};
 struct MouseMovedEvent{}; 
 
-bool operator==(ClosedEvent, ClosedEvent) { return true; }
-bool operator==(MouseMovedEvent, MouseMovedEvent) { return true;}
+bool operator==(ClosedEvent /*unused*/, ClosedEvent /*unused*/) { return true; }
+bool operator==(MouseMovedEvent /*unused*/, MouseMovedEvent /*unused*/) { return true;}
 
 using SimplifiedEvent = std::variant<KeyPressedEvent, MouseButtonPressedEvent, MouseMovedEvent, ClosedEvent>;
 
 template<class... Ts>
-struct overloaded : Ts... { using Ts::operator()...; };
+struct Overloaded : Ts... { using Ts::operator()...; };
 
-struct hash
+struct Hash
 {
     size_t operator()(const KeyPressedEvent& l_event) const
     {
@@ -51,12 +51,12 @@ struct hash
         return std::hash<MouseButtonPressedEventEnumType>{}(l_event.get());
     }
 
-    size_t operator()(const ClosedEvent&) const
+    size_t operator()(const ClosedEvent& /*unused*/) const
     {
         return 1;
     }
 
-    size_t operator()(const MouseMovedEvent&) const
+    size_t operator()(const MouseMovedEvent& /*unused*/) const
     {
         return 2; 
     }
@@ -67,7 +67,7 @@ struct hash
         return std::visit(
         [index](const auto& l_arg)
         {
-            std::size_t h1 = hash{}(l_arg);
+            std::size_t h1 = Hash{}(l_arg);
             std::size_t h2 = std::hash<std::size_t>{}(index);
             return h1 ^ (h2 + 0x9e3779b9 + (h1 << 6) + (h1 >> 2));
         }
@@ -85,32 +85,32 @@ using ActualEvents = std::vector<sf::Event>;
 using Callbacks = std::unordered_map<std::string, Callback>;
 using CallbacksContainer = std::unordered_map<EventManager::StateType, Callbacks>;
 
-static const std::string BindingsFilePath{Utils::GetConfigDirectory() + "bindings.json"};
+static const std::string bindings_file_path{Utils::getConfigDirectory() + "bindings.json"};
 
 std::optional<SerializableBindings> loadFromBindingsFile()
 {
-    std::ifstream configFile(BindingsFilePath.c_str());
+    std::ifstream config_file(bindings_file_path.c_str());
     
-    if(!configFile.good())
+    if(!config_file.good())
     {
-        configFile.close();
+        config_file.close();
         return std::nullopt;
     }
 
     std::stringstream buffer;
-    buffer << configFile.rdbuf();
-    std::string jsonString = buffer.str();
-    configFile.close();
+    buffer << config_file.rdbuf();
+    std::string json_string = buffer.str();
+    config_file.close();
 
-    auto result = rfl::json::read<SerializableBindings, rfl::AddTagsToVariants>(jsonString);
-    ASSERT_NON_FATAL(result, "Failed to read bindings from file {}", BindingsFilePath);
+    auto result = rfl::json::read<SerializableBindings, rfl::AddTagsToVariants>(json_string);
+    ASSERT_NON_FATAL(result, "Failed to read bindings from file {}", bindings_file_path);
     
     if(!result)
     {
         return std::nullopt;
     }
 
-    LOG("Reading from binding file {}", BindingsFilePath);
+    LOG("Reading from binding file {}", bindings_file_path);
 
     return result.value();
 }
@@ -155,10 +155,10 @@ std::any buildBindings()
 
 bool bindingsAreEquivalent(const std::any& l_first, const std::any& l_second)
 {
-    const auto& firstBindings = std::any_cast<const SerializableBindings&>(l_first);
-    const auto& secondBindings = std::any_cast<const SerializableBindings&>(l_second);
+    const auto& first_bindings = std::any_cast<const SerializableBindings&>(l_first);
+    const auto& second_bindings = std::any_cast<const SerializableBindings&>(l_second);
 
-    return firstBindings == secondBindings;
+    return first_bindings == second_bindings;
 }
 
 std::any deserializeBindings(const std::string &l_jsonString)
@@ -181,30 +181,30 @@ EventManager::EventManager() : m_impl(std::make_unique<Impl>())
     auto& bindings = std::get<0>(m_impl->m_tuple);
     std::get<1>(m_impl->m_tuple).reserve(128);
 
-    const auto nonCustomizableBindings = buildNonCustomizableBindings();
+    const auto non_customizable_bindings = buildNonCustomizableBindings();
 
-    if(auto customizedSerializedBindings = loadFromBindingsFile())
+    if(auto customized_serialized_bindings = loadFromBindingsFile())
     {
-        bindings = std::array{*customizedSerializedBindings, nonCustomizableBindings} | std::ranges::views::join | std::ranges::to<std::vector>();
+        bindings = std::array{*customized_serialized_bindings, non_customizable_bindings} | std::ranges::views::join | std::ranges::to<std::vector>();
     }
     else
     {
-        const auto defaultCustomizableBindings = buildDefaultBindings();
-        bindings = std::array{defaultCustomizableBindings, nonCustomizableBindings} | std::ranges::views::join | std::ranges::to<std::vector>();
+        const auto default_customizable_bindings = buildDefaultBindings();
+        bindings = std::array{default_customizable_bindings, non_customizable_bindings} | std::ranges::views::join | std::ranges::to<std::vector>();
 
-        std::ofstream configFile(BindingsFilePath.data());
+        std::ofstream config_file(bindings_file_path.data());
 
-        const auto jsonString = rfl::json::write < rfl::AddTagsToVariants>(defaultCustomizableBindings);
-        configFile << jsonString;
-        ASSERT_NON_FATAL(!configFile.fail(), "Failed to write default bindings to file {}", BindingsFilePath);
-        configFile.close();
+        const auto json_string = rfl::json::write < rfl::AddTagsToVariants>(default_customizable_bindings);
+        config_file << json_string;
+        ASSERT_NON_FATAL(!config_file.fail(), "Failed to write default bindings to file {}", bindings_file_path);
+        config_file.close();
     }
 }
 
-bool EventManager::AddCallback(StateType l_state, const std::string& l_action, Callback l_callback)
+bool EventManager::addCallback(StateType l_state, const std::string& l_action, Callback l_callback)
 {
-    auto& callbacksContainer = std::get<2>(m_impl->m_tuple);
-    auto& callbacks = callbacksContainer[l_state];
+    auto& callbacks_container = std::get<2>(m_impl->m_tuple);
+    auto& callbacks = callbacks_container[l_state];
 
     if(callbacks.find(l_action) != callbacks.end())
     {
@@ -215,48 +215,48 @@ bool EventManager::AddCallback(StateType l_state, const std::string& l_action, C
     return true;
 }
 
-void EventManager::RemoveCallback(StateType l_state, const std::string& l_action)
+void EventManager::removeCallback(StateType l_state, const std::string& l_action)
 {
-    auto& callbacksContainer = std::get<2>(m_impl->m_tuple);
-    auto& callbacks = callbacksContainer[l_state];
+    auto& callbacks_container = std::get<2>(m_impl->m_tuple);
+    auto& callbacks = callbacks_container[l_state];
 
     callbacks.erase(l_action);
 }
 
-void EventManager::HandleEvent(const sf::Event& l_event)
+void EventManager::handleEvent(const sf::Event& l_event)
 {
-    auto& actualEvents = std::get<1>(m_impl->m_tuple);
-    actualEvents.push_back(l_event);
+    auto& actual_events = std::get<1>(m_impl->m_tuple);
+    actual_events.push_back(l_event);
 }
 
-void EventManager::HandleRealtimeEvents()
+void EventManager::handleRealtimeEvents()
 {
-    using Set = std::unordered_set<SimplifiedEvent, hash>;
+    using Set = std::unordered_set<SimplifiedEvent, Hash>;
 
     auto& [bindings, actualEvents, _] = m_impl->m_tuple;
-    auto uniqueBindings = bindings | std::ranges::views::transform([](const auto& l_pair){return std::get<1>(l_pair);}) | std::ranges::views::join | std::ranges::to<Set>();
+    auto unique_bindings = bindings | std::ranges::views::transform([](const auto& l_pair){return std::get<1>(l_pair);}) | std::ranges::views::join | std::ranges::to<Set>();
 
-    for(const auto& binding : uniqueBindings)
+    for(const auto& binding : unique_bindings)
     {
-        std::visit(overloaded{
+        std::visit(Overloaded{
         [&actualEvents](const KeyPressedEvent& l_event)
         {
             if(sf::Keyboard::isKeyPressed((sf::Keyboard::Key)l_event.get()))
             {
-                sf::Event rtEvent;
-                rtEvent.type = sf::Event::KeyPressed;
-                rtEvent.key.code  = (sf::Keyboard::Key)l_event.get();
-                actualEvents.emplace_back(std::move(rtEvent));
+                sf::Event rt_event{};
+                rt_event.type = sf::Event::KeyPressed;
+                rt_event.key.code  = (sf::Keyboard::Key)l_event.get();
+                actualEvents.emplace_back(std::move(rt_event));
             }
         },
         [&actualEvents](const MouseButtonPressedEvent& l_event)
         {
             if(sf::Mouse::isButtonPressed((sf::Mouse::Button)l_event.get()))
             {
-                sf::Event rtEvent;
-                rtEvent.type = sf::Event::MouseButtonPressed;
-                rtEvent.mouseButton.button = (sf::Mouse::Button)l_event.get();
-                actualEvents.emplace_back(std::move(rtEvent));
+                sf::Event rt_event{};
+                rt_event.type = sf::Event::MouseButtonPressed;
+                rt_event.mouseButton.button = (sf::Mouse::Button)l_event.get();
+                actualEvents.emplace_back(std::move(rt_event));
             }
         },
         [](const auto&){}}, binding);
@@ -265,7 +265,7 @@ void EventManager::HandleRealtimeEvents()
 
 static bool simplifiedEventMatchesActualEvent(const SimplifiedEvent& l_simpleEvent, const sf::Event& l_event)
 {
-  return std::visit(overloaded
+  return std::visit(Overloaded
     {
     [&l_event](KeyPressedEvent l_simpleEvent)
     {
@@ -291,27 +291,27 @@ static bool simplifiedEventMatchesActualEvent(const SimplifiedEvent& l_simpleEve
     return std::any_of(l_events.begin(), l_events.end(), [&l_simpleEvent](const sf::Event& l_event){return simplifiedEventMatchesActualEvent(l_simpleEvent, l_event);});
 }
 
-void EventManager::Update(StateType l_state, const sf::WindowBase& l_window)
+void EventManager::update(StateType l_state, const sf::WindowBase& l_window)
 {
-    HandleRealtimeEvents();
+    handleRealtimeEvents();
     auto& [bindings, actualEvents, callbacksContainer] = m_impl->m_tuple;
 
     for(const auto& [action, binding] : bindings)
     {
         if(std::all_of(binding.begin(), binding.end(), [&actualEvents](const auto& l_expectedEvent){return simplifiedEventMatchesActualEvent(l_expectedEvent, actualEvents);}))
         {
-            const auto& stateCallbacks = callbacksContainer[l_state];
-            auto it = stateCallbacks.find(action);
-            if(it != stateCallbacks.end())
+            const auto& state_callbacks = callbacksContainer[l_state];
+            auto it = state_callbacks.find(action);
+            if(it != state_callbacks.end())
             {
                 it->second(l_window);
             }
 
-            const auto& otherCallbacks = callbacksContainer[StateType{0}];
-            auto otherIt = otherCallbacks.find(action);
-            if(otherIt != otherCallbacks.end())
+            const auto& other_callbacks = callbacksContainer[StateType{0}];
+            auto other_it = other_callbacks.find(action);
+            if(other_it != other_callbacks.end())
             {
-                otherIt->second(l_window);
+                other_it->second(l_window);
             }
         }
     }
@@ -321,5 +321,5 @@ void EventManager::Update(StateType l_state, const sf::WindowBase& l_window)
 
 EventManager::~EventManager() = default;
 
-EventManager::EventManager(EventManager&&) = default;
-EventManager& EventManager::operator=(EventManager&&) = default;
+EventManager::EventManager(EventManager&&) noexcept = default;
+EventManager& EventManager::operator=(EventManager&&) noexcept = default;

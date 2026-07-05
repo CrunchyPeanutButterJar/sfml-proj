@@ -14,14 +14,14 @@ int main(int /*argc*/, char* /*argv*/[])
     #error "Unknown OS!"
     #endif
 
-    LOG("Current working directory : {}", Utils::GetWorkingDirectory());
+    LOG("Current working directory : {}", Utils::getWorkingDirectory());
 
-    while(!game.GetWindow()->IsDone())
+    while(!game.getWindow()->isDone())
     {
         //Game loop
-        game.Update();
-        game.Render();
-        game.LateUpdate();
+        game.update();
+        game.render();
+        game.lateUpdate();
     }
 
     return 0;

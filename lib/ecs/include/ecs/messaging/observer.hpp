@@ -1,5 +1,5 @@
-#ifndef OBSERVER_HPP
-#define OBSERVER_HPP
+#ifndef ECS_MESSAGING_OBSERVER_HPP
+#define ECS_MESSAGING_OBSERVER_HPP
 
 #include <ecs/messaging/message.hpp>
 

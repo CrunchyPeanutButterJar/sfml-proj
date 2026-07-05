@@ -9,11 +9,11 @@
 
 EntityManager::EntityManager(SystemManager& l_sysManager, TextureManager& l_textureManager):
 m_systemManager(l_sysManager),
-m_textureManager(l_textureManager),
-m_idCounter{0}
+m_textureManager(l_textureManager)
+
 {
-    addComponentType<C_Position>(Component::Position);
-    addComponentType<C_SpriteSheet>(Component::SpriteSheet);
+    addComponentType<CPosition>(Component::Position);
+    addComponentType<CSpriteSheet>(Component::SpriteSheet);
 }
 
 int EntityManager::addEntity(Bitmask l_mask)
@@ -34,55 +34,55 @@ int EntityManager::addEntity(Bitmask l_mask)
 
 int EntityManager::addEntity(const std::string& l_entityFile)
 {
-    static const std::string EntityDir = Utils::GetResourcesDirectory() + "media/entities/";
-    int entityId = -1;
-    auto fileStream = Utils::ReadFile(EntityDir + l_entityFile);
-    if(!fileStream)
+    static const std::string entity_dir = Utils::getResourcesDirectory() + "media/entities/";
+    int entity_id = -1;
+    auto file_stream = Utils::readFile(entity_dir + l_entityFile);
+    if(!file_stream)
     {
         FAILURE_NON_FATAL("Could not open entity file {}", l_entityFile);
-        return entityId;
+        return entity_id;
     }
-    Utils::Tokens tokens{std::move(*fileStream)};
+    Utils::Tokens tokens{std::move(*file_stream)};
     
     while(!tokens.empty())
     {
-        auto key = *ConsumeToken<std::string>(tokens);
+        auto key = *consumeToken<std::string>(tokens);
         if(key == "Name")
         {
 
         }
         else if(key == "Attributes")
         {
-            if(entityId != -1) 
+            if(entity_id != -1) 
             {
                 FAILURE_NON_FATAL("Invalid entity file {} : duplicate `Attributes` field found", l_entityFile);
                 return -1;
             }
-            entityId = addEntity(*ConsumeToken<Bitset>(tokens));
+            entity_id = addEntity(*consumeToken<Bitset>(tokens));
         }
         else if(key == "Component")
         {
-            if(entityId == -1)
+            if(entity_id == -1)
             {
                 FAILURE_NON_FATAL("Invalid entity file {} : `Component` field found before `Attributes` field ", l_entityFile);
                 return -1;
             }
-            const auto c_id = *ConsumeToken<unsigned int>(tokens);
-            auto* component = getComponent<C_Base>(entityId, (Component) c_id);
-            if(!component)
+            const auto c_id = *consumeToken<unsigned int>(tokens);
+            auto* component = getComponent<CBase>(entity_id, (Component) c_id);
+            if(component == nullptr)
             {
                 FAILURE_NON_FATAL("Could not find component {}", c_id);
                 return -1;
             }
             component->readInput(tokens);
-            if(auto* c_spriteSheet = static_cast<C_SpriteSheet*>(component); component->getType() == Component::SpriteSheet)
+            if(auto* c_sprite_sheet = dynamic_cast<CSpriteSheet*>(component); component->getType() == Component::SpriteSheet)
             {
-                c_spriteSheet->create(m_textureManager);
+                c_sprite_sheet->create(m_textureManager);
             }
         }
     }
 
-    return entityId;
+    return entity_id;
 }
 
 bool EntityManager::removeEntity(EntityId l_id)
@@ -110,8 +110,8 @@ bool EntityManager::addComponent(EntityId l_entity, Component l_component)
         FAILURE_NON_FATAL("Could not find Component Factory for {}", (const unsigned int&) l_component);
         return false;
     }
-    auto newComponent = itr2->second();
-    itr->second.second.emplace_back(std::move(newComponent));
+    auto new_component = itr2->second();
+    itr->second.second.emplace_back(std::move(new_component));
     itr->second.first.turnOnBit((unsigned int)l_component);
     m_systemManager.entityModified(l_entity, itr->second.first);
     return true;

@@ -1,5 +1,5 @@
-#ifndef MESSAGEHANDLER_HPP
-#define MESSAGEHANDLER_HPP
+#ifndef ECS_MESSAGING_MESSAGEHANDLER_HPP
+#define ECS_MESSAGING_MESSAGEHANDLER_HPP
 
 #include <ecs/messaging/entitymessage.hpp>
 #include <ecs/messaging/message.hpp>

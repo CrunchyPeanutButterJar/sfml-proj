@@ -1,5 +1,5 @@
-#ifndef C_SPRITESHEET_HPP
-#define C_SPRITESHEET_HPP
+#ifndef ECS_ENTITY_C_SPRITESHEET_HPP
+#define ECS_ENTITY_C_SPRITESHEET_HPP
 
 #include <SFML/Graphics/RenderWindow.hpp>
 #include <SFML/System/Vector2.hpp>
@@ -11,10 +11,10 @@
 
 #include <string>
 
-class C_SpriteSheet : public C_Drawable
+class CSpriteSheet : public CDrawable
 {
 public:
-    C_SpriteSheet();
+    CSpriteSheet();
     void readInput(Utils::Tokens& l_tokens) override;
     void create(TextureManager& l_textureManager, std::optional<std::string> l_sheetName = {});
 

@@ -17,34 +17,34 @@
 
 GameState::GameState(StateManager& l_stateManager):
 BaseState(l_stateManager),
-m_gameMap{m_stateManager.GetContext(), *this}
+m_gameMap{m_stateManager.getContext(), *this}
 {
-    m_gameMap.loadMap(Utils::GetConfigDirectory() + "map.map");
+    m_gameMap.loadMap(Utils::getConfigDirectory() + "map.map");
 
-    auto& eventManager = m_stateManager.GetContext().m_eventManager;
-    auto& entityManager = m_stateManager.GetContext().m_entityManager;
-    auto& messageHandler = m_stateManager.GetContext().m_systemManager.getMessageHandler();
+    auto& event_manager = m_stateManager.getContext().m_eventManager;
+    auto& entity_manager = m_stateManager.getContext().m_entityManager;
+    auto& message_handler = m_stateManager.getContext().m_systemManager.getMessageHandler();
 
-    EntityId playerId = m_gameMap.getPlayerId(); 
+    EntityId player_id = m_gameMap.getPlayerId(); 
 
-    auto* sprite = entityManager.getComponent<C_SpriteSheet>(playerId, Component::SpriteSheet);
+    auto* sprite = entity_manager.getComponent<CSpriteSheet>(player_id, Component::SpriteSheet);
     sprite->getSpriteSheet()->nextAnimation();
 
-    eventManager.AddCallback((EventManager::StateType)StateType::Game, "Mouse_Moved",
-    [&entityManager, playerId](const sf::Window::WindowBase& l_window)
+    event_manager.addCallback((EventManager::StateType)StateType::Game, "Mouse_Moved",
+    [&entity_manager, player_id](const sf::Window::WindowBase& l_window)
     {
-        auto* position = entityManager.getComponent<C_Position>(playerId, Component::Position);
+        auto* position = entity_manager.getComponent<CPosition>(player_id, Component::Position);
         auto [ix, iy] = sf::Mouse::getPosition(l_window);
         position->setPosition({(float)ix, (float)iy});
     });
 
-    eventManager.AddCallback((EventManager::StateType)StateType::Game, "Game_MoveLeft",
-    [playerId, &messageHandler](const sf::WindowBase&)
+    event_manager.addCallback((EventManager::StateType)StateType::Game, "Game_MoveLeft",
+    [player_id, &message_handler](const sf::WindowBase&)
     {
-        static bool moveLeft = true;
-        Message msg{.m_type = (MessageType)EntityMessage::Direction_Changed, .m_receiver = (int) playerId, .m_int = (int)(moveLeft ? Direction::Left : Direction::Right)};
-        messageHandler.dispatch(msg);
-        moveLeft = !moveLeft;
+        static bool move_left = true;
+        Message msg{.m_type = (MessageType)EntityMessage::Direction_Changed, .m_receiver = (int) player_id, .m_int = (int)(move_left ? Direction::Left : Direction::Right)};
+        message_handler.dispatch(msg);
+        move_left = !move_left;
     });
 }
 
@@ -52,14 +52,14 @@ GameState::~GameState()
 {
 }
 
-void GameState::Update(const sf::Time& l_elapsed)
+void GameState::update(const sf::Time& l_elapsed)
 {
     m_elapsed += l_elapsed;
 
     m_gameMap.update(l_elapsed.asSeconds());
-    m_stateManager.GetContext().m_systemManager.update(l_elapsed.asSeconds());
+    m_stateManager.getContext().m_systemManager.update(l_elapsed.asSeconds());
 
-    float timestep = 1.0f / 60;
+    float timestep = 1.0F / 60;
 
     if(m_elapsed.asSeconds() >= timestep)
     {
@@ -67,23 +67,23 @@ void GameState::Update(const sf::Time& l_elapsed)
     }
 }
 
-void GameState::Draw()
+void GameState::draw()
 {
-    auto& systemManager = m_stateManager.GetContext().m_systemManager;
-    auto& window = m_stateManager.GetContext().m_window;
+    auto& system_manager = m_stateManager.getContext().m_systemManager;
+    auto& window = m_stateManager.getContext().m_window;
     
     m_gameMap.draw();
-    systemManager.draw(window);
+    system_manager.draw(window);
 }
 
-void GameState::Activate()
+void GameState::activate()
 {
 }
 
-void GameState::Deactivate()
+void GameState::deactivate()
 {
 }
 
-void GameState::OnCreate()
+void GameState::onCreate()
 {
 }

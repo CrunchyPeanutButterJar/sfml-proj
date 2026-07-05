@@ -21,7 +21,7 @@ bool Tokens::currentMatch()
     [](auto& l_ss, const std::string& l_delimiters) -> std::string
     {
         std::string token;
-        char c;
+        char c = 0;
         while(l_ss.get(c) && !l_delimiters.contains(c))
         {
             token.push_back(c);
@@ -77,7 +77,7 @@ std::optional<std::string> Tokens::advance()
     return std::nullopt;
 }
 
-std::optional<std::istringstream> ReadFile(const std::string& l_filePath)
+std::optional<std::istringstream> readFile(const std::string& l_filePath)
 {
     std::ifstream file{l_filePath};
     if (!file)
@@ -85,9 +85,9 @@ std::optional<std::istringstream> ReadFile(const std::string& l_filePath)
         return {};
     }
     
-    std::string fileContent{std::istreambuf_iterator<char>(file), std::istreambuf_iterator<char>()};
+    std::string file_content{std::istreambuf_iterator<char>(file), std::istreambuf_iterator<char>()};
 
-    return std::istringstream{std::move(fileContent)};
+    return std::istringstream{std::move(file_content)};
 }
 
 size_t pgcd(size_t l_n1, size_t l_n2)

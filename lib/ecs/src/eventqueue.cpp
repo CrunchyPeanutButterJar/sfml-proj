@@ -11,9 +11,9 @@ std::optional<EventId> EventQueue::processEvent()
     {
         return {};
     }
-    auto eventId = m_queue.front();
+    auto event_id = m_queue.front();
     m_queue.pop();
-    return eventId;
+    return event_id;
 }
 
 void EventQueue::clear()

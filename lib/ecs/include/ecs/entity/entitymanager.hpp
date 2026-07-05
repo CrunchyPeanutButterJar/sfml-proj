@@ -1,5 +1,5 @@
-#ifndef ENTITYMANAGER_HPP
-#define ENTITYMANAGER_HPP
+#ifndef ECS_ENTITY_ENTITYMANAGER_HPP
+#define ECS_ENTITY_ENTITYMANAGER_HPP
 
 #include <core/graphics/textureManager.fwd.hpp>
 #include <ecs/system/systemmanager.fwd.hpp>
@@ -10,10 +10,10 @@
 #include <utility>
 #include <unordered_map>
 
-using ComponentContainer = std::vector<C_BasePtr>;
+using ComponentContainer = std::vector<CBasePtr>;
 using EntityData = std::pair<Bitmask, ComponentContainer>;
 using EntityContainer = std::unordered_map<EntityId, EntityData>;
-using ComponentFactory = std::unordered_map<Component, std::function<C_BasePtr()>>;
+using ComponentFactory = std::unordered_map<Component, std::function<CBasePtr()>>;
 
 class EntityManager
 {
@@ -39,7 +39,7 @@ public:
         }
         auto& components = itr->second.second;
         auto component = std::find_if(components.begin(), components.end(),
-        [l_component](const C_BasePtr& l_c)
+        [l_component](const CBasePtr& l_c)
         {
             return l_c->getType() == l_component;
         });
@@ -52,14 +52,14 @@ private:
     template<class T>
     void addComponentType(Component l_id)
     {
-        m_componentFactory[l_id] = []() -> C_BasePtr {return std::make_unique<T>();};
+        m_componentFactory[l_id] = []() -> CBasePtr {return std::make_unique<T>();};
     }
 
-private:
+
     SystemManager& m_systemManager;
     TextureManager& m_textureManager;
 
-    EntityId m_idCounter;
+    EntityId m_idCounter{0};
     EntityContainer m_entities;
     ComponentFactory m_componentFactory;
 };

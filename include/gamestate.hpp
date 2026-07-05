@@ -11,15 +11,15 @@ class GameState : public BaseState
 {
 public:
     GameState(StateManager& l_stateManager);
-    virtual ~GameState();
+    ~GameState() override;
 
-    void Update(const sf::Time& l_elapsed) override;
-    void Draw() override;
+    void update(const sf::Time& l_elapsed) override;
+    void draw() override;
 
-    void Activate() override;
-    void Deactivate() override;
+    void activate() override;
+    void deactivate() override;
 
-    void OnCreate() override;
+    void onCreate() override;
 
 private:
     sf::Time m_elapsed;

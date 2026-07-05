@@ -26,7 +26,7 @@ private:
     TileId convertCoordinates(size_t iRow, size_t iCol);
     sf::Vector2u convertCoordinates(TileId l_id);
 
-private:
+
     SharedContext& m_context;
     BaseState& m_currentState;
     TileSheet m_tileSet;

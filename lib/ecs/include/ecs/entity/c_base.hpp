@@ -1,15 +1,15 @@
-#ifndef C_BASE_HPP
-#define C_BASE_HPP
+#ifndef ECS_ENTITY_C_BASE_HPP
+#define ECS_ENTITY_C_BASE_HPP
 
 #include <ecs/ecs_types.hpp>
 #include <utils/utilities.hpp>
 #include <memory>
 
-class C_Base
+class CBase
 {
 public:
-    C_Base(Component l_type) : m_type{l_type} {}
-    virtual ~C_Base() = default;
+    CBase(Component l_type) : m_type{l_type} {}
+    virtual ~CBase() = default;
 
     Component getType() const {return m_type;}
 
@@ -19,6 +19,6 @@ private:
     Component m_type;
 };
 
-using C_BasePtr = std::unique_ptr<C_Base>;
+using CBasePtr = std::unique_ptr<CBase>;
 
 #endif

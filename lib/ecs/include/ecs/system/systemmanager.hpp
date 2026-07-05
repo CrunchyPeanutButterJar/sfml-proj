@@ -1,5 +1,5 @@
-#ifndef SYSTEMMANAGER_HPP
-#define SYSTEMMANAGER_HPP
+#ifndef ECS_SYSTEM_SYSTEMMANAGER_HPP
+#define ECS_SYSTEM_SYSTEMMANAGER_HPP
 
 #include <ecs/system/s_base.hpp>
 #include <ecs/ecs_types.hpp>
@@ -11,7 +11,7 @@
 #include <core/window.fwd.hpp>
 #include <unordered_map>
 
-using SystemContainer = std::unordered_map<System, S_BasePtr>;
+using SystemContainer = std::unordered_map<System, SBasePtr>;
 using EntityEventContainer = std::unordered_map<EntityId, EventQueue>;
 
 class SystemManager

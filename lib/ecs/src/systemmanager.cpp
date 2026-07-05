@@ -4,7 +4,7 @@
 
 SystemManager::SystemManager(EntityManager& l_entityManager) : m_entityManager{l_entityManager}
 {
-    m_systems[System::Renderer] = std::make_unique<S_Renderer>(*this);
+    m_systems[System::Renderer] = std::make_unique<SRenderer>(*this);
 }
 
 EntityManager& SystemManager::getEntityManager()
@@ -63,9 +63,9 @@ void SystemManager::update(float l_dt)
 
 void SystemManager::handleEvents()
 {
-    for(auto& entityAndEvents : m_events)
+    for(auto& entity_and_events : m_events)
     {
-        auto& [entity, events] = entityAndEvents;
+        auto& [entity, events] = entity_and_events;
         while(auto event = events.processEvent())
         {
             for(auto& s_itr : m_systems)
@@ -81,7 +81,7 @@ void SystemManager::handleEvents()
 
 void SystemManager::draw(Window& l_window)
 {
-    auto* s_renderer = getSystem<S_Renderer>(System::Renderer);
+    auto* s_renderer = getSystem<SRenderer>(System::Renderer);
     ASSERT(s_renderer, "Renderer not initialized!!");
     s_renderer->render(l_window);
 }

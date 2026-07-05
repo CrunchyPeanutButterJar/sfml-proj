@@ -1,5 +1,6 @@
 #include <gtest/gtest.h>
 #include <gmock/gmock.h>
+#include <math.h>
 #include <utils/utilities.hpp>
 #include <utils/bitmask.hpp>
 #include <sstream>
@@ -13,27 +14,29 @@ TEST(Tokenizer, consume_typed_tokens)
 
     Utils::Tokens tokens{std::istringstream(ss.str())};
 
-    float x,y,z;
+    float x = NAN;
+    float y = NAN;
+    float z = NAN;
 
-    std::tie(std::ignore, x, y, z) = *ConsumeTokens<std::string, float, float, float>(tokens);
-    EXPECT_FLOAT_EQ(x, 1.0f);
-    EXPECT_FLOAT_EQ(y, 2.0f);
-    EXPECT_FLOAT_EQ(z, 3.14f);
+    std::tie(std::ignore, x, y, z) = *consumeTokens<std::string, float, float, float>(tokens);
+    EXPECT_FLOAT_EQ(x, 1.0F);
+    EXPECT_FLOAT_EQ(y, 2.0F);
+    EXPECT_FLOAT_EQ(z, 3.14F);
 
-    int age;
+    int age = 0;
 
-    std::tie(std::ignore, age) = *ConsumeTokens<std::string, int>(tokens);
+    std::tie(std::ignore, age) = *consumeTokens<std::string, int>(tokens);
     EXPECT_EQ(age, 18);
 
     std::string name;
 
-    std::tie(std::ignore, name) = *ConsumeTokens<std::string, std::string>(tokens);
+    std::tie(std::ignore, name) = *consumeTokens<std::string, std::string>(tokens);
     EXPECT_EQ(name, "joe");
 
-    std::string familyName;
+    std::string family_name;
     
-    std::tie(std::ignore, familyName) = *ConsumeTokens<std::string, std::string>(tokens);
-    EXPECT_EQ(familyName, "Rustom");
+    std::tie(std::ignore, family_name) = *consumeTokens<std::string, std::string>(tokens);
+    EXPECT_EQ(family_name, "Rustom");
 
     EXPECT_TRUE(tokens.empty());
 }
@@ -59,7 +62,7 @@ TEST(Tokenizer, consume_tokens_return_nullopt_in_case_of_failure)
         ss << "      \n\n\n\n\n\n\n#this is a comment       \n\n\n\n\n";
 
         Utils::Tokens tokens{std::istringstream(ss.str())};
-        auto result = ConsumeTokens<int, float, double>(tokens);
+        auto result = consumeTokens<int, float, double>(tokens);
         EXPECT_FALSE(result.has_value());
     }
 
@@ -68,7 +71,7 @@ TEST(Tokenizer, consume_tokens_return_nullopt_in_case_of_failure)
         ss << "      \n\n\n\n\n\n\n joeeee tempppp       \n\n\n\n\n";
 
         Utils::Tokens tokens{std::istringstream(ss.str())};
-        auto result = ConsumeTokens<int, float, double>(tokens);
+        auto result = consumeTokens<int, float, double>(tokens);
         EXPECT_FALSE(result.has_value());
     }
 }
@@ -79,7 +82,7 @@ TEST(Tokenizer, skips_line_correctly)
     ss << "      \n\n\n\n\n\n\n  this is a   line       \n\n  joe   \n\n\n";
     Utils::Tokens tokens{std::istringstream{ss.str()}};
     tokens.skipLine();
-    auto token = ConsumeToken<std::string>(tokens);
+    auto token = consumeToken<std::string>(tokens);
     ASSERT_TRUE(token.has_value());
     EXPECT_EQ(*token, "joe");
 }
@@ -111,12 +114,12 @@ TEST(number_theory, euclid_division_pgcd_ppcm)
 
 TEST(bitmask, smoke_test)
 {
-    const Bitset PositionComponent = 1 << 0;
-    const Bitset SpriteComponent = 1 << 1;
-    const Bitset MovableComponent = 1 << 2;
-    const Bitset StateComponent = 1 << 3;
+    const Bitset position_component = 1 << 0;
+    const Bitset sprite_component = 1 << 1;
+    const Bitset movable_component = 1 << 2;
+    const Bitset state_component = 1 << 3;
 
-    Bitmask mask{PositionComponent | SpriteComponent | MovableComponent | StateComponent};
+    Bitmask mask{position_component | sprite_component | movable_component | state_component};
     EXPECT_TRUE(mask.getBit(0));
     EXPECT_TRUE(mask.getBit(1));
     EXPECT_TRUE(mask.getBit(2));
@@ -140,14 +143,14 @@ TEST(bitmask, smoke_test)
     EXPECT_FALSE(mask.getBit(2));
     EXPECT_FALSE(mask.getBit(3));
 
-    Bitmask moveAndPosition{};
-    moveAndPosition.setMask(MovableComponent | PositionComponent);
+    Bitmask move_and_position{};
+    move_and_position.setMask(movable_component | position_component);
 
-    Bitmask moveAndState{};
-    moveAndState.setMask(MovableComponent | StateComponent);
+    Bitmask move_and_state{};
+    move_and_state.setMask(movable_component | state_component);
 
-    EXPECT_TRUE(moveAndPosition.matches(moveAndState, MovableComponent));
-    EXPECT_TRUE(moveAndState.matches(moveAndPosition, MovableComponent));
+    EXPECT_TRUE(move_and_position.matches(move_and_state, movable_component));
+    EXPECT_TRUE(move_and_state.matches(move_and_position, movable_component));
 
-    EXPECT_FALSE(moveAndPosition.matches(moveAndState));
+    EXPECT_FALSE(move_and_position.matches(move_and_state));
 }

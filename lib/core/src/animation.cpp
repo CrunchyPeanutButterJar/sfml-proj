@@ -9,13 +9,13 @@ void Animation::cropSprite()
     int width = (int) uwidth;
     int height = (int) uheight;
 
-    Direction currentDirection = m_spriteSheet->getDirection();
+    Direction current_direction = m_spriteSheet->getDirection();
 
     sf::IntRect rect
     {
-        width * (currentDirection == Direction::Right? (int)getFrame() : (int) getFrame() + 1),
+        width * (current_direction == Direction::Right? (int)getFrame() : (int) getFrame() + 1),
         height * (int)m_frameRow,
-        currentDirection == Direction::Right? width : -width,
+        current_direction == Direction::Right? width : -width,
         height
     };
 
@@ -38,7 +38,7 @@ void Animation::frameStep()
 
 void Animation::readInput(Utils::Tokens& l_tokens)
 {
-    auto tuple = Utils::ConsumeTokens<Frame, Frame, Frame, float, int, int>(l_tokens);
+    auto tuple = Utils::consumeTokens<Frame, Frame, Frame, float, int, int>(l_tokens);
 
     ASSERT(tuple.has_value(), "Error reading Animation from config file");
 

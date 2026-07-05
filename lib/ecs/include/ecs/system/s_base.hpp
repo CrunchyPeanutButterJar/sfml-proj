@@ -1,5 +1,5 @@
-#ifndef S_BASE_HPP
-#define S_BASE_HPP
+#ifndef ECS_SYSTEM_S_BASE_HPP
+#define ECS_SYSTEM_S_BASE_HPP
 
 #include <ecs/system/systemmanager.fwd.hpp>
 #include <ecs/ecs_types.hpp>
@@ -12,11 +12,11 @@
 using EntityList = std::vector<EntityId>;
 using Requirements = std::vector<Bitmask>;
 
-class S_Base : public Observer
+class SBase : public Observer
 {
 public:
-    S_Base(System l_id, SystemManager& l_sysManager);
-    virtual ~S_Base() = default;
+    SBase(System l_id, SystemManager& l_sysManager);
+    ~SBase() override = default;
 
     bool addEntity(EntityId l_entity);
     bool hasEntity(EntityId l_entity);
@@ -36,6 +36,6 @@ protected:
     EntityList m_entities;
 };
 
-using S_BasePtr = std::unique_ptr<S_Base>;
+using SBasePtr = std::unique_ptr<SBase>;
 
 #endif

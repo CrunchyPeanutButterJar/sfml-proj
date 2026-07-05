@@ -33,22 +33,22 @@ class StateManager
 public:
     StateManager(SharedContext l_sharedContext);
 
-    void Update(const sf::Time& l_elapsed);
-    void Draw();
+    void update(const sf::Time& l_elapsed);
+    void draw();
 
-    void SwitchTo(StateType l_state);
-    void Remove(StateType l_state);
-    void ProcessRequests();
+    void switchTo(StateType l_state);
+    void remove(StateType l_state);
+    void processRequests();
 
-    StateType GetCurrentState() const;
-    bool HasState(StateType l_state) const;
+    StateType getCurrentState() const;
+    bool hasState(StateType l_state) const;
 
-    SharedContext& GetContext();
-
-private:
-    template<typename StateImpl> void RegisterState(StateType l_stateType);
+    SharedContext& getContext();
 
 private:
+    template<typename StateImpl> void registerState(StateType l_stateType);
+
+
     SharedContext m_context;
     StateContainer m_states;
     StateFactory m_stateFactory;

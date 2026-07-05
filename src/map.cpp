@@ -17,10 +17,10 @@ sf::Vector2u Map::convertCoordinates(TileId l_id)
     ASSERT(m_mapSize.x != 0 && m_mapSize.y != 0, "Map dimensions invalid");
     const auto [nRows, nCols] = m_mapSize;
 
-    TileId iRow = l_id < nCols? 0 : l_id % nCols;
-    TileId iCol = l_id - iRow * nCols;
+    TileId i_row = l_id < nCols? 0 : l_id % nCols;
+    TileId i_col = l_id - i_row * nCols;
     
-    return {iRow, iCol};
+    return {i_row, i_col};
 }
 
 TileId Map::convertCoordinates(size_t iRow, size_t iCol)
@@ -34,51 +34,51 @@ TileId Map::convertCoordinates(size_t iRow, size_t iCol)
 
 void Map::loadMap(const std::string& l_path)
 {
-    auto mapFile = Utils::ReadFile(l_path);
-    ASSERT(mapFile.has_value(), "Error reading map file {}", l_path);
-    Utils::Tokens tokens{std::move(*mapFile)};
+    auto map_file = Utils::readFile(l_path);
+    ASSERT(map_file.has_value(), "Error reading map file {}", l_path);
+    Utils::Tokens tokens{std::move(*map_file)};
     
     while(!tokens.empty())
     {
-        auto key = *ConsumeToken<std::string>(tokens);
+        auto key = *consumeToken<std::string>(tokens);
         if(key == "TilesSet")
         {
-            loadTileset(Utils::GetConfigDirectory() + *ConsumeToken<std::string>(tokens));
+            loadTileset(Utils::getConfigDirectory() + *consumeToken<std::string>(tokens));
         }
         else if(key == "Background")
         {
-            std::string textureAlias = *ConsumeToken<std::string>(tokens);
+            std::string texture_alias = *consumeToken<std::string>(tokens);
             ASSERT_NON_FATAL(m_backgroundTexture == nullptr, "Overriding background texture");
-            m_backgroundTexture = m_context.m_textureManager.acquire(textureAlias);
-            ASSERT_NON_FATAL(m_backgroundTexture != nullptr, "Could not load background texture with alias {}", textureAlias);
+            m_backgroundTexture = m_context.m_textureManager.acquire(texture_alias);
+            ASSERT_NON_FATAL(m_backgroundTexture != nullptr, "Could not load background texture with alias {}", texture_alias);
             if(m_backgroundTexture != nullptr)
             {
                 m_background.setTexture(*m_backgroundTexture);
-                const auto textureSize = m_backgroundTexture->getSize();
-                const auto viewSize = m_currentState.GetView().getSize();
-                m_background.setScale( {viewSize.x / textureSize.x, viewSize.y / textureSize.y} );
+                const auto texture_size = m_backgroundTexture->getSize();
+                const auto view_size = m_currentState.getView().getSize();
+                m_background.setScale( {view_size.x / texture_size.x, view_size.y / texture_size.y} );
             }
         }
         else if(key == "Gravity")
         {
-            *ConsumeToken<float>(tokens);//discard for now
+            *consumeToken<float>(tokens);//discard for now
         }
         else if (key == "Size")
         {
-            std::tie(m_mapSize.x, m_mapSize.y) = *ConsumeTokens<size_t, size_t>(tokens);
+            std::tie(m_mapSize.x, m_mapSize.y) = *consumeTokens<size_t, size_t>(tokens);
         }
         else if(key == "TilesStart")
         {
             std::string temp;
             while(temp = *tokens.head<std::string>(), temp != "TilesEnd")
             {
-                auto [tileId, iRow, iCol] = *ConsumeTokens<TileId, size_t, size_t>(tokens);
+                auto [tileId, iRow, iCol] = *consumeTokens<TileId, size_t, size_t>(tokens);
                 auto it = m_tileSet.find(tileId);
                 ASSERT_NON_FATAL(it != m_tileSet.end(), "Invalid tile id {}", tileId);
                 if(it != m_tileSet.end())
                 {
-                    TileInfo& tileInfo = it->second;
-                    ASSERT_NON_FATAL(m_tileMap.emplace(convertCoordinates(iRow, iCol), Tile{&tileInfo}).second,
+                    TileInfo& tile_info = it->second;
+                    ASSERT_NON_FATAL(m_tileMap.emplace(convertCoordinates(iRow, iCol), Tile{&tile_info}).second,
                 "Overriding existing tile at coordinates ({}, {})", iRow, iCol);
                 }
             }
@@ -89,7 +89,7 @@ void Map::loadMap(const std::string& l_path)
             std::string temp;
             while(temp = *tokens.head<std::string>(), temp != "EntitiesEnd")
             {
-                auto name = *ConsumeToken<std::string>(tokens);
+                auto name = *consumeToken<std::string>(tokens);
                 auto& entities = m_context.m_entityManager;
                 int entity = m_context.m_entityManager.addEntity(name);
                 if(entity < 0 )
@@ -103,8 +103,8 @@ void Map::loadMap(const std::string& l_path)
                     m_playerId = entity;
                 }
 
-                auto* position = entities.getComponent<C_Position>(entity, Component::Position);
-                if(position)
+                auto* position = entities.getComponent<CPosition>(entity, Component::Position);
+                if(position != nullptr)
                 {
                     position->readInput(tokens);
                 }
@@ -116,43 +116,45 @@ void Map::loadMap(const std::string& l_path)
 
 void Map::loadTileset(const std::string &l_path)
 {
-    auto tileSetFile = Utils::ReadFile(l_path);
-    ASSERT(tileSetFile.has_value(), "Error reading tileset file {}", l_path);
-    Utils::Tokens tokens{std::move(*tileSetFile)};
-    bool filledDimensions = false, filledTileSize = false, filledTexture = false; 
+    auto tile_set_file = Utils::readFile(l_path);
+    ASSERT(tile_set_file.has_value(), "Error reading tileset file {}", l_path);
+    Utils::Tokens tokens{std::move(*tile_set_file)};
+    bool filledDimensions = false;
+    bool filledTileSize = false;
+    bool filledTexture = false; 
 
     while(!tokens.empty())
     {
-        auto key = *ConsumeToken<std::string>(tokens);
+        auto key = *consumeToken<std::string>(tokens);
         if(key == "Dimensions")
         {
             ASSERT_NON_FATAL(!filledDimensions, "Overriding tilesheet dimensions in {}", l_path);
-            std::tie(m_tileSheetConfig.m_width, m_tileSheetConfig.m_height) = *ConsumeTokens<size_t, size_t>(tokens);
+            std::tie(m_tileSheetConfig.m_width, m_tileSheetConfig.m_height) = *consumeTokens<size_t, size_t>(tokens);
             filledDimensions = true;
         }
         else if(key == "TileSize")
         {
             ASSERT_NON_FATAL(!filledTileSize, "Overriding tilesheet tilesize in {}", l_path);
-            std::tie(m_tileSheetConfig.m_tileSize) = *ConsumeTokens<size_t>(tokens);
+            std::tie(m_tileSheetConfig.m_tileSize) = *consumeTokens<size_t>(tokens);
             filledTileSize = true;
         }
         else if(key == "Texture")
         {
             ASSERT_NON_FATAL(!filledTexture, "Overriding tilesheet texture in {}", l_path);
-            std::string textureAlias = *ConsumeToken<std::string>(tokens);
-            m_tileSheetConfig.m_texture = m_context.m_textureManager.acquire(textureAlias);
-            ASSERT_NON_FATAL(m_tileSheetConfig.m_texture != nullptr, "Error loading texture alias {}", textureAlias);
+            std::string texture_alias = *consumeToken<std::string>(tokens);
+            m_tileSheetConfig.m_texture = m_context.m_textureManager.acquire(texture_alias);
+            ASSERT_NON_FATAL(m_tileSheetConfig.m_texture != nullptr, "Error loading texture alias {}", texture_alias);
             filledTexture = true;
         }
         else if(key == "TilesStart")
         {
             ASSERT(filledDimensions && filledTileSize && filledTexture, "Invalid config for {}", l_path);
-            std::string tileType;
-            while(std::tie(tileType) = *ConsumeTokens<std::string>(tokens), tileType != "TilesEnd")
+            std::string tile_type;
+            while(std::tie(tile_type) = *consumeTokens<std::string>(tokens), tile_type != "TilesEnd")
             {
-                TileInfo newTile{m_tileSheetConfig, tokens};
-                auto tileId = newTile.m_id;
-                ASSERT_NON_FATAL(m_tileSet.insert({tileId, std::move(newTile)}).second, "Overriden Tile id {} from config file {}", tileId, l_path);
+                TileInfo new_tile{m_tileSheetConfig, tokens};
+                auto tile_id = new_tile.m_id;
+                ASSERT_NON_FATAL(m_tileSet.insert({tile_id, std::move(new_tile)}).second, "Overriden Tile id {} from config file {}", tile_id, l_path);
             }
         }
     }
@@ -160,41 +162,41 @@ void Map::loadTileset(const std::string &l_path)
     ASSERT(filledDimensions && filledTileSize && filledTexture, "Missing data in tilesheet config file {}", l_path);
 }
 
-void Map::update(float)
+void Map::update(float /*unused*/)
 {
-    sf::FloatRect viewSpace = m_context.m_window.GetViewSpace();
-    m_background.setPosition(viewSpace.left, viewSpace.top);
+    sf::FloatRect view_space = m_context.m_window.getViewSpace();
+    m_background.setPosition(view_space.left, view_space.top);
 }
 
 void Map::draw()
 {
-    auto* window = m_context.m_window.GetRenderWindow();
+    auto* window = m_context.m_window.getRenderWindow();
     window->draw(m_background);
-    const sf::FloatRect viewSpace = m_context.m_window.GetViewSpace();
+    const sf::FloatRect view_space = m_context.m_window.getViewSpace();
     
-    float x = viewSpace.left;
-    float y = viewSpace.top;
+    float x = view_space.left;
+    float y = view_space.top;
 
     const auto [nRow, nCols] = m_mapSize;
-    const size_t tileSize = m_tileSheetConfig.m_tileSize;
+    const size_t tile_size = m_tileSheetConfig.m_tileSize;
 
-    TileId iRowBegin = std::floor(y / tileSize);
-    TileId iColBegin = std::ceil(x / tileSize);
+    TileId i_row_begin = std::floor(y / tile_size);
+    TileId i_col_begin = std::ceil(x / tile_size);
 
-    for(TileId iRow = iRowBegin; iRow < nRow; iRow++)
+    for(TileId i_row = i_row_begin; i_row < nRow; i_row++)
     {
-        for(TileId iCol = iColBegin; iCol < nCols ; iCol++)
+        for(TileId i_col = i_col_begin; i_col < nCols ; i_col++)
         {
-            if(auto it = m_tileMap.find(convertCoordinates(iRow, iCol)); it != m_tileMap.end())
+            if(auto it = m_tileMap.find(convertCoordinates(i_row, i_col)); it != m_tileMap.end())
             {
                 auto& tile = it->second;
-                auto& tileInfo = *tile.m_tileInfo;
-                tileInfo.m_sprite.setPosition
+                auto& tile_info = *tile.m_tileInfo;
+                tile_info.m_sprite.setPosition
                 ({
-                    (float)iCol*tileSize,
-                    (float)iRow*tileSize
+                    (float)i_col*tile_size,
+                    (float)i_row*tile_size
                 });
-                window->draw(tileInfo.m_sprite);
+                window->draw(tile_info.m_sprite);
             }
         }
     }

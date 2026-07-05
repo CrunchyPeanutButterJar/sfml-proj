@@ -1,13 +1,13 @@
-#ifndef C_POSITION_HPP
-#define C_POSITION_HPP
+#ifndef ECS_ENTITY_C_POSITION_HPP
+#define ECS_ENTITY_C_POSITION_HPP
 
 #include <ecs/entity/c_base.hpp>
 #include <SFML/System/Vector2.hpp>
 
-class C_Position : public C_Base
+class CPosition : public CBase
 {
 public:
-    C_Position();
+    CPosition();
 
     void readInput(Utils::Tokens& l_tokens) override;
 

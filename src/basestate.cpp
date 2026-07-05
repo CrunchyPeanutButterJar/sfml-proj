@@ -2,7 +2,7 @@
 #include <statemanager.hpp>
 #include <core/window.hpp>
 
-BaseState::BaseState(StateManager& l_stateManager) : m_stateManager(l_stateManager)
+BaseState::BaseState(StateManager& l_stateManager) : m_stateManager(l_stateManager), m_view(m_stateManager.getContext().m_window.getRenderWindow()->getDefaultView())
 {
-    m_view = m_stateManager.GetContext().m_window.GetRenderWindow()->getDefaultView();
+    
 }

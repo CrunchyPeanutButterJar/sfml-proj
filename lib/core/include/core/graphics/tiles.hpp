@@ -1,5 +1,5 @@
-#ifndef TILES_HPP
-#define TILES_HPP
+#ifndef CORE_GRAPHICS_TILES_HPP
+#define CORE_GRAPHICS_TILES_HPP
 
 #include <SFML/Graphics/Sprite.hpp>
 #include <SFML/System/Vector2.hpp>
@@ -12,9 +12,9 @@ using TileId = unsigned int;
 
 struct TileSheetConfig
 {
-    size_t m_tileSize;
-    size_t m_width;
-    size_t m_height;
+    size_t m_tileSize{};
+    size_t m_width{};
+    size_t m_height{};
     std::shared_ptr<sf::Texture> m_texture;
 };
 

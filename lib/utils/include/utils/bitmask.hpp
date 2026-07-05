@@ -1,5 +1,5 @@
-#ifndef BITMASK_HPP
-#define BITMASK_HPP
+#ifndef UTILS_BITMASK_HPP
+#define UTILS_BITMASK_HPP
 
 #include <stdint.h>
 
@@ -10,7 +10,7 @@ class Bitmask
 public:
   using Position = uint8_t;
 
-public:
+
     Bitmask();
     Bitmask(Bitset l_bits);
 

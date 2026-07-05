@@ -1,5 +1,5 @@
-#ifndef RESOURCEMANAGER_HPP
-#define RESOURCEMANAGER_HPP
+#ifndef CORE_RESOURCEMANAGER_HPP
+#define CORE_RESOURCEMANAGER_HPP
 
 #include <utils/assert.hpp>
 #include <utils/utilities.hpp>
@@ -13,13 +13,13 @@ public:
 
 ResourceManager(const std::string& l_pathFileName)
 {
-    if(auto fileContent = Utils::ReadFile(Utils::GetConfigDirectory() + l_pathFileName))
+    if(auto file_content = Utils::readFile(Utils::getConfigDirectory() + l_pathFileName))
     {
-        Utils::Tokens tokens{std::move(*fileContent)}; // Alias Path
+        Utils::Tokens tokens{std::move(*file_content)}; // Alias Path
 
         while(!tokens.empty())
         {
-            auto tuple = Utils::ConsumeTokens<std::string, std::string>(tokens);
+            auto tuple = Utils::consumeTokens<std::string, std::string>(tokens);
             ASSERT(tuple.has_value(), "Error reading from ressource file {}", l_pathFileName);
 
             const auto [alias, path] = *tuple;
@@ -44,17 +44,17 @@ std::shared_ptr<T> acquire(const std::string& l_alias)
 
     if(it == m_resources.end() || it->second.lock() == nullptr)
     {
-        auto resourcePathIt = m_paths.find(l_alias);
-        if (resourcePathIt == m_paths.end())
+        auto resource_path_it = m_paths.find(l_alias);
+        if (resource_path_it == m_paths.end())
         {
             FAILURE_NON_FATAL("Invalid resource alias {}", l_alias);
             return nullptr;
         }
 
-        auto tmp = load(resourcePathIt->second);
+        auto tmp = load(resource_path_it->second);
         if(tmp == nullptr)
         {
-            FAILURE_NON_FATAL("Failed to load resource {} at {}", l_alias, resourcePathIt->second);
+            FAILURE_NON_FATAL("Failed to load resource {} at {}", l_alias, resource_path_it->second);
             return nullptr;
         }
 

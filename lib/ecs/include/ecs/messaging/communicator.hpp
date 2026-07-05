@@ -1,5 +1,5 @@
-#ifndef COMMUNICATOR_HPP
-#define COMMUNICATOR_HPP
+#ifndef ECS_MESSAGING_COMMUNICATOR_HPP
+#define ECS_MESSAGING_COMMUNICATOR_HPP
 
 #include <ecs/messaging/observer.hpp>
 #include <set>

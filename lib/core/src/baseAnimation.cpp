@@ -29,7 +29,7 @@ void BaseAnimation::stop()
 void BaseAnimation::reset()
 {
     m_frameCurrent = m_frameStart;
-    m_elapsedTime = 0.0f;
+    m_elapsedTime = 0.0F;
     cropSprite();   
 }
 

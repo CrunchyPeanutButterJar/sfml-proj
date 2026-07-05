@@ -5,7 +5,7 @@
 TEST(serialization_deserialization, serialization_deserialization_of_bindings_is_symmetrical)
 {
   auto bindings = buildBindings();
-  auto jsonBindings = serializeBindings(bindings);
-  auto deserializedBindings = deserializeBindings(jsonBindings);
-  EXPECT_TRUE(bindingsAreEquivalent(bindings, deserializedBindings));
+  auto json_bindings = serializeBindings(bindings);
+  auto deserialized_bindings = deserializeBindings(json_bindings);
+  EXPECT_TRUE(bindingsAreEquivalent(bindings, deserialized_bindings));
 }

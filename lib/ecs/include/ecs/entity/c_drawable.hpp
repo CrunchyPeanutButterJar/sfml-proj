@@ -1,15 +1,15 @@
-#ifndef C_DRAWABLE_HPP
-#define C_DRAWABLE_HPP
+#ifndef ECS_ENTITY_C_DRAWABLE_HPP
+#define ECS_ENTITY_C_DRAWABLE_HPP
 
 #include <ecs/entity/c_base.hpp>
 #include <SFML/System/Vector2.hpp>
 #include <SFML/Graphics/RenderWindow.hpp>
 
-class C_Drawable : public C_Base
+class CDrawable : public CBase
 {
 public:
-    C_Drawable(Component l_type) : C_Base(l_type) {}
-    virtual ~C_Drawable() = default;
+    CDrawable(Component l_type) : CBase(l_type) {}
+    ~CDrawable() override = default;
 
     virtual void updatePosition(const sf::Vector2f& l_vec) = 0;
     virtual const sf::Vector2u& getSize() = 0;
