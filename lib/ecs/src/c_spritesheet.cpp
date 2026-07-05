@@ -8,23 +8,23 @@ CSpriteSheet::CSpriteSheet():
 CDrawable(Component::SpriteSheet)
 {}
 
-void CSpriteSheet::readInput(Utils::Tokens& l_tokens)
+void CSpriteSheet::readInput(utils::Tokens& l_tokens)
 {
     m_sheetName = *consumeToken<std::string>(l_tokens);
 }
 
-void CSpriteSheet::create(TextureManager& l_textureManager, std::optional<std::string> l_sheetName)
+void CSpriteSheet::create(core::graphics::TextureManager& l_textureManager, std::optional<std::string> l_sheetName)
 {
     if(m_spriteSheet)
     {
         LOG("Overriding spritesheet");
     }
 
-    m_spriteSheet.emplace(SpriteSheet{l_textureManager});
-    m_spriteSheet->loadSheet(Utils::getResourcesDirectory() + "media/spritesheets/" + (l_sheetName? *l_sheetName: m_sheetName));
+    m_spriteSheet.emplace(core::graphics::SpriteSheet{l_textureManager});
+    m_spriteSheet->loadSheet(utils::getResourcesDirectory() + "media/spritesheets/" + (l_sheetName? *l_sheetName: m_sheetName));
 }
 
-SpriteSheet* CSpriteSheet::getSpriteSheet()
+core::graphics::SpriteSheet* CSpriteSheet::getSpriteSheet()
 {
     if(m_spriteSheet)
     {
@@ -36,19 +36,19 @@ SpriteSheet* CSpriteSheet::getSpriteSheet()
 
 void CSpriteSheet::updatePosition(const sf::Vector2f& l_position)
 {
-    ASSERT(m_spriteSheet.has_value(), "SpriteSheet {} was not loaded!", m_sheetName);
+    ASSERT(m_spriteSheet.has_value(), "core::graphics::SpriteSheet {} was not loaded!", m_sheetName);
     m_spriteSheet->setSpritePosition(l_position);
 }
 
 const sf::Vector2u& CSpriteSheet::getSize()
 {
-    ASSERT(m_spriteSheet.has_value(), "SpriteSheet {} was not loaded!", m_sheetName);
+    ASSERT(m_spriteSheet.has_value(), "core::graphics::SpriteSheet {} was not loaded!", m_sheetName);
     return m_spriteSheet->getSpriteSize();
 }
 
 void CSpriteSheet::draw(sf::RenderWindow* l_window)
 {
-    ASSERT(m_spriteSheet.has_value(), "SpriteSheet {} was not loaded!", m_sheetName);
+    ASSERT(m_spriteSheet.has_value(), "core::graphics::SpriteSheet {} was not loaded!", m_sheetName);
     ASSERT(l_window != nullptr, "RenderWindow is nullptr!");
     m_spriteSheet->draw(l_window);
 }

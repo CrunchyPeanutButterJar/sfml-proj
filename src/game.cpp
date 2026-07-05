@@ -15,7 +15,7 @@ using Resolution = std::pair<uint32_t, uint32_t>;
 
 static sf::Vector2u loadResolutionFromConfigFile()
 {
-    static const std::string ConfigFileName = Utils::getConfigDirectory() + "config.json";
+    static const std::string ConfigFileName = utils::getConfigDirectory() + "config.json";
 
     std::ifstream config{ConfigFileName};
     if(config.good())
@@ -59,7 +59,7 @@ m_systemManager{m_entityManager}
 
 void Game::update()
 {
-    m_window.update((EventManager::StateType)m_stateManager.getCurrentState());
+    m_window.update((core::EventManager::StateType)m_stateManager.getCurrentState());
     m_stateManager.update(m_elapsed);
 }
 
@@ -79,7 +79,7 @@ void Game::restartClock()
     m_elapsed = m_clock.restart();
 }
 
-Window* Game::getWindow()
+core::Window* Game::getWindow()
 {
     return &m_window;
 }

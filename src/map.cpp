@@ -6,6 +6,8 @@
 #include <ecs/entity/entitymanager.hpp>
 #include <ecs/entity/c_position.hpp>
 
+using namespace core::graphics;
+
 Map::Map(SharedContext& l_context, BaseState& l_currentState):
 m_context(l_context),
 m_currentState(l_currentState)
@@ -34,16 +36,16 @@ TileId Map::convertCoordinates(size_t iRow, size_t iCol)
 
 void Map::loadMap(const std::string& l_path)
 {
-    auto map_file = Utils::readFile(l_path);
+    auto map_file = utils::readFile(l_path);
     ASSERT(map_file.has_value(), "Error reading map file {}", l_path);
-    Utils::Tokens tokens{std::move(*map_file)};
+    utils::Tokens tokens{std::move(*map_file)};
     
     while(!tokens.empty())
     {
         auto key = *consumeToken<std::string>(tokens);
         if(key == "TilesSet")
         {
-            loadTileset(Utils::getConfigDirectory() + *consumeToken<std::string>(tokens));
+            loadTileset(utils::getConfigDirectory() + *consumeToken<std::string>(tokens));
         }
         else if(key == "Background")
         {
@@ -116,9 +118,9 @@ void Map::loadMap(const std::string& l_path)
 
 void Map::loadTileset(const std::string &l_path)
 {
-    auto tile_set_file = Utils::readFile(l_path);
+    auto tile_set_file = utils::readFile(l_path);
     ASSERT(tile_set_file.has_value(), "Error reading tileset file {}", l_path);
-    Utils::Tokens tokens{std::move(*tile_set_file)};
+    utils::Tokens tokens{std::move(*tile_set_file)};
     bool filled_dimensions = false;
     bool filled_tile_size = false;
     bool filled_texture = false; 

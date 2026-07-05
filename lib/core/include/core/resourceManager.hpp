@@ -6,6 +6,8 @@
 #include <memory>
 #include <unordered_map>
 
+namespace core
+{
 template<typename Derived, typename T>
 class ResourceManager
 {
@@ -13,13 +15,13 @@ public:
 
 ResourceManager(const std::string& l_pathFileName)
 {
-    if(auto file_content = Utils::readFile(Utils::getConfigDirectory() + l_pathFileName))
+    if(auto file_content = utils::readFile(utils::getConfigDirectory() + l_pathFileName))
     {
-        Utils::Tokens tokens{std::move(*file_content)}; // Alias Path
+        utils::Tokens tokens{std::move(*file_content)}; // Alias Path
 
         while(!tokens.empty())
         {
-            auto tuple = Utils::consumeTokens<std::string, std::string>(tokens);
+            auto tuple = utils::consumeTokens<std::string, std::string>(tokens);
             ASSERT(tuple.has_value(), "Error reading from ressource file {}", l_pathFileName);
 
             const auto [alias, path] = *tuple;
@@ -76,5 +78,5 @@ private:
     std::unordered_map<std::string, std::weak_ptr<T>> m_resources;//alias - resource mapping
 
 };
-
+}
 #endif

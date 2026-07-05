@@ -3,7 +3,7 @@
 
 CPosition::CPosition() : CBase{Component::Position} {}
 
-void CPosition::readInput(Utils::Tokens& l_tokens)
+void CPosition::readInput(utils::Tokens& l_tokens)
 {
     std::tie(m_position.x, m_position.y) = *consumeTokens<float, float>(l_tokens);
 }

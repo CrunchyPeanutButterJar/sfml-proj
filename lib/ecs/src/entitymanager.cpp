@@ -7,7 +7,7 @@
 #include <core/graphics/textureManager.hpp>
 #include <ecs/system/systemmanager.hpp>
 
-EntityManager::EntityManager(SystemManager& l_sysManager, TextureManager& l_textureManager):
+EntityManager::EntityManager(SystemManager& l_sysManager, core::graphics::TextureManager& l_textureManager):
 m_systemManager(l_sysManager),
 m_textureManager(l_textureManager)
 
@@ -16,7 +16,7 @@ m_textureManager(l_textureManager)
     addComponentType<CSpriteSheet>(Component::SpriteSheet);
 }
 
-int EntityManager::addEntity(Bitmask l_mask)
+int EntityManager::addEntity(utils::Bitmask l_mask)
 {
     EntityId entity = m_idCounter++;
     ASSERT(m_entities.emplace(entity, EntityData{}).second, "Invalid Entity Id Counter {}", entity);
@@ -34,15 +34,15 @@ int EntityManager::addEntity(Bitmask l_mask)
 
 int EntityManager::addEntity(const std::string& l_entityFile)
 {
-    static const std::string EntityDir = Utils::getResourcesDirectory() + "media/entities/";
+    static const std::string EntityDir = utils::getResourcesDirectory() + "media/entities/";
     int entity_id = -1;
-    auto file_stream = Utils::readFile(EntityDir + l_entityFile);
+    auto file_stream = utils::readFile(EntityDir + l_entityFile);
     if(!file_stream)
     {
         FAILURE_NON_FATAL("Could not open entity file {}", l_entityFile);
         return entity_id;
     }
-    Utils::Tokens tokens{std::move(*file_stream)};
+    utils::Tokens tokens{std::move(*file_stream)};
     
     while(!tokens.empty())
     {
@@ -58,7 +58,7 @@ int EntityManager::addEntity(const std::string& l_entityFile)
                 FAILURE_NON_FATAL("Invalid entity file {} : duplicate `Attributes` field found", l_entityFile);
                 return -1;
             }
-            entity_id = addEntity(*consumeToken<Bitset>(tokens));
+            entity_id = addEntity(*consumeToken<utils::Bitset>(tokens));
         }
         else if(key == "Component")
         {

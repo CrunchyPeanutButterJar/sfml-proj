@@ -36,10 +36,10 @@ System SBase::getId() const
     return m_id;
 }
 
-bool SBase::fitsRequirements(Bitmask l_bits)
+bool SBase::fitsRequirements(utils::Bitmask l_bits)
 {
     return std::any_of(m_requiredComponents.begin(), m_requiredComponents.end(),
-    [l_bits](const Bitmask& l_requirement)
+    [l_bits](const utils::Bitmask& l_requirement)
     {
         return l_requirement.matches(l_bits, l_bits.getMask());
     });

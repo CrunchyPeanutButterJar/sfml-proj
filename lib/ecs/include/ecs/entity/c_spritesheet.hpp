@@ -15,17 +15,17 @@ class CSpriteSheet : public CDrawable
 {
 public:
     CSpriteSheet();
-    void readInput(Utils::Tokens& l_tokens) override;
-    void create(TextureManager& l_textureManager, std::optional<std::string> l_sheetName = {});
+    void readInput(utils::Tokens& l_tokens) override;
+    void create(core::graphics::TextureManager& l_textureManager, std::optional<std::string> l_sheetName = {});
 
-    SpriteSheet* getSpriteSheet();
+    core::graphics::SpriteSheet* getSpriteSheet();
     
     void updatePosition(const sf::Vector2f& l_vec) override;
     const sf::Vector2u& getSize() override;
     void draw(sf::RenderWindow* l_window) override;
 
 private:
-    std::optional<SpriteSheet> m_spriteSheet;
+    std::optional<core::graphics::SpriteSheet> m_spriteSheet;
     std::string m_sheetName;
 };
 

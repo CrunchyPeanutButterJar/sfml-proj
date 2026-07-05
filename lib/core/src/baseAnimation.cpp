@@ -1,5 +1,7 @@
 #include <core/animation/baseAnimation.hpp>
 
+using namespace core::animation;
+
 void BaseAnimation::play()
 {
     m_playing = true;

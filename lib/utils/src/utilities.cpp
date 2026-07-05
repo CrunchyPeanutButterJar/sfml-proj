@@ -3,7 +3,7 @@
 #include <cctype>
 #include <fstream>
 
-namespace Utils
+namespace utils
 {
 
 Tokens::Tokens(std::istringstream ss, char l_delimiter, char l_commentChar) : m_ss{std::move(ss)}, m_delimiter{l_delimiter}, m_commentChar{l_commentChar} {}

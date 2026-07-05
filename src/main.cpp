@@ -14,7 +14,7 @@ int main(int /*argc*/, char* /*argv*/[])
     #error "Unknown OS!"
     #endif
 
-    LOG("Current working directory : {}", Utils::getWorkingDirectory());
+    LOG("Current working directory : {}", utils::getWorkingDirectory());
 
     while(!game.getWindow()->isDone())
     {

@@ -31,12 +31,12 @@ public:
 
     void addEvent(EntityId l_entity, EventId l_event);
 
-    void entityModified(EntityId l_id, Bitmask l_bits);
+    void entityModified(EntityId l_id, utils::Bitmask l_bits);
     void removeEntity(EntityId l_id);
 
     void update(float l_dt);
     void handleEvents();
-    void draw(Window& l_window);
+    void draw(core::Window& l_window);
 private:
     EntityManager& m_entityManager;
     SystemContainer m_systems;

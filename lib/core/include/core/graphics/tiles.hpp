@@ -8,8 +8,10 @@
 
 #include <string>
 
-using TileId = unsigned int;
+namespace core::graphics
+{
 
+using TileId = unsigned int;
 struct TileSheetConfig
 {
     size_t m_tileSize{};
@@ -20,7 +22,7 @@ struct TileSheetConfig
 
 struct TileInfo
 {
-    TileInfo(const TileSheetConfig& l_config, Utils::Tokens& l_tokens);
+    TileInfo(const TileSheetConfig& l_config, utils::Tokens& l_tokens);
 
     const TileSheetConfig& m_config;
     const TileId m_id;
@@ -32,6 +34,7 @@ struct TileInfo
 struct Tile
 {
     TileInfo* m_tileInfo;
+};
 };
 
 #endif

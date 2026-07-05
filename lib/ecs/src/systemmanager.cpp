@@ -22,7 +22,7 @@ void SystemManager::addEvent(EntityId l_entity, EventId l_event)
     m_events[l_entity].addEvent(l_event);
 }
 
-void SystemManager::entityModified(EntityId l_entity, Bitmask l_bits)
+void SystemManager::entityModified(EntityId l_entity, utils::Bitmask l_bits)
 {
     for(auto& s_itr : m_systems)
     {
@@ -79,7 +79,7 @@ void SystemManager::handleEvents()
     }
 }
 
-void SystemManager::draw(Window& l_window)
+void SystemManager::draw(core::Window& l_window)
 {
     auto* s_renderer = getSystem<SRenderer>(System::Renderer);
     ASSERT(s_renderer, "Renderer not initialized!!");

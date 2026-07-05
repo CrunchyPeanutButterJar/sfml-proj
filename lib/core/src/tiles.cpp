@@ -3,7 +3,9 @@
 #include <utils/assert.hpp>
 #include <utils/utilities.hpp>
 
-TileInfo::TileInfo(const TileSheetConfig& l_config, Utils::Tokens& l_tokens)
+using namespace core::graphics;
+
+TileInfo::TileInfo(const TileSheetConfig& l_config, utils::Tokens& l_tokens)
 :
 m_config{l_config},
 m_id{*consumeToken<TileId>(l_tokens)},

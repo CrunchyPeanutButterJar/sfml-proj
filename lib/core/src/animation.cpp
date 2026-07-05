@@ -3,6 +3,8 @@
 #include <core/graphics/spriteSheet.hpp>
 #include <SFML/Graphics/Rect.hpp>
 
+using namespace core::animation;
+
 void Animation::cropSprite()
 {
     auto [uwidth, uheight] = m_spriteSheet->getSpriteSize();
@@ -36,9 +38,9 @@ void Animation::frameStep()
     }
 }
 
-void Animation::readInput(Utils::Tokens& l_tokens)
+void Animation::readInput(utils::Tokens& l_tokens)
 {
-    auto tuple = Utils::consumeTokens<Frame, Frame, Frame, float, int, int>(l_tokens);
+    auto tuple = utils::consumeTokens<Frame, Frame, Frame, float, int, int>(l_tokens);
 
     ASSERT(tuple.has_value(), "Error reading Animation from config file");
 

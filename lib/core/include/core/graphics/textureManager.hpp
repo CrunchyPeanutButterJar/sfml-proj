@@ -5,8 +5,9 @@
 #include <core/resourceManager.hpp>
 #include <SFML/Graphics/Texture.hpp>
 
-class TextureManager : public ResourceManager<TextureManager, sf::Texture>
+namespace core::graphics
 {
+class TextureManager : public ResourceManager<TextureManager, sf::Texture> {
 public:
     TextureManager();
 
@@ -19,5 +20,5 @@ public:
 
     static std::unique_ptr<sf::Texture> load(const std::string &l_path);
 };
-
+} // namespace core::graphics
 #endif

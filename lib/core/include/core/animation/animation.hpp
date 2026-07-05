@@ -4,17 +4,21 @@
 #include <utils/utilities.hpp>
 #include <core/animation/baseAnimation.hpp>
 
+namespace core::animation
+{
 class Animation : public BaseAnimation
 {
 public:
     Animation() = default;
     ~Animation() override = default;
 
-    void readInput(Utils::Tokens& l_tokens) override;
+    void readInput(utils::Tokens& l_tokens) override;
 
 protected:
     void frameStep() override;
     void cropSprite() override;
+};
+
 };
 
 #endif

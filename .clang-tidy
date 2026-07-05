@@ -6,7 +6,9 @@ Checks: >
   cppcoreguidelines-*,
   readability-*,
   -readability-braces-around-statements,
-  llvm-header-guard
+  llvm-header-guard,
+  llvm-namespace-comment,
+  modernize-concat-nested-namespaces
 
 # Turn all matching warnings into hard compilation/build errors
 WarningsAsErrors: 'bugprone-*,performance-*'
@@ -74,4 +76,15 @@ CheckOptions:
     value: ''                # no global prefix
   - key: llvm-header-guard.HeaderGuardMacroSeparator
     value: '_'               # join path components with underscores
+
+  # Enforce strict naming conventions for all namespaces
+  - key:             readability-identifier-naming.NamespaceCase
+    value:           lower_case
+
+  # Control how comments are automatically fixed or flagged
+  - key:             llvm-namespace-comment.ShortNamespaceLines
+    value:           0 # Only requires a closing comment if the namespace spans more than 0 lines
+    
+  - key:             llvm-namespace-comment.SpacesBeforeComments
+    value:           1  # Adds exactly one space before the '// namespace name' comment
 ...

@@ -19,7 +19,7 @@ GameState::GameState(StateManager& l_stateManager):
 BaseState(l_stateManager),
 m_gameMap{m_stateManager.getContext(), *this}
 {
-    m_gameMap.loadMap(Utils::getConfigDirectory() + "map.map");
+    m_gameMap.loadMap(utils::getConfigDirectory() + "map.map");
 
     auto& event_manager = m_stateManager.getContext().m_eventManager;
     auto& entity_manager = m_stateManager.getContext().m_entityManager;
@@ -30,7 +30,7 @@ m_gameMap{m_stateManager.getContext(), *this}
     auto* sprite = entity_manager.getComponent<CSpriteSheet>(player_id, Component::SpriteSheet);
     sprite->getSpriteSheet()->nextAnimation();
 
-    event_manager.addCallback((EventManager::StateType)StateType::Game, "Mouse_Moved",
+    event_manager.addCallback((core::EventManager::StateType)StateType::Game, "Mouse_Moved",
     [&entity_manager, player_id](const sf::Window::WindowBase& l_window)
     {
         auto* position = entity_manager.getComponent<CPosition>(player_id, Component::Position);
@@ -38,7 +38,7 @@ m_gameMap{m_stateManager.getContext(), *this}
         position->setPosition({(float)ix, (float)iy});
     });
 
-    event_manager.addCallback((EventManager::StateType)StateType::Game, "Game_MoveLeft",
+    event_manager.addCallback((core::EventManager::StateType)StateType::Game, "Game_MoveLeft",
     [player_id, &message_handler](const sf::WindowBase&)
     {
         static bool move_left = true;

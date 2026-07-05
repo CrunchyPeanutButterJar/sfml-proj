@@ -7,35 +7,37 @@
 #include <utils/utilities.hpp>
 #include <utility>
 
-SpriteSheet::SpriteSheet(TextureManager& l_textureManager) : m_textureManager(&l_textureManager) {}
+using namespace core::graphics;
+
+SpriteSheet::SpriteSheet(core::graphics::TextureManager& l_textureManager) : m_textureManager(&l_textureManager) {}
 
 bool SpriteSheet::loadSheet(const std::string& l_filePath)
 {
-    if(auto fstream = Utils::readFile(l_filePath))
+    if(auto fstream = utils::readFile(l_filePath))
     {
-        Utils::Tokens tokens{std::move(*fstream)};
+        utils::Tokens tokens{std::move(*fstream)};
 
         while(!tokens.empty())
         {
-            auto [key] = *Utils::consumeTokens<std::string>(tokens);
+            auto [key] = *utils::consumeTokens<std::string>(tokens);
             if(key == "Size")
             {
-                std::tie(m_spriteSize.x, m_spriteSize.y) = *Utils::consumeTokens<unsigned int, unsigned int>(tokens);
+                std::tie(m_spriteSize.x, m_spriteSize.y) = *utils::consumeTokens<unsigned int, unsigned int>(tokens);
             }
             else if(key == "Scale")
             {
-                std::tie(m_spriteScale.x, m_spriteScale.y) = *Utils::consumeTokens<float, float>(tokens);
+                std::tie(m_spriteScale.x, m_spriteScale.y) = *utils::consumeTokens<float, float>(tokens);
             }
             else if(key == "AnimationsStart")
             {
                 std::string animation_type;
-                while(std::tie(animation_type) = *Utils::consumeTokens<std::string>(tokens), animation_type != "AnimationsEnd")
+                while(std::tie(animation_type) = *utils::consumeTokens<std::string>(tokens), animation_type != "AnimationsEnd")
                 {
-                    auto [animationName] = *Utils::consumeTokens<std::string>(tokens);
+                    auto [animationName] = *utils::consumeTokens<std::string>(tokens);
                     ASSERT(animation_type == "Animation", "Invalid animation type {}", animation_type);
-                    auto animation_ptr = std::make_unique<Animation>();
+                    auto animation_ptr = std::make_unique<core::animation::Animation>();
                     animation_ptr->readInput(tokens);
-                    auto [textureAlias] = *Utils::consumeTokens<std::string>(tokens);
+                    auto [textureAlias] = *utils::consumeTokens<std::string>(tokens);
 
                     auto texture_ptr = m_textureManager->acquire(textureAlias);
                     ASSERT(texture_ptr != nullptr, "Could not load texture {}", textureAlias);
@@ -106,7 +108,7 @@ Direction SpriteSheet::getDirection() const
     return m_direction;
 }
 
-BaseAnimation* SpriteSheet::getCurrentAnimation() const
+core::animation::BaseAnimation* SpriteSheet::getCurrentAnimation() const
 {
     return m_currentAnimation;
 }

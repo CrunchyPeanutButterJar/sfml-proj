@@ -5,7 +5,7 @@
 
 #include <fmt/format.h>
 
-namespace Utils::internal
+namespace utils::internal
 {
 inline void vlog(FILE* f, const char* file, const char* function, int line, fmt::string_view fmt, fmt::format_args args)
 {
@@ -43,15 +43,15 @@ inline void ensureImpl(bool condition, const char* file, const char* function, i
 }
 }
 
-#define ASSERT_NON_FATAL(condition, ...) Utils::internal::ensureImpl<false>((condition), __FILE__, __func__, __LINE__, ##__VA_ARGS__)
+#define ASSERT_NON_FATAL(condition, ...) utils::internal::ensureImpl<false>((condition), __FILE__, __func__, __LINE__, ##__VA_ARGS__)
 
-#define ASSERT(condition, ...) Utils::internal::ensureImpl<true>((condition), __FILE__, __func__, __LINE__, ##__VA_ARGS__)
+#define ASSERT(condition, ...) utils::internal::ensureImpl<true>((condition), __FILE__, __func__, __LINE__, ##__VA_ARGS__)
 
 #define FAILURE_NON_FATAL(...) ASSERT_NON_FATAL(false, ##__VA_ARGS__)
 
 #define FAILURE(...) ASSERT(false, ##__VA_ARGS__)
 
-#define LOG(...) Utils::internal::log(stdout, __FILE__, __func__, __LINE__, ##__VA_ARGS__)
+#define LOG(...) utils::internal::log(stdout, __FILE__, __func__, __LINE__, ##__VA_ARGS__)
 
 #ifdef DEBUG_BUILD
 #define ASSERT_DEBUG_BUILD(condition, ...) ASSERT(condition, ##__VA_ARGS__)

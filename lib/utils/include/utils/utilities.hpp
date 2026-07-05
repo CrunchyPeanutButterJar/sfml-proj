@@ -8,7 +8,7 @@
 #include <optional>
 #include <tuple>
 
-namespace Utils
+namespace utils
 {
     #ifdef _WIN32
     #include <windows.h>

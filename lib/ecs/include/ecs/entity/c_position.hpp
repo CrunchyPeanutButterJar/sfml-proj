@@ -9,7 +9,7 @@ class CPosition : public CBase
 public:
     CPosition();
 
-    void readInput(Utils::Tokens& l_tokens) override;
+    void readInput(utils::Tokens& l_tokens) override;
 
     const sf::Vector2f& getPosition() const;
     const sf::Vector2f& getOldPosition() const;

@@ -9,11 +9,11 @@
 
 struct SharedContext
 {
-    Window& m_window;
-    EventManager& m_eventManager;
+    core::Window& m_window;
+    core::EventManager& m_eventManager;
     EntityManager& m_entityManager;
     SystemManager& m_systemManager;
-    TextureManager& m_textureManager;
+    core::graphics::TextureManager& m_textureManager;
 };
 
 #endif

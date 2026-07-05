@@ -13,13 +13,15 @@
 #include <unordered_map>
 #include <memory>
 
-using AnimationPtr = std::unique_ptr<BaseAnimation>;
+namespace core::graphics
+{
+using AnimationPtr = std::unique_ptr<core::animation::BaseAnimation>;
 using Animations =  std::unordered_map<std::string, AnimationPtr>;
 
 class SpriteSheet
 {
 public:
-    SpriteSheet(TextureManager& l_textureManager);
+    SpriteSheet(core::graphics::TextureManager& l_textureManager);
 
     bool loadSheet(const std::string& l_filePath);
 
@@ -32,7 +34,7 @@ public:
     void setSpritePosition(const sf::Vector2f& l_pos);
     void setDirection(Direction l_dir);
 
-    BaseAnimation *getCurrentAnimation() const;
+    core::animation::BaseAnimation *getCurrentAnimation() const;
     const sf::Vector2u& getSpriteSize() const; 
     const sf::Vector2f& getSpritePosition() const;
     Direction getDirection() const;
@@ -46,9 +48,10 @@ private:
     sf::Vector2f m_spriteScale{1.F, 1.F};
     Direction m_direction{Direction::Right};
     Animations m_animations;
-    BaseAnimation* m_currentAnimation{nullptr};
-    TextureManager* m_textureManager;
+    core::animation::BaseAnimation* m_currentAnimation{nullptr};
+    core::graphics::TextureManager* m_textureManager;
     std::vector<std::shared_ptr<sf::Texture>> m_textures;
+};
 };
 
 #endif

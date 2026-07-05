@@ -23,11 +23,13 @@
 #include <rfl/json.hpp>
 #include <rfl.hpp>
 
+using namespace core;
+
 using KeyPressedEventEnumType = int;
 using MouseButtonPressedEventEnumType = int;
 
-using KeyPressedEvent = PhantomType<KeyPressedEventEnumType, struct KeyPressedEventTag>;
-using MouseButtonPressedEvent = PhantomType<KeyPressedEventEnumType, struct MouseButtonPressedEventTag>;
+using KeyPressedEvent = utils::PhantomType<KeyPressedEventEnumType, struct KeyPressedEventTag>;
+using MouseButtonPressedEvent = utils::PhantomType<KeyPressedEventEnumType, struct MouseButtonPressedEventTag>;
 struct ClosedEvent{};
 struct MouseMovedEvent{}; 
 
@@ -85,7 +87,7 @@ using ActualEvents = std::vector<sf::Event>;
 using Callbacks = std::unordered_map<std::string, Callback>;
 using CallbacksContainer = std::unordered_map<EventManager::StateType, Callbacks>;
 
-static const std::string BINDINGS_FILE_PATH{Utils::getConfigDirectory() + "bindings.json"};
+static const std::string BINDINGS_FILE_PATH{utils::getConfigDirectory() + "bindings.json"};
 
 std::optional<SerializableBindings> loadFromBindingsFile()
 {
@@ -146,29 +148,6 @@ SerializableBindings buildNonCustomizableBindings()
     bindings.emplace_back("Window_ToggleFullscreen", SimplifiedEvents{KeyPressedEvent{sf::Keyboard::F5}});
     
     return bindings;
-}
-
-std::any buildBindings()
-{
-    return std::array{buildDefaultBindings(), buildNonCustomizableBindings()} | std::ranges::views::join | std::ranges::to<std::vector>();
-}
-
-bool bindingsAreEquivalent(const std::any& l_first, const std::any& l_second)
-{
-    const auto& first_bindings = std::any_cast<const SerializableBindings&>(l_first);
-    const auto& second_bindings = std::any_cast<const SerializableBindings&>(l_second);
-
-    return first_bindings == second_bindings;
-}
-
-std::any deserializeBindings(const std::string &l_jsonString)
-{
-    return rfl::json::read<SerializableBindings, rfl::AddTagsToVariants>(l_jsonString).value();
-}
-
-std::string serializeBindings(const std::any& l_serializableBindings)
-{
-    return rfl::json::write<rfl::AddTagsToVariants>(std::any_cast<const SerializableBindings&>(l_serializableBindings));
 }
 
 struct EventManager::Impl
@@ -323,3 +302,29 @@ EventManager::~EventManager() = default;
 
 EventManager::EventManager(EventManager&&) noexcept = default;
 EventManager& EventManager::operator=(EventManager&&) noexcept = default;
+
+namespace core
+{
+std::any buildBindings()
+{
+    return std::array{buildDefaultBindings(), buildNonCustomizableBindings()} | std::ranges::views::join | std::ranges::to<std::vector>();
+}
+
+bool bindingsAreEquivalent(const std::any& l_first, const std::any& l_second)
+{
+    const auto& first_bindings = std::any_cast<const SerializableBindings&>(l_first);
+    const auto& second_bindings = std::any_cast<const SerializableBindings&>(l_second);
+
+    return first_bindings == second_bindings;
+}
+
+std::any deserializeBindings(const std::string &l_jsonString)
+{
+    return rfl::json::read<SerializableBindings, rfl::AddTagsToVariants>(l_jsonString).value();
+}
+
+std::string serializeBindings(const std::any& l_serializableBindings)
+{
+    return rfl::json::write<rfl::AddTagsToVariants>(std::any_cast<const SerializableBindings&>(l_serializableBindings));
+}
+};

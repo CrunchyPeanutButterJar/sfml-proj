@@ -3,6 +3,8 @@
 
 #include <stdint.h>
 
+namespace utils
+{
 using Bitset = uint32_t;
 
 class Bitmask
@@ -28,6 +30,7 @@ public:
 private:
     Bitset m_bits;
 
+};
 };
 
 #endif

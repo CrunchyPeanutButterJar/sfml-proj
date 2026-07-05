@@ -8,9 +8,9 @@
 
 SRenderer::SRenderer(SystemManager& l_systemManager) : SBase{System::Renderer, l_systemManager}
 {
-    Bitmask req;
-    req.turnOnBit((Bitmask::Position)Component::Position);
-    req.turnOnBit((Bitmask::Position)Component::SpriteSheet);
+    utils::Bitmask req;
+    req.turnOnBit((utils::Bitmask::Position)Component::Position);
+    req.turnOnBit((utils::Bitmask::Position)Component::SpriteSheet);
     m_requiredComponents.push_back(std::move(req));
 
     m_systemManager.getMessageHandler().subscribe(EntityMessage::Direction_Changed,this);
@@ -46,7 +46,7 @@ void SRenderer::notify(const Message& l_message)
     }
 }
 
-void SRenderer::render(Window& l_window)
+void SRenderer::render(core::Window& l_window)
 {
     auto& entity_manager = m_systemManager.getEntityManager();
     for(auto entity : m_entities)

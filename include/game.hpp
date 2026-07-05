@@ -17,7 +17,7 @@ public:
     void update();
     void lateUpdate();
     void render();
-    Window* getWindow();
+    core::Window* getWindow();
     sf::Time getElapsed();
 
 private:
@@ -27,11 +27,11 @@ private:
     sf::Clock m_clock;
     sf::Time m_elapsed;
 
-    Window m_window;
+    core::Window m_window;
     StateManager m_stateManager;
     EntityManager m_entityManager;
     SystemManager m_systemManager; // to handle cyclic dependency systemmanager <-> entityManager
-    TextureManager m_textureManager;
+    core::graphics::TextureManager m_textureManager;
 };
 
 #endif

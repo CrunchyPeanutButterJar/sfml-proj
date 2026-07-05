@@ -2,6 +2,8 @@
 
 #include <functional>
 
+using namespace core;
+
 Window::Window()
 {
     setup("Window", sf::Vector2u(640, 480));
@@ -46,7 +48,7 @@ sf::RenderWindow* Window::getRenderWindow()
     return &m_window;
 }
 
-EventManager& Window::getEventManager()
+core::EventManager& Window::getEventManager()
 {
     return m_eventManager;
 }
@@ -61,7 +63,7 @@ sf::FloatRect Window::getViewSpace() const
 }
 
 
-void Window::update(EventManager::StateType l_state)
+void Window::update(core::EventManager::StateType l_state)
 {
     sf::Event event{};
 

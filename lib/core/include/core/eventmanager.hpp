@@ -13,6 +13,9 @@
 #include <string>
 #include <vector>
 
+namespace core
+{
+
 using Callback = std::function<void(const sf::WindowBase&)>;
 
 class EventManager
@@ -49,5 +52,6 @@ std::any buildBindings();
 std::any deserializeBindings(const std::string& l_jsonString);
 std::string serializeBindings(const std::any& l_serializableBindings);
 bool bindingsAreEquivalent(const std::any& l_first, const std::any& l_second);
+}
 
 #endif

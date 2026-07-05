@@ -13,7 +13,7 @@ public:
 
     Component getType() const {return m_type;}
 
-    virtual void readInput(Utils::Tokens&) = 0;
+    virtual void readInput(utils::Tokens&) = 0;
 
 private:
     Component m_type;

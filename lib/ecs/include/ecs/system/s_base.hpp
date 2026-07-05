@@ -10,7 +10,7 @@
 #include <memory>
 
 using EntityList = std::vector<EntityId>;
-using Requirements = std::vector<Bitmask>;
+using Requirements = std::vector<utils::Bitmask>;
 
 class SBase : public Observer
 {
@@ -24,7 +24,7 @@ public:
 
     System getId() const;
 
-    bool fitsRequirements(Bitmask l_bits);
+    bool fitsRequirements(utils::Bitmask l_bits);
 
     virtual void update(float l_dt) = 0;
     virtual void handleEvent(EntityId l_entity, EntityEvent l_event) = 0;

@@ -3,6 +3,8 @@
 
 #include <utility>
 
+namespace utils
+{
 template<typename UnderlyingType, typename PhantomTypeParam>
 class PhantomType
 {
@@ -40,5 +42,6 @@ public:
 private:
     UnderlyingType m_value;
 };
+}
 
 #endif

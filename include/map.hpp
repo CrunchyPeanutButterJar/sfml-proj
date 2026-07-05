@@ -9,8 +9,8 @@
 #include <SFML/System/Vector2.hpp>
 #include <optional>
 
-using TileSheet = std::unordered_map<TileId, TileInfo>;
-using TileMap = std::unordered_map<TileId, Tile>;
+using TileSheet = std::unordered_map<core::graphics::TileId, core::graphics::TileInfo>;
+using TileMap = std::unordered_map<core::graphics::TileId, core::graphics::Tile>;
 
 class Map
 {
@@ -23,14 +23,14 @@ public:
 
 private:
     void loadTileset(const std::string& l_path);
-    TileId convertCoordinates(size_t iRow, size_t iCol);
-    sf::Vector2u convertCoordinates(TileId l_id);
+    core::graphics::TileId convertCoordinates(size_t iRow, size_t iCol);
+    sf::Vector2u convertCoordinates(core::graphics::TileId l_id);
 
 
     SharedContext& m_context;
     BaseState& m_currentState;
     TileSheet m_tileSet;
-    TileSheetConfig m_tileSheetConfig;
+    core::graphics::TileSheetConfig m_tileSheetConfig;
     TileMap m_tileMap;
     sf::Vector2u m_mapSize;
     sf::Sprite m_background;

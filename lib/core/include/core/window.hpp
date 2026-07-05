@@ -6,6 +6,8 @@
 #include <SFML/Graphics/Rect.hpp>
 #include <core/eventmanager.hpp>
 
+namespace core
+{
 class Window
 {
 public:
@@ -15,7 +17,7 @@ public:
     ~Window();
     void beginDraw(); // Clear the window.
     void endDraw(); // Display the changes.
-    void update(EventManager::StateType l_state);
+    void update(core::EventManager::StateType l_state);
     void setAsDone() { m_isDone = true; }
     bool isDone() const;
     bool isFullscreen() const;
@@ -23,7 +25,7 @@ public:
     void toggleFullscreen();
     void draw(sf::Drawable& l_drawable);
     sf::RenderWindow* getRenderWindow();
-    EventManager& getEventManager();
+    core::EventManager& getEventManager();
     sf::FloatRect getViewSpace() const;
 
 private:
@@ -32,7 +34,7 @@ private:
     void create();
 
 
-    EventManager m_eventManager;
+    core::EventManager m_eventManager;
     sf::RenderWindow m_window;
     sf::Vector2u m_windowSize;
     std::string m_windowTitle;
@@ -41,5 +43,6 @@ private:
     bool m_isFocused{}; 
 
 };
+}
 
 #endif

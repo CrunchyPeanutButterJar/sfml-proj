@@ -7,11 +7,13 @@
 
 #include <vector>
 
-using Frame = unsigned int;
+namespace core::animation
+{
 
+using Frame = unsigned int;
 class BaseAnimation
 {
-friend class SpriteSheet;
+friend class core::graphics::SpriteSheet;
 
 public:
     BaseAnimation() = default;
@@ -25,7 +27,7 @@ public:
     void stopLoop();
 
     virtual void update(float l_dt);
-    virtual void readInput(Utils::Tokens& l_tokens) = 0;
+    virtual void readInput(utils::Tokens& l_tokens) = 0;
 
     Frame getFrame() const;
 
@@ -49,8 +51,9 @@ public:
   bool m_loop{false};
   bool m_playing{false};
   std::string m_name;
-  SpriteSheet *m_spriteSheet{};
+  core::graphics::SpriteSheet *m_spriteSheet{};
   sf::Texture* m_texture{};
 };
+}
 
 #endif
