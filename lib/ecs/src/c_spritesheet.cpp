@@ -4,6 +4,8 @@
 #include <utils/assert.hpp>
 #include <core/graphics/textureManager.hpp>
 
+using namespace ecs::entity;
+
 CSpriteSheet::CSpriteSheet():
 CDrawable(Component::SpriteSheet)
 {}

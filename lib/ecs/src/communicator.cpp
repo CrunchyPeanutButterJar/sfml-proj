@@ -1,6 +1,8 @@
 #include <ecs/messaging/communicator.hpp>
 #include <algorithm>
 
+using namespace ecs::messaging;
+
 bool Communicator::addObserver(Observer* l_observer)
 {
     return m_observers.insert(l_observer).second;

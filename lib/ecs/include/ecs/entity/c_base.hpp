@@ -5,6 +5,8 @@
 #include <utils/utilities.hpp>
 #include <memory>
 
+namespace ecs::entity
+{
 class CBase
 {
 public:
@@ -20,5 +22,6 @@ private:
 };
 
 using CBasePtr = std::unique_ptr<CBase>;
+};
 
 #endif

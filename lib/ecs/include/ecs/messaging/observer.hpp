@@ -3,11 +3,13 @@
 
 #include <ecs/messaging/message.hpp>
 
+namespace ecs::messaging
+{
 class Observer
 {
 public:
     virtual ~Observer() = default;
     virtual void notify(const Message& l_message) = 0;
 };
-
+}
 #endif

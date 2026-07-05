@@ -6,6 +6,8 @@
 #include <ecs/messaging/communicator.hpp>
 #include <unordered_map>
 
+namespace ecs::messaging
+{
 using Subscriptions = std::unordered_map<EntityMessage, Communicator>;
 
 class MessageHandler
@@ -18,5 +20,5 @@ public:
 private:
     Subscriptions m_communicators;
 };
-
+}
 #endif

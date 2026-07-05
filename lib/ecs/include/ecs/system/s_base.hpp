@@ -9,10 +9,12 @@
 #include <vector>
 #include <memory>
 
+namespace ecs::system
+{
 using EntityList = std::vector<EntityId>;
 using Requirements = std::vector<utils::Bitmask>;
 
-class SBase : public Observer
+class SBase : public messaging::Observer
 {
 public:
     SBase(System l_id, SystemManager& l_sysManager);
@@ -27,7 +29,7 @@ public:
     bool fitsRequirements(utils::Bitmask l_bits);
 
     virtual void update(float l_dt) = 0;
-    virtual void handleEvent(EntityId l_entity, EntityEvent l_event) = 0;
+    virtual void handleEvent(EntityId l_entity, messaging::EntityEvent l_event) = 0;
 
 protected:
     SystemManager& m_systemManager;
@@ -37,5 +39,6 @@ protected:
 };
 
 using SBasePtr = std::unique_ptr<SBase>;
+};
 
 #endif

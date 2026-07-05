@@ -6,6 +6,10 @@
 #include <ecs/system/s_renderer.hpp>
 #include <ecs/system/systemmanager.hpp>
 
+using namespace ecs::system;
+using namespace ecs::messaging;
+using namespace ecs::entity;
+
 SRenderer::SRenderer(SystemManager& l_systemManager) : SBase{System::Renderer, l_systemManager}
 {
     utils::Bitmask req;
@@ -39,7 +43,7 @@ void SRenderer::notify(const Message& l_message)
         switch(m)
         {
             case EntityMessage::Direction_Changed:
-            setSheetDirection(l_message.m_receiver,(Direction)l_message.m_int);
+            setSheetDirection(l_message.m_receiver,(core::Direction)l_message.m_int);
             break;
             default:
         }
@@ -65,7 +69,7 @@ void SRenderer::render(core::Window& l_window)
     }
 }
 
-void SRenderer::setSheetDirection(EntityId l_entity, Direction l_dir)
+void SRenderer::setSheetDirection(EntityId l_entity, core::Direction l_dir)
 {
     auto& entity_manager = m_systemManager.getEntityManager();
     ASSERT(hasEntity(l_entity), "");

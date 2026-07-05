@@ -25,15 +25,15 @@ m_gameMap{m_stateManager.getContext(), *this}
     auto& entity_manager = m_stateManager.getContext().m_entityManager;
     auto& message_handler = m_stateManager.getContext().m_systemManager.getMessageHandler();
 
-    EntityId player_id = m_gameMap.getPlayerId(); 
+    ecs::EntityId player_id = m_gameMap.getPlayerId(); 
 
-    auto* sprite = entity_manager.getComponent<CSpriteSheet>(player_id, Component::SpriteSheet);
+    auto* sprite = entity_manager.getComponent<ecs::entity::CSpriteSheet>(player_id, ecs::Component::SpriteSheet);
     sprite->getSpriteSheet()->nextAnimation();
 
     event_manager.addCallback((core::EventManager::StateType)StateType::Game, "Mouse_Moved",
     [&entity_manager, player_id](const sf::Window::WindowBase& l_window)
     {
-        auto* position = entity_manager.getComponent<CPosition>(player_id, Component::Position);
+        auto* position = entity_manager.getComponent<ecs::entity::CPosition>(player_id, ecs::Component::Position);
         auto [ix, iy] = sf::Mouse::getPosition(l_window);
         position->setPosition({(float)ix, (float)iy});
     });
@@ -42,7 +42,7 @@ m_gameMap{m_stateManager.getContext(), *this}
     [player_id, &message_handler](const sf::WindowBase&)
     {
         static bool move_left = true;
-        Message msg{.m_type = (MessageType)EntityMessage::Direction_Changed, .m_receiver = (int) player_id, .m_int = (int)(move_left ? Direction::Left : Direction::Right)};
+        ecs::messaging::Message msg{.m_type = (ecs::messaging::MessageType)ecs::messaging::EntityMessage::Direction_Changed, .m_receiver = (int) player_id, .m_int = (int)(move_left ? core::Direction::Left : core::Direction::Right)};
         message_handler.dispatch(msg);
         move_left = !move_left;
     });

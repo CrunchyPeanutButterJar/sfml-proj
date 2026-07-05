@@ -5,6 +5,8 @@
 #include <ecs/messaging/entityevents.hpp>
 #include <optional>
 
+namespace ecs::messaging
+{
 using EventId = unsigned int;
 
 class EventQueue
@@ -16,6 +18,7 @@ public:
 
 private:
     std::queue<EventId> m_queue;
+};
 };
 
 #endif

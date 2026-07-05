@@ -11,16 +11,19 @@
 #include <core/window.fwd.hpp>
 #include <unordered_map>
 
+namespace ecs::system
+{
+
 using SystemContainer = std::unordered_map<System, SBasePtr>;
-using EntityEventContainer = std::unordered_map<EntityId, EventQueue>;
+using EntityEventContainer = std::unordered_map<EntityId, messaging::EventQueue>;
 
 class SystemManager
 {
 public:
-    SystemManager(EntityManager& l_entityManager);
+    SystemManager(entity::EntityManager& l_entityManager);
 
-    EntityManager& getEntityManager();
-    MessageHandler& getMessageHandler();
+    entity::EntityManager& getEntityManager();
+    messaging::MessageHandler& getMessageHandler();
 
     template<typename T>
     T* getSystem(System l_system)
@@ -29,7 +32,7 @@ public:
         return itr != m_systems.end() ? dynamic_cast<T*>(itr->second.get()) : nullptr;
     }
 
-    void addEvent(EntityId l_entity, EventId l_event);
+    void addEvent(EntityId l_entity, messaging::EventId l_event);
 
     void entityModified(EntityId l_id, utils::Bitmask l_bits);
     void removeEntity(EntityId l_id);
@@ -38,10 +41,11 @@ public:
     void handleEvents();
     void draw(core::Window& l_window);
 private:
-    EntityManager& m_entityManager;
+    entity::EntityManager& m_entityManager;
     SystemContainer m_systems;
     EntityEventContainer m_events;
-    MessageHandler m_messageHandler;
+    messaging::MessageHandler m_messageHandler;
+};
 };
 
 #endif

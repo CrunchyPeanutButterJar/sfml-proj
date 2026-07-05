@@ -82,7 +82,7 @@ void SpriteSheet::nextAnimation()
     setAnimation(it->first, true, false);
 }
 
-void SpriteSheet::setDirection(Direction l_dir)
+void SpriteSheet::setDirection(core::Direction l_dir)
 {
     if(l_dir == m_direction)
     {
@@ -103,7 +103,7 @@ const sf::Vector2f& SpriteSheet::getSpritePosition() const
     return m_sprite.getPosition();
 }
 
-Direction SpriteSheet::getDirection() const
+core::Direction SpriteSheet::getDirection() const
 {
     return m_direction;
 }

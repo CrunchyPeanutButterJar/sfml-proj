@@ -7,6 +7,10 @@
 #include <core/graphics/textureManager.hpp>
 #include <ecs/system/systemmanager.hpp>
 
+using namespace ecs::entity;
+using namespace ecs::system;
+using namespace ecs::messaging;
+
 EntityManager::EntityManager(SystemManager& l_sysManager, core::graphics::TextureManager& l_textureManager):
 m_systemManager(l_sysManager),
 m_textureManager(l_textureManager)

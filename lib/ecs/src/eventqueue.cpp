@@ -1,5 +1,7 @@
 #include <ecs/messaging/eventqueue.hpp>
 
+using namespace ecs::messaging;
+
 void EventQueue::addEvent(EventId l_event)
 {
     m_queue.push(l_event);

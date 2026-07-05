@@ -1,5 +1,7 @@
 #include <ecs/messaging/messagehandler.hpp>
 
+using namespace ecs::messaging;
+
 bool MessageHandler::subscribe(EntityMessage l_type, Observer* l_observer)
 {
     return m_communicators[l_type].addObserver(l_observer);

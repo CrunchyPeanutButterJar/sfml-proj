@@ -5,6 +5,9 @@
 #include <utility>
 #include <SFML/System/Vector2.hpp>
 
+namespace ecs::messaging
+{
+
 using MessageType = unsigned int;
 
 struct Message
@@ -19,6 +22,7 @@ struct Message
         bool m_bool{};
         int m_int;
     };
+};
 };
 
 #endif

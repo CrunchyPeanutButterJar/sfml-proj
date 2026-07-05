@@ -32,12 +32,12 @@ public:
 
     void setSpriteSize(const sf::Vector2u& l_size); 
     void setSpritePosition(const sf::Vector2f& l_pos);
-    void setDirection(Direction l_dir);
+    void setDirection(core::Direction l_dir);
 
     core::animation::BaseAnimation *getCurrentAnimation() const;
     const sf::Vector2u& getSpriteSize() const; 
     const sf::Vector2f& getSpritePosition() const;
-    Direction getDirection() const;
+    core::Direction getDirection() const;
 
     void update(float l_dt);
     void draw(sf::RenderWindow* l_window);
@@ -46,7 +46,7 @@ private:
     sf::Sprite m_sprite;
     sf::Vector2u m_spriteSize;
     sf::Vector2f m_spriteScale{1.F, 1.F};
-    Direction m_direction{Direction::Right};
+    core::Direction m_direction{core::Direction::Right};
     Animations m_animations;
     core::animation::BaseAnimation* m_currentAnimation{nullptr};
     core::graphics::TextureManager* m_textureManager;

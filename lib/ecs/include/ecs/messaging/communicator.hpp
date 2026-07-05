@@ -4,6 +4,8 @@
 #include <ecs/messaging/observer.hpp>
 #include <set>
 
+namespace ecs::messaging
+{
 using ObserverContainer = std::set<Observer*>;
 
 class Communicator
@@ -16,6 +18,7 @@ public:
 
 private:
     ObserverContainer m_observers;
+};
 };
 
 #endif

@@ -29,8 +29,8 @@ private:
 
     core::Window m_window;
     StateManager m_stateManager;
-    EntityManager m_entityManager;
-    SystemManager m_systemManager; // to handle cyclic dependency systemmanager <-> entityManager
+    ecs::entity::EntityManager m_entityManager;
+    ecs::system::SystemManager m_systemManager;
     core::graphics::TextureManager m_textureManager;
 };
 

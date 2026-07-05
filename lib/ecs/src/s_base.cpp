@@ -1,6 +1,10 @@
 #include <ecs/system/s_base.hpp>
 #include <algorithm>
 
+using namespace ecs;
+using namespace ecs::system;
+using namespace ecs::messaging;
+
 SBase::SBase(System l_id, SystemManager& l_sysManager):
 m_systemManager{l_sysManager},
 m_id{l_id} {}

@@ -10,6 +10,8 @@
 #include <utility>
 #include <unordered_map>
 
+namespace ecs::entity
+{
 using ComponentContainer = std::vector<CBasePtr>;
 using EntityData = std::pair<utils::Bitmask, ComponentContainer>;
 using EntityContainer = std::unordered_map<EntityId, EntityData>;
@@ -18,7 +20,7 @@ using ComponentFactory = std::unordered_map<Component, std::function<CBasePtr()>
 class EntityManager
 {
 public:
-    EntityManager(SystemManager& l_sysManager, core::graphics::TextureManager& l_textureManager);
+    EntityManager(system::SystemManager& l_sysManager, core::graphics::TextureManager& l_textureManager);
 
     int addEntity(utils::Bitmask l_mask);
     int addEntity(const std::string& l_entityFile);
@@ -56,12 +58,13 @@ private:
     }
 
 
-    SystemManager& m_systemManager;
+    system::SystemManager& m_systemManager;
     core::graphics::TextureManager& m_textureManager;
 
     EntityId m_idCounter{0};
     EntityContainer m_entities;
     ComponentFactory m_componentFactory;
+};
 };
 
 #endif

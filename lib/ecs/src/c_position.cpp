@@ -1,6 +1,8 @@
 #include <SFML/System/Vector2.hpp>
 #include <ecs/entity/c_position.hpp>
 
+using namespace ecs::entity;
+
 CPosition::CPosition() : CBase{Component::Position} {}
 
 void CPosition::readInput(utils::Tokens& l_tokens)

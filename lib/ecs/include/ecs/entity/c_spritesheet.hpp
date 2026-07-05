@@ -11,6 +11,8 @@
 
 #include <string>
 
+namespace ecs::entity
+{
 class CSpriteSheet : public CDrawable
 {
 public:
@@ -28,5 +30,6 @@ private:
     std::optional<core::graphics::SpriteSheet> m_spriteSheet;
     std::string m_sheetName;
 };
+}
 
 #endif

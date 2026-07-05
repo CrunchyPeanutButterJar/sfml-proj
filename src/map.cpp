@@ -105,7 +105,7 @@ void Map::loadMap(const std::string& l_path)
                     m_playerId = entity;
                 }
 
-                auto* position = entities.getComponent<CPosition>(entity, Component::Position);
+                auto* position = entities.getComponent<ecs::entity::CPosition>(entity, ecs::Component::Position);
                 if(position != nullptr)
                 {
                     position->readInput(tokens);
@@ -205,7 +205,7 @@ void Map::draw()
 
 }
 
-EntityId Map::getPlayerId()
+ecs::EntityId Map::getPlayerId()
 {
     ASSERT(m_playerId.has_value(), "did not load player id");
     return *m_playerId;

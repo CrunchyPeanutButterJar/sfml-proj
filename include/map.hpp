@@ -19,7 +19,7 @@ public:
     void loadMap(const std::string& l_path);
     void update(float l_dt);
     void draw();
-    EntityId getPlayerId();
+    ecs::EntityId getPlayerId();
 
 private:
     void loadTileset(const std::string& l_path);
@@ -35,7 +35,7 @@ private:
     sf::Vector2u m_mapSize;
     sf::Sprite m_background;
     std::shared_ptr<sf::Texture> m_backgroundTexture;
-    std::optional<EntityId> m_playerId;
+    std::optional<ecs::EntityId> m_playerId;
 };
 
 #endif

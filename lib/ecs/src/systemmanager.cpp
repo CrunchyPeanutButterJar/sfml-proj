@@ -2,6 +2,10 @@
 #include <ecs/system/s_renderer.hpp>
 #include <utils/assert.hpp>
 
+using namespace ecs::system;
+using namespace ecs::messaging;
+using namespace ecs::entity;
+
 SystemManager::SystemManager(EntityManager& l_entityManager) : m_entityManager{l_entityManager}
 {
     m_systems[System::Renderer] = std::make_unique<SRenderer>(*this);

@@ -4,6 +4,8 @@
 #include <ecs/entity/c_base.hpp>
 #include <SFML/System/Vector2.hpp>
 
+namespace ecs::entity
+{
 class CPosition : public CBase
 {
 public:
@@ -22,5 +24,6 @@ private:
     sf::Vector2f m_position;
     sf::Vector2f m_positionOld;
 };
+}
 
 #endif

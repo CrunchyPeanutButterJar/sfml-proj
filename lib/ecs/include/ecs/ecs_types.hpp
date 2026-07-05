@@ -1,6 +1,8 @@
 #ifndef ECS_ECS_TYPES_HPP
 #define ECS_ECS_TYPES_HPP
 
+namespace ecs
+{
 using EntityId = unsigned int;
 
 enum {
@@ -27,6 +29,7 @@ enum class System
     State,
     SheetAnimation
 };
+}
 
 
 #endif
