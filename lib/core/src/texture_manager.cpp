@@ -1,5 +1,5 @@
 #include <SFML/Graphics/Texture.hpp>
-#include <core/graphics/textureManager.hpp>
+#include <core/graphics/texture_manager.hpp>
 #include <utils/utilities.hpp>
 
 using namespace core::graphics;

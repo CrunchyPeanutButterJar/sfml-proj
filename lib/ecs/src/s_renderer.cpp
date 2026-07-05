@@ -2,9 +2,9 @@
 #include <ecs/entity/c_drawable.hpp>
 #include <ecs/entity/c_position.hpp>
 #include <ecs/entity/c_spritesheet.hpp>
-#include <ecs/entity/entitymanager.hpp>
+#include <ecs/entity/entity_manager.hpp>
 #include <ecs/system/s_renderer.hpp>
-#include <ecs/system/systemmanager.hpp>
+#include <ecs/system/system_manager.hpp>
 
 using namespace ecs::system;
 using namespace ecs::messaging;

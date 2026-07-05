@@ -1,9 +1,9 @@
-#include <core/graphics/textureManager.hpp>
+#include <core/graphics/texture_manager.hpp>
 #include <ecs/ecs_types.hpp>
 #include <ecs/entity/c_position.hpp>
 #include <ecs/entity/c_spritesheet.hpp>
-#include <ecs/entity/entitymanager.hpp>
-#include <ecs/system/systemmanager.hpp>
+#include <ecs/entity/entity_manager.hpp>
+#include <ecs/system/system_manager.hpp>
 #include <utils/assert.hpp>
 #include <utils/utilities.hpp>
 

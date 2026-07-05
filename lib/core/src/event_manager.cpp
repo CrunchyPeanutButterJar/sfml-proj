@@ -1,6 +1,6 @@
 #include <SFML/Window/Keyboard.hpp>
 #include <SFML/Window/WindowBase.hpp>
-#include <core/eventmanager.hpp>
+#include <core/event_manager.hpp>
 
 #include <fstream>
 #include <iostream>

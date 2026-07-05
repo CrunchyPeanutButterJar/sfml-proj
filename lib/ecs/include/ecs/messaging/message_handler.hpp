@@ -2,7 +2,7 @@
 #define ECS_MESSAGING_MESSAGEHANDLER_HPP
 
 #include <ecs/messaging/communicator.hpp>
-#include <ecs/messaging/entitymessage.hpp>
+#include <ecs/messaging/entity_message.hpp>
 #include <ecs/messaging/message.hpp>
 #include <unordered_map>
 

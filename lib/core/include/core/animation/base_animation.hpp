@@ -2,7 +2,7 @@
 #define CORE_ANIMATION_BASEANIMATION_HPP
 
 #include <SFML/Graphics/Texture.hpp>
-#include <core/graphics/spriteSheet.fwd.hpp>
+#include <core/graphics/spritesheet.fwd.hpp>
 #include <utils/utilities.hpp>
 
 namespace core::animation

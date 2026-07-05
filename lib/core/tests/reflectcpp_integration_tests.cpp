@@ -1,6 +1,6 @@
 #include <gtest/gtest.h>
 
-#include <core/eventmanager.hpp>
+#include <core/event_manager.hpp>
 
 TEST(serialization_deserialization, serialization_deserialization_of_bindings_is_symmetrical)
 {

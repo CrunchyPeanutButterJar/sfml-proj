@@ -2,9 +2,9 @@
 #define ECS_SYSTEM_S_BASE_HPP
 
 #include <ecs/ecs_types.hpp>
-#include <ecs/messaging/entityevents.hpp>
+#include <ecs/messaging/entity_events.hpp>
 #include <ecs/messaging/observer.hpp>
-#include <ecs/system/systemmanager.fwd.hpp>
+#include <ecs/system/system_manager.fwd.hpp>
 #include <memory>
 #include <utils/bitmask.hpp>
 #include <vector>

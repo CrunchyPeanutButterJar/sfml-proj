@@ -1,4 +1,4 @@
-#include <ecs/messaging/eventqueue.hpp>
+#include <ecs/messaging/event_queue.hpp>
 
 using namespace ecs::messaging;
 

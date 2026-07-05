@@ -3,11 +3,11 @@
 
 #include <core/window.fwd.hpp>
 #include <ecs/ecs_types.hpp>
-#include <ecs/entity/entitymanager.fwd.hpp>
-#include <ecs/messaging/eventqueue.hpp>
-#include <ecs/messaging/messagehandler.hpp>
+#include <ecs/entity/entity_manager.fwd.hpp>
+#include <ecs/messaging/event_queue.hpp>
+#include <ecs/messaging/message_handler.hpp>
 #include <ecs/system/s_base.hpp>
-#include <ecs/system/systemmanager.fwd.hpp>
+#include <ecs/system/system_manager.fwd.hpp>
 #include <unordered_map>
 #include <utils/bitmask.hpp>
 

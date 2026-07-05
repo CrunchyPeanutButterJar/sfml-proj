@@ -6,9 +6,9 @@
 #include <SFML/Graphics/Sprite.hpp>
 #include <SFML/Graphics/Texture.hpp>
 #include <SFML/System/Vector2.hpp>
-#include <core/animation/baseAnimation.hpp>
+#include <core/animation/base_animation.hpp>
 #include <core/directions.hpp>
-#include <core/graphics/textureManager.fwd.hpp>
+#include <core/graphics/texture_manager.fwd.hpp>
 
 #include <memory>
 #include <unordered_map>

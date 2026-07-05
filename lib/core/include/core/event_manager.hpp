@@ -4,7 +4,7 @@
 #include <SFML/Window/Event.hpp>
 #include <SFML/Window/WindowBase.hpp>
 
-#include <core/eventmanager.fwd.hpp>
+#include <core/event_manager.fwd.hpp>
 
 #include <any>
 

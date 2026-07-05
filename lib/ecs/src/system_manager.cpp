@@ -1,5 +1,5 @@
 #include <ecs/system/s_renderer.hpp>
-#include <ecs/system/systemmanager.hpp>
+#include <ecs/system/system_manager.hpp>
 #include <utils/assert.hpp>
 
 using namespace ecs::system;

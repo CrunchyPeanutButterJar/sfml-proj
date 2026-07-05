@@ -1,6 +1,6 @@
 #include <SFML/Graphics/Rect.hpp>
 #include <core/animation/animation.hpp>
-#include <core/graphics/spriteSheet.hpp>
+#include <core/graphics/spritesheet.hpp>
 #include <utils/utilities.hpp>
 
 using namespace core::animation;

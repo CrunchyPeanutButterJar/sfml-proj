@@ -3,8 +3,8 @@
 
 #include <SFML/Graphics.hpp>
 
-#include <ecs/entity/entitymanager.hpp>
-#include <ecs/system/systemmanager.hpp>
+#include <ecs/entity/entity_manager.hpp>
+#include <ecs/system/system_manager.hpp>
 #include <statemanager.hpp>
 #include <core/window.hpp>
 

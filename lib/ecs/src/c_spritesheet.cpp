@@ -1,6 +1,6 @@
 #include <ecs/entity/c_spritesheet.hpp>
 
-#include <core/graphics/textureManager.hpp>
+#include <core/graphics/texture_manager.hpp>
 #include <utils/assert.hpp>
 #include <utils/utilities.hpp>
 

@@ -5,7 +5,7 @@
 
 #include <map.hpp>
 #include <basestate.hpp>
-#include <core/graphics/spriteSheet.hpp>
+#include <core/graphics/spritesheet.hpp>
 
 class GameState : public BaseState
 {

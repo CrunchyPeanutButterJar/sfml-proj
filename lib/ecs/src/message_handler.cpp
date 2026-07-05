@@ -1,4 +1,4 @@
-#include <ecs/messaging/messagehandler.hpp>
+#include <ecs/messaging/message_handler.hpp>
 
 using namespace ecs::messaging;
 

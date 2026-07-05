@@ -3,14 +3,14 @@
 #include <gamestate.hpp>
 #include <utils/utilities.hpp>
 
-#include <core/eventmanager.hpp>
+#include <core/event_manager.hpp>
 #include <core/window.hpp>
 #include <ecs/entity/c_position.hpp>
 #include <ecs/entity/c_spritesheet.hpp>
-#include <ecs/entity/entitymanager.hpp>
-#include <ecs/messaging/entitymessage.hpp>
+#include <ecs/entity/entity_manager.hpp>
+#include <ecs/messaging/entity_message.hpp>
 #include <ecs/messaging/message.hpp>
-#include <ecs/system/systemmanager.hpp>
+#include <ecs/system/system_manager.hpp>
 #include <statemanager.hpp>
 
 #include <SFML/Window/Keyboard.hpp>

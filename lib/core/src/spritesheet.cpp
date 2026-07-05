@@ -1,8 +1,8 @@
 #include <SFML/Graphics/Rect.hpp>
 #include <SFML/Graphics/RenderWindow.hpp>
 #include <core/animation/animation.hpp>
-#include <core/graphics/spriteSheet.hpp>
-#include <core/graphics/textureManager.hpp>
+#include <core/graphics/spritesheet.hpp>
+#include <core/graphics/texture_manager.hpp>
 #include <utility>
 #include <utils/assert.hpp>
 #include <utils/utilities.hpp>

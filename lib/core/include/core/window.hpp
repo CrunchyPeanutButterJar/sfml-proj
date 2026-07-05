@@ -4,7 +4,7 @@
 #include <SFML/Graphics.hpp>
 
 #include <SFML/Graphics/Rect.hpp>
-#include <core/eventmanager.hpp>
+#include <core/event_manager.hpp>
 
 namespace core
 {

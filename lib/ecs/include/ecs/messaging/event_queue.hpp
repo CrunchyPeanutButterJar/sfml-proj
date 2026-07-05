@@ -1,7 +1,7 @@
 #ifndef ECS_MESSAGING_EVENTQUEUE_HPP
 #define ECS_MESSAGING_EVENTQUEUE_HPP
 
-#include <ecs/messaging/entityevents.hpp>
+#include <ecs/messaging/entity_events.hpp>
 #include <optional>
 #include <queue>
 

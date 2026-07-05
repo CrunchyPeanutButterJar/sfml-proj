@@ -1,9 +1,10 @@
 #ifndef ECS_ENTITY_ENTITYMANAGER_HPP
 #define ECS_ENTITY_ENTITYMANAGER_HPP
 
-#include <core/graphics/textureManager.fwd.hpp>
+#include <core/graphics/texture_manager.fwd.hpp>
 #include <ecs/entity/c_base.hpp>
-#include <ecs/system/systemmanager.fwd.hpp>
+#include <ecs/entity/entity_manager.fwd.hpp>
+#include <ecs/system/system_manager.fwd.hpp>
 #include <functional>
 #include <unordered_map>
 #include <utility>

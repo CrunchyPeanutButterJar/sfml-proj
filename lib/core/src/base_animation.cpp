@@ -1,4 +1,4 @@
-#include <core/animation/baseAnimation.hpp>
+#include <core/animation/base_animation.hpp>
 
 using namespace core::animation;
 

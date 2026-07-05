@@ -3,8 +3,8 @@
 
 #include <SFML/Graphics/RenderWindow.hpp>
 #include <SFML/System/Vector2.hpp>
-#include <core/graphics/spriteSheet.hpp>
-#include <core/graphics/textureManager.fwd.hpp>
+#include <core/graphics/spritesheet.hpp>
+#include <core/graphics/texture_manager.fwd.hpp>
 #include <ecs/entity/c_drawable.hpp>
 #include <optional>
 #include <utils/utilities.hpp>

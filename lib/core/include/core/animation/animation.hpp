@@ -1,7 +1,7 @@
 #ifndef CORE_ANIMATION_ANIMATION_HPP
 #define CORE_ANIMATION_ANIMATION_HPP
 
-#include <core/animation/baseAnimation.hpp>
+#include <core/animation/base_animation.hpp>
 #include <utils/utilities.hpp>
 
 namespace core::animation

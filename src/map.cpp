@@ -1,7 +1,7 @@
 #include <SFML/Graphics/Rect.hpp>
 #include <core/window.hpp>
 #include <ecs/entity/c_position.hpp>
-#include <ecs/entity/entitymanager.hpp>
+#include <ecs/entity/entity_manager.hpp>
 #include <map.hpp>
 #include <utils/assert.hpp>
 #include <utils/utilities.hpp>

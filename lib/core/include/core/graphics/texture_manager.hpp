@@ -2,8 +2,8 @@
 #define CORE_GRAPHICS_TEXTUREMANAGER_HPP
 
 #include <SFML/Graphics/Texture.hpp>
-#include <core/graphics/textureManager.fwd.hpp>
-#include <core/resourceManager.hpp>
+#include <core/graphics/texture_manager.fwd.hpp>
+#include <core/resource_manager.hpp>
 
 namespace core::graphics
 {
