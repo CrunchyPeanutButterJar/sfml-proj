@@ -5,8 +5,9 @@ namespace ecs
 {
 using EntityId = unsigned int;
 
-enum {
-N_COMPONENT_TYPES = 32
+enum
+{
+    N_COMPONENT_TYPES = 32
 };
 using ComponentType = unsigned int;
 
@@ -30,6 +31,5 @@ enum class System
     SheetAnimation
 };
 } // namespace ecs
-
 
 #endif

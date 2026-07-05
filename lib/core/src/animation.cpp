@@ -1,25 +1,22 @@
-#include <core/animation/animation.hpp>
-#include <utils/utilities.hpp>
-#include <core/graphics/spriteSheet.hpp>
 #include <SFML/Graphics/Rect.hpp>
+#include <core/animation/animation.hpp>
+#include <core/graphics/spriteSheet.hpp>
+#include <utils/utilities.hpp>
 
 using namespace core::animation;
 
 void Animation::cropSprite()
 {
     auto [uwidth, uheight] = m_spriteSheet->getSpriteSize();
-    int width = (int) uwidth;
-    int height = (int) uheight;
+    int width              = (int)uwidth;
+    int height             = (int)uheight;
 
     core::Direction current_direction = m_spriteSheet->getDirection();
 
-    sf::IntRect rect
-    {
-        width * (current_direction == core::Direction::Right? (int)getFrame() : (int) getFrame() + 1),
-        height * (int)m_frameRow,
-        current_direction == core::Direction::Right? width : -width,
-        height
-    };
+    sf::IntRect rect{width * (current_direction == core::Direction::Right ? (int)getFrame()
+                                                                          : (int)getFrame() + 1),
+                     height * (int)m_frameRow,
+                     current_direction == core::Direction::Right ? width : -width, height};
 
     m_spriteSheet->cropSprite(rect);
 }
@@ -27,9 +24,9 @@ void Animation::cropSprite()
 void Animation::frameStep()
 {
     const bool Advanced = nextFrame();
-    if(!Advanced)
+    if (!Advanced)
     {
-        if(m_loop)
+        if (m_loop)
         {
             m_frameCurrent = m_frameStart;
             return;
@@ -44,13 +41,6 @@ void Animation::readInput(utils::Tokens& l_tokens)
 
     ASSERT(tuple.has_value(), "Error reading Animation from config file");
 
-    std::tie
-    (
-        m_frameStart,
-        m_frameEnd,
-        m_frameRow,
-        m_frameTime,
-        m_frameActionStart,
-        m_frameActionEnd
-    ) = *tuple;
+    std::tie(m_frameStart, m_frameEnd, m_frameRow, m_frameTime, m_frameActionStart,
+             m_frameActionEnd) = *tuple;
 }

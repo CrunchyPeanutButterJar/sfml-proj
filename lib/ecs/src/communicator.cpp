@@ -1,5 +1,5 @@
-#include <ecs/messaging/communicator.hpp>
 #include <algorithm>
+#include <ecs/messaging/communicator.hpp>
 
 using namespace ecs::messaging;
 
@@ -11,7 +11,7 @@ auto Communicator::addObserver(Observer* l_observer) -> bool
 auto Communicator::removeObserver(Observer* l_observer) -> bool
 {
     auto itr = std::find(m_observers.begin(), m_observers.end(), l_observer);
-    if(itr == m_observers.end())
+    if (itr == m_observers.end())
     {
         return false;
     }
@@ -21,13 +21,14 @@ auto Communicator::removeObserver(Observer* l_observer) -> bool
 
 auto Communicator::hasObserver(const Observer* l_observer) const -> bool
 {
-  auto itr = std::find(m_observers.begin(), m_observers.end(), l_observer);
-  return itr != m_observers.end();
+    auto itr = std::find(m_observers.begin(), m_observers.end(), l_observer);
+    return itr != m_observers.end();
 }
 
-void Communicator::broadcast(const Message &l_message) const 
+void Communicator::broadcast(const Message& l_message) const
 {
-  for (auto *observer : m_observers) {
-    observer->notify(l_message);
-  }
+    for (auto* observer : m_observers)
+    {
+        observer->notify(l_message);
+    }
 }

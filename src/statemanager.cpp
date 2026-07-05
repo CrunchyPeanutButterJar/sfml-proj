@@ -1,16 +1,18 @@
 #include <statemanager.hpp>
 
-#include <gamestate.hpp>
 #include <core/window.hpp>
+#include <gamestate.hpp>
 
 #include <algorithm>
 
 void StateManager::switchTo(StateType l_state)
 {
-    auto itr = std::find_if(m_states.begin(), m_states.end(), [l_state](const auto& el){ return el.first == l_state; });
-    
-    if(!m_states.empty()) m_states.back().second->deactivate();
-    
+    auto itr = std::find_if(m_states.begin(), m_states.end(),
+                            [l_state](const auto& el) { return el.first == l_state; });
+
+    if (!m_states.empty())
+        m_states.back().second->deactivate();
+
     if (itr == m_states.end())
     {
         itr = m_states.insert(m_states.end(), {l_state, m_stateFactory[l_state](this)});
@@ -29,15 +31,16 @@ auto StateManager::getCurrentState() const -> StateType
 
 void StateManager::update(const sf::Time& l_elapsed)
 {
-    auto ritr = std::find_if(m_states.rbegin(), m_states.rend(), [](const auto& el){ return !el.second->isTranscendent(); });
-    if(ritr == m_states.rend())
+    auto ritr = std::find_if(m_states.rbegin(), m_states.rend(),
+                             [](const auto& el) { return !el.second->isTranscendent(); });
+    if (ritr == m_states.rend())
     {
         return;
     }
 
-    int r_index = std::distance(m_states.rbegin(), ritr);
-    auto itr = std::prev(m_states.end(), r_index + 1);
-    for(; itr != m_states.end(); ++itr)
+    int  r_index = std::distance(m_states.rbegin(), ritr);
+    auto itr     = std::prev(m_states.end(), r_index + 1);
+    for (; itr != m_states.end(); ++itr)
     {
         itr->second->update(l_elapsed);
     }
@@ -45,15 +48,16 @@ void StateManager::update(const sf::Time& l_elapsed)
 
 void StateManager::draw()
 {
-    auto ritr = std::find_if(m_states.rbegin(), m_states.rend(), [](const auto& el){ return !el.second->isTransparent(); });
-    if(ritr == m_states.rend())
+    auto ritr = std::find_if(m_states.rbegin(), m_states.rend(),
+                             [](const auto& el) { return !el.second->isTransparent(); });
+    if (ritr == m_states.rend())
     {
         return;
     }
 
-    int r_index = std::distance(m_states.rbegin(), ritr);
-    auto itr = std::prev(m_states.end(), r_index + 1);
-    for(; itr != m_states.end(); ++itr)
+    int  r_index = std::distance(m_states.rbegin(), ritr);
+    auto itr     = std::prev(m_states.end(), r_index + 1);
+    for (; itr != m_states.end(); ++itr)
     {
         getContext().m_window.getRenderWindow()->setView(itr->second->getView());
         itr->second->draw();
@@ -67,22 +71,22 @@ void StateManager::remove(StateType l_state)
 
 void StateManager::processRequests()
 {
-    for(auto to_remove : m_toBeRemoved)
+    for (auto to_remove : m_toBeRemoved)
     {
-        auto itr = std::find_if(m_states.begin(), m_states.end(), [to_remove](const auto& el){ return el.first == to_remove; });
-        if(itr != m_states.end())
+        auto itr = std::find_if(m_states.begin(), m_states.end(),
+                                [to_remove](const auto& el) { return el.first == to_remove; });
+        if (itr != m_states.end())
         {
             m_states.erase(itr);
         }
     }
 }
 
-template<typename StateImpl>
-void StateManager::registerState(StateType l_stateType)
+template <typename StateImpl> void StateManager::registerState(StateType l_stateType)
 {
-    m_stateFactory[l_stateType] = [](StateManager* stateManager) -> StatePtr 
+    m_stateFactory[l_stateType] = [](StateManager* stateManager) -> StatePtr
     {
-        auto state =  std::make_unique<StateImpl>(*stateManager); 
+        auto state = std::make_unique<StateImpl>(*stateManager);
         state->onCreate();
 
         return state;
@@ -101,5 +105,6 @@ auto StateManager::getContext() -> SharedContext&
 
 auto StateManager::hasState(StateType l_state) const -> bool
 {
-    return std::any_of(m_states.begin(), m_states.end(), [l_state](const auto& el){ return el.first == l_state; });
+    return std::any_of(m_states.begin(), m_states.end(),
+                       [l_state](const auto& el) { return el.first == l_state; });
 }

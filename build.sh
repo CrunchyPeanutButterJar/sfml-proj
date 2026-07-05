@@ -45,7 +45,7 @@ done
 
 
 if $DO_CLANG_FORMAT; then
-  echo "Lancement de clang-format..."
+  clang-format-18 -i $(find ./lib/* ./src/* -name "*.cpp" -o -name "*.hpp")
   exit 0
 fi
 

@@ -1,9 +1,9 @@
 #ifndef ECS_MESSAGING_MESSAGEHANDLER_HPP
 #define ECS_MESSAGING_MESSAGEHANDLER_HPP
 
+#include <ecs/messaging/communicator.hpp>
 #include <ecs/messaging/entitymessage.hpp>
 #include <ecs/messaging/message.hpp>
-#include <ecs/messaging/communicator.hpp>
 #include <unordered_map>
 
 namespace ecs::messaging
@@ -12,12 +12,12 @@ using Subscriptions = std::unordered_map<EntityMessage, Communicator>;
 
 class MessageHandler
 {
-public:
+  public:
     auto subscribe(EntityMessage l_type, Observer* l_observer) -> bool;
     auto unsubscribe(EntityMessage l_type, Observer* l_observer) -> bool;
     void dispatch(const Message& l_message) const;
 
-private:
+  private:
     Subscriptions m_communicators;
 };
 } // namespace ecs::messaging

@@ -1,5 +1,5 @@
-#include <ecs/system/systemmanager.hpp>
 #include <ecs/system/s_renderer.hpp>
+#include <ecs/system/systemmanager.hpp>
 #include <utils/assert.hpp>
 
 using namespace ecs::system;
@@ -28,19 +28,19 @@ void SystemManager::addEvent(EntityId l_entity, EventId l_event)
 
 void SystemManager::entityModified(EntityId l_entity, utils::Bitmask l_bits)
 {
-    for(auto& s_itr : m_systems)
+    for (auto& s_itr : m_systems)
     {
         auto* system = s_itr.second.get();
-        if(system->fitsRequirements(l_bits))
+        if (system->fitsRequirements(l_bits))
         {
-            if(!system->hasEntity(l_entity))
+            if (!system->hasEntity(l_entity))
             {
                 system->addEntity(l_entity);
             }
         }
         else
         {
-            if(system->hasEntity(l_entity))
+            if (system->hasEntity(l_entity))
             {
                 system->removeEntity(l_entity);
             }
@@ -50,7 +50,7 @@ void SystemManager::entityModified(EntityId l_entity, utils::Bitmask l_bits)
 
 void SystemManager::removeEntity(EntityId l_entity)
 {
-    for(auto& s_itr : m_systems)
+    for (auto& s_itr : m_systems)
     {
         s_itr.second->removeEntity(l_entity);
     }
@@ -58,7 +58,7 @@ void SystemManager::removeEntity(EntityId l_entity)
 
 void SystemManager::update(float l_dt)
 {
-    for(auto& s_itr : m_systems)
+    for (auto& s_itr : m_systems)
     {
         s_itr.second->update(l_dt);
     }
@@ -67,14 +67,14 @@ void SystemManager::update(float l_dt)
 
 void SystemManager::handleEvents()
 {
-    for(auto& entity_and_events : m_events)
+    for (auto& entity_and_events : m_events)
     {
         auto& [entity, events] = entity_and_events;
-        while(auto event = events.processEvent())
+        while (auto event = events.processEvent())
         {
-            for(auto& s_itr : m_systems)
+            for (auto& s_itr : m_systems)
             {
-                if(s_itr.second->hasEntity(entity))
+                if (s_itr.second->hasEntity(entity))
                 {
                     s_itr.second->handleEvent(entity, (EntityEvent)*event);
                 }

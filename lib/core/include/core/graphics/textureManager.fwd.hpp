@@ -3,8 +3,7 @@
 
 namespace core::graphics
 {
-    class TextureManager;
+class TextureManager;
 } // namespace core::graphics
-
 
 #endif

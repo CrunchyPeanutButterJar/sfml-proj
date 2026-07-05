@@ -3,8 +3,7 @@
 
 namespace core::graphics
 {
-    class SpriteSheet;
+class SpriteSheet;
 } // namespace core::graphics
-
 
 #endif

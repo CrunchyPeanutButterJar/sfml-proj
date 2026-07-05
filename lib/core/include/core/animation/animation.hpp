@@ -1,20 +1,20 @@
 #ifndef CORE_ANIMATION_ANIMATION_HPP
 #define CORE_ANIMATION_ANIMATION_HPP
 
-#include <utils/utilities.hpp>
 #include <core/animation/baseAnimation.hpp>
+#include <utils/utilities.hpp>
 
 namespace core::animation
 {
 class Animation : public BaseAnimation
 {
-public:
-    Animation() = default;
+  public:
+    Animation()           = default;
     ~Animation() override = default;
 
     void readInput(utils::Tokens& l_tokens) override;
 
-protected:
+  protected:
     void frameStep() override;
     void cropSprite() override;
 };

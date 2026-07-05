@@ -9,7 +9,7 @@ TextureManager::TextureManager() : ResourceManager{"textures.cfg"} {}
 auto TextureManager::load(const std::string& l_path) -> std::unique_ptr<sf::Texture>
 {
     auto texture = std::make_unique<sf::Texture>();
-    if(!texture->loadFromFile(utils::getResourcesDirectory() + l_path))
+    if (!texture->loadFromFile(utils::getResourcesDirectory() + l_path))
     {
         texture.reset();
     }

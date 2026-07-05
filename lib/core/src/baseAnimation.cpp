@@ -31,25 +31,25 @@ void BaseAnimation::stop()
 void BaseAnimation::reset()
 {
     m_frameCurrent = m_frameStart;
-    m_elapsedTime = 0.0F;
-    cropSprite();   
+    m_elapsedTime  = 0.0F;
+    cropSprite();
 }
 
 void BaseAnimation::update(float l_dt)
 {
-    if(!m_playing)
+    if (!m_playing)
     {
         return;
     }
 
     m_elapsedTime += l_dt;
-    if(m_elapsedTime < m_frameTime)
+    if (m_elapsedTime < m_frameTime)
     {
         return;
     }
     frameStep();
     cropSprite();
-    m_elapsedTime-=m_frameTime;
+    m_elapsedTime -= m_frameTime;
 }
 
 auto BaseAnimation::getFrame() const -> Frame
@@ -59,9 +59,9 @@ auto BaseAnimation::getFrame() const -> Frame
 
 auto BaseAnimation::nextFrame() -> bool
 {
-    if(m_frameStart < m_frameEnd)
+    if (m_frameStart < m_frameEnd)
     {
-        if(m_frameCurrent >= m_frameEnd)
+        if (m_frameCurrent >= m_frameEnd)
         {
             return false;
         }
@@ -69,7 +69,7 @@ auto BaseAnimation::nextFrame() -> bool
     }
     else
     {
-        if(m_frameCurrent <= m_frameEnd)
+        if (m_frameCurrent <= m_frameEnd)
         {
             return false;
         }
@@ -82,10 +82,11 @@ auto BaseAnimation::nextFrame() -> bool
 
 auto BaseAnimation::isInAction() const -> bool
 {
-    if(m_frameActionStart == -1 || m_frameActionEnd == -1)
+    if (m_frameActionStart == -1 || m_frameActionEnd == -1)
     {
         return true;
     }
 
-    return  (((int)m_frameCurrent >= m_frameActionStart) && ((int)m_frameCurrent <= m_frameActionEnd));
+    return (((int)m_frameCurrent >= m_frameActionStart) &&
+            ((int)m_frameCurrent <= m_frameActionEnd));
 }

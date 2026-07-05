@@ -2,8 +2,8 @@
 #define CORE_ANIMATION_BASEANIMATION_HPP
 
 #include <SFML/Graphics/Texture.hpp>
-#include <utils/utilities.hpp>
 #include <core/graphics/spriteSheet.fwd.hpp>
+#include <utils/utilities.hpp>
 
 namespace core::animation
 {
@@ -11,10 +11,10 @@ namespace core::animation
 using Frame = unsigned int;
 class BaseAnimation
 {
-friend class core::graphics::SpriteSheet;
+    friend class core::graphics::SpriteSheet;
 
-public:
-    BaseAnimation() = default;
+  public:
+    BaseAnimation()          = default;
     virtual ~BaseAnimation() = default;
 
     void play();
@@ -34,23 +34,22 @@ public:
     [[nodiscard]] auto isInAction() const -> bool;
 
   protected:
-    virtual void frameStep() = 0;
+    virtual void frameStep()  = 0;
     virtual void cropSprite() = 0;
 
-
-  Frame m_frameCurrent{0};
-  Frame m_frameStart{0};
-  Frame m_frameEnd{0};
-  Frame m_frameRow{0};
-  int m_frameActionStart{-1};
-  int m_frameActionEnd{-1};
-  float m_frameTime{0.F};
-  float m_elapsedTime{0.F};
-  bool m_loop{false};
-  bool m_playing{false};
-  std::string m_name;
-  core::graphics::SpriteSheet *m_spriteSheet{};
-  sf::Texture* m_texture{};
+    Frame                        m_frameCurrent{0};
+    Frame                        m_frameStart{0};
+    Frame                        m_frameEnd{0};
+    Frame                        m_frameRow{0};
+    int                          m_frameActionStart{-1};
+    int                          m_frameActionEnd{-1};
+    float                        m_frameTime{0.F};
+    float                        m_elapsedTime{0.F};
+    bool                         m_loop{false};
+    bool                         m_playing{false};
+    std::string                  m_name;
+    core::graphics::SpriteSheet* m_spriteSheet{};
+    sf::Texture*                 m_texture{};
 };
 } // namespace core::animation
 

@@ -9,7 +9,7 @@ void EventQueue::addEvent(EventId l_event)
 
 auto EventQueue::processEvent() -> std::optional<EventId>
 {
-    if(m_queue.empty())
+    if (m_queue.empty())
     {
         return {};
     }
@@ -20,5 +20,6 @@ auto EventQueue::processEvent() -> std::optional<EventId>
 
 void EventQueue::clear()
 {
-    while(processEvent());
+    while (processEvent())
+        ;
 }

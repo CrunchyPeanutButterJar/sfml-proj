@@ -19,9 +19,8 @@ using Callback = std::function<void(const sf::WindowBase&)>;
 
 class EventManager
 {
-public:
+  public:
     using StateType = unsigned int;
-
 
     void handleEvent(const sf::Event& l_event);
     void update(StateType l_state, const sf::WindowBase& l_wind);
@@ -32,21 +31,20 @@ public:
     EventManager();
     ~EventManager();
 
-    EventManager(const EventManager&) = delete;
+    EventManager(const EventManager&)                    = delete;
     auto operator=(const EventManager&) -> EventManager& = delete;
 
     EventManager(EventManager&&) noexcept;
     auto operator=(EventManager&&) noexcept -> EventManager&;
 
-private:
+  private:
     void handleRealtimeEvents();
-
 
     struct Impl;
     std::unique_ptr<Impl> m_impl;
 };
 
-//exposed for tests
+// exposed for tests
 auto buildBindings() -> std::any;
 auto deserializeBindings(const std::string& l_jsonString) -> std::any;
 auto serializeBindings(const std::any& l_serializableBindings) -> std::string;

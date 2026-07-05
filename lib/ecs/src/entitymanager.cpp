@@ -1,19 +1,19 @@
-#include <utils/assert.hpp>
-#include <utils/utilities.hpp>
+#include <core/graphics/textureManager.hpp>
+#include <ecs/ecs_types.hpp>
 #include <ecs/entity/c_position.hpp>
 #include <ecs/entity/c_spritesheet.hpp>
-#include <ecs/ecs_types.hpp>
 #include <ecs/entity/entitymanager.hpp>
-#include <core/graphics/textureManager.hpp>
 #include <ecs/system/systemmanager.hpp>
+#include <utils/assert.hpp>
+#include <utils/utilities.hpp>
 
 using namespace ecs::entity;
 using namespace ecs::system;
 using namespace ecs::messaging;
 
-EntityManager::EntityManager(SystemManager& l_sysManager, core::graphics::TextureManager& l_textureManager):
-m_systemManager(l_sysManager),
-m_textureManager(l_textureManager)
+EntityManager::EntityManager(SystemManager&                  l_sysManager,
+                             core::graphics::TextureManager& l_textureManager)
+    : m_systemManager(l_sysManager), m_textureManager(l_textureManager)
 
 {
     addComponentType<CPosition>(Component::Position);
@@ -24,9 +24,9 @@ auto EntityManager::addEntity(utils::Bitmask l_mask) -> int
 {
     EntityId entity = m_idCounter++;
     ASSERT(m_entities.emplace(entity, EntityData{}).second, "Invalid Entity Id Counter {}", entity);
-    for(size_t i = 0; i < N_COMPONENT_TYPES;i++)
+    for (size_t i = 0; i < N_COMPONENT_TYPES; i++)
     {
-        if(l_mask.getBit(i))
+        if (l_mask.getBit(i))
         {
             addComponent(entity, (Component)i);
         }
@@ -38,48 +38,51 @@ auto EntityManager::addEntity(utils::Bitmask l_mask) -> int
 
 auto EntityManager::addEntity(const std::string& l_entityFile) -> int
 {
-    static const std::string EntityDir = utils::getResourcesDirectory() + "media/entities/";
-    int entity_id = -1;
-    auto file_stream = utils::readFile(EntityDir + l_entityFile);
-    if(!file_stream)
+    static const std::string EntityDir   = utils::getResourcesDirectory() + "media/entities/";
+    int                      entity_id   = -1;
+    auto                     file_stream = utils::readFile(EntityDir + l_entityFile);
+    if (!file_stream)
     {
         FAILURE_NON_FATAL("Could not open entity file {}", l_entityFile);
         return entity_id;
     }
     utils::Tokens tokens{std::move(*file_stream)};
-    
-    while(!tokens.empty())
+
+    while (!tokens.empty())
     {
         auto key = *consumeToken<std::string>(tokens);
-        if(key == "Name")
+        if (key == "Name")
         {
-
         }
-        else if(key == "Attributes")
+        else if (key == "Attributes")
         {
-            if(entity_id != -1) 
+            if (entity_id != -1)
             {
-                FAILURE_NON_FATAL("Invalid entity file {} : duplicate `Attributes` field found", l_entityFile);
+                FAILURE_NON_FATAL("Invalid entity file {} : duplicate `Attributes` field found",
+                                  l_entityFile);
                 return -1;
             }
             entity_id = addEntity(*consumeToken<utils::Bitset>(tokens));
         }
-        else if(key == "Component")
+        else if (key == "Component")
         {
-            if(entity_id == -1)
+            if (entity_id == -1)
             {
-                FAILURE_NON_FATAL("Invalid entity file {} : `Component` field found before `Attributes` field ", l_entityFile);
+                FAILURE_NON_FATAL(
+                    "Invalid entity file {} : `Component` field found before `Attributes` field ",
+                    l_entityFile);
                 return -1;
             }
-            const auto CId = *consumeToken<unsigned int>(tokens);
-            auto* component = getComponent<CBase>(entity_id, (Component) CId);
-            if(component == nullptr)
+            const auto CId       = *consumeToken<unsigned int>(tokens);
+            auto*      component = getComponent<CBase>(entity_id, (Component)CId);
+            if (component == nullptr)
             {
                 FAILURE_NON_FATAL("Could not find component {}", CId);
                 return -1;
             }
             component->readInput(tokens);
-            if(auto* c_sprite_sheet = dynamic_cast<CSpriteSheet*>(component); component->getType() == Component::SpriteSheet)
+            if (auto* c_sprite_sheet = dynamic_cast<CSpriteSheet*>(component);
+                component->getType() == Component::SpriteSheet)
             {
                 c_sprite_sheet->create(m_textureManager);
             }
@@ -92,7 +95,7 @@ auto EntityManager::addEntity(const std::string& l_entityFile) -> int
 auto EntityManager::removeEntity(EntityId l_id) -> bool
 {
     auto itr = m_entities.find(l_id);
-    if(itr == m_entities.end())
+    if (itr == m_entities.end())
     {
         return false;
     }
@@ -104,14 +107,15 @@ auto EntityManager::removeEntity(EntityId l_id) -> bool
 auto EntityManager::addComponent(EntityId l_entity, Component l_component) -> bool
 {
     auto itr = m_entities.find(l_entity);
-    if(itr == m_entities.end() || itr->second.first.getBit((unsigned int)l_component))
+    if (itr == m_entities.end() || itr->second.first.getBit((unsigned int)l_component))
     {
         return false;
     }
     auto itr2 = m_componentFactory.find(l_component);
-    if(itr2 == m_componentFactory.end())
+    if (itr2 == m_componentFactory.end())
     {
-        FAILURE_NON_FATAL("Could not find Component Factory for {}", (const unsigned int&) l_component);
+        FAILURE_NON_FATAL("Could not find Component Factory for {}",
+                          (const unsigned int&)l_component);
         return false;
     }
     auto new_component = itr2->second();
@@ -124,13 +128,15 @@ auto EntityManager::addComponent(EntityId l_entity, Component l_component) -> bo
 auto EntityManager::removeComponent(EntityId l_entity, Component l_component) -> bool
 {
     auto itr = m_entities.find(l_entity);
-    if(itr == m_entities.end() || !itr->second.first.getBit((unsigned int)l_component))
+    if (itr == m_entities.end() || !itr->second.first.getBit((unsigned int)l_component))
     {
         return false;
     }
     auto& container = itr->second.second;
-    auto component = std::find_if(container.begin(), container.end(), [l_component](const auto& component){return component->getType() == l_component;});
-    if(component == container.end())
+    auto  component =
+        std::find_if(container.begin(), container.end(), [l_component](const auto& component)
+                     { return component->getType() == l_component; });
+    if (component == container.end())
     {
         FAILURE_NON_FATAL("Could not find component {}", (const unsigned int&)l_component);
         return false;
@@ -144,7 +150,7 @@ auto EntityManager::removeComponent(EntityId l_entity, Component l_component) ->
 auto EntityManager::hasComponent(EntityId l_entity, Component l_component) -> bool
 {
     auto itr = m_entities.find(l_entity);
-    if(itr == m_entities.end())
+    if (itr == m_entities.end())
     {
         return false;
     }

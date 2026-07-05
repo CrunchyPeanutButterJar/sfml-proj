@@ -10,13 +10,12 @@ namespace core
 {
 class Window
 {
-public:
-
+  public:
     Window();
     Window(const std::string& l_title, const sf::Vector2u& l_size);
     ~Window();
     void beginDraw(); // Clear the window.
-    void endDraw(); // Display the changes.
+    void endDraw();   // Display the changes.
     void update(core::EventManager::StateType l_state);
     void setAsDone() { m_isDone = true; }
     auto isDone() const -> bool;
@@ -28,20 +27,18 @@ public:
     auto getEventManager() -> core::EventManager&;
     auto getViewSpace() const -> sf::FloatRect;
 
-private:
+  private:
     void setup(const std::string& l_title, const sf::Vector2u& l_size);
     void destroy();
     void create();
 
-
     core::EventManager m_eventManager;
-    sf::RenderWindow m_window;
-    sf::Vector2u m_windowSize;
-    std::string m_windowTitle;
-    bool m_isDone{};
-    bool m_isFullscreen{};
-    bool m_isFocused{}; 
-
+    sf::RenderWindow   m_window;
+    sf::Vector2u       m_windowSize;
+    std::string        m_windowTitle;
+    bool               m_isDone{};
+    bool               m_isFullscreen{};
+    bool               m_isFocused{};
 };
 } // namespace core
 

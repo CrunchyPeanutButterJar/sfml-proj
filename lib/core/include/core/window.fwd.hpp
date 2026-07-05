@@ -3,7 +3,7 @@
 
 namespace core
 {
-    class Window;
+class Window;
 } // namespace core
 
 #endif

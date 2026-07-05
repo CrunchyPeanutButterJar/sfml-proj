@@ -18,24 +18,25 @@ static auto loadResolutionFromConfigFile() -> sf::Vector2u
     static const std::string ConfigFileName = utils::getConfigDirectory() + "config.json";
 
     std::ifstream config{ConfigFileName};
-    if(config.good())
+    if (config.good())
     {
         std::stringstream buffer;
         buffer << config.rdbuf();
 
         std::string json_config = buffer.str();
-        
-        if(auto result = rfl::json::read<Resolution, rfl::AddTagsToVariants>(json_config))
+
+        if (auto result = rfl::json::read<Resolution, rfl::AddTagsToVariants>(json_config))
         {
             auto resolution = result.value();
-            LOG("Loaded Config file {} with width = {} and height = {}", ConfigFileName, resolution.first, resolution.second);
+            LOG("Loaded Config file {} with width = {} and height = {}", ConfigFileName,
+                resolution.first, resolution.second);
 
             return {resolution.first, resolution.second};
         }
         FAILURE("Error while parsing invalid file : {}", ConfigFileName);
         return {};
     }
-    
+
     {
         const Resolution DefaultResolution{800, 600};
 
@@ -43,18 +44,20 @@ static auto loadResolutionFromConfigFile() -> sf::Vector2u
         ASSERT_NON_FATAL(config.good(), "Error while writing to file : {}", ConfigFileName);
         config << rfl::json::write<rfl::AddTagsToVariants>(DefaultResolution);
 
-        LOG("Loaded default Config with width = {} and height = {}", DefaultResolution.first, DefaultResolution.second);
+        LOG("Loaded default Config with width = {} and height = {}", DefaultResolution.first,
+            DefaultResolution.second);
         return {DefaultResolution.first, DefaultResolution.second};
     }
-} 
+}
 
-Game::Game() :
-m_window{"MyGame", loadResolutionFromConfigFile()},
-m_stateManager{{m_window, m_window.getEventManager(), m_entityManager, m_systemManager, m_textureManager}},
-m_entityManager{m_systemManager, m_stateManager.getContext().m_textureManager},
-m_systemManager{m_entityManager}
+Game::Game()
+    : m_window{"MyGame", loadResolutionFromConfigFile()},
+      m_stateManager{{m_window, m_window.getEventManager(), m_entityManager, m_systemManager,
+                      m_textureManager}},
+      m_entityManager{m_systemManager, m_stateManager.getContext().m_textureManager},
+      m_systemManager{m_entityManager}
 {
-        m_stateManager.switchTo(StateType::Game);
+    m_stateManager.switchTo(StateType::Game);
 }
 
 void Game::update()

@@ -1,15 +1,15 @@
 #ifndef ECS_SYSTEM_S_RENDERER_HPP
 #define ECS_SYSTEM_S_RENDERER_HPP
 
-#include <ecs/system/s_base.hpp>
 #include <core/directions.hpp>
 #include <core/window.hpp>
+#include <ecs/system/s_base.hpp>
 
 namespace ecs::system
 {
 class SRenderer : public SBase
 {
-public:
+  public:
     SRenderer(SystemManager& l_systemManager);
 
     void update(float l_dt) override;
@@ -17,7 +17,7 @@ public:
     void notify(const messaging::Message& l_message) override;
     void render(core::Window& l_window);
 
-private:
+  private:
     void setSheetDirection(EntityId l_entity, core::Direction l_dir);
 };
 } // namespace ecs::system

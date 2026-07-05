@@ -10,13 +10,13 @@ using ObserverContainer = std::set<Observer*>;
 
 class Communicator
 {
-public:
+  public:
     auto addObserver(Observer* l_observer) -> bool;
     auto removeObserver(Observer* l_observer) -> bool;
     auto hasObserver(const Observer* l_observer) const -> bool;
     void broadcast(const Message& l_message) const;
 
-private:
+  private:
     ObserverContainer m_observers;
 };
 } // namespace ecs::messaging

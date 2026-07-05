@@ -6,19 +6,19 @@ auto main(int /*argc*/, char* /*argv*/[]) -> int
 {
     Game game;
 
-    #ifdef _WIN32
+#ifdef _WIN32
     LOG("Running On Windows!");
-    #elif __linux__
+#elif __linux__
     LOG("Running on linux!");
-    #else
-    #error "Unknown OS!"
-    #endif
+#else
+#error "Unknown OS!"
+#endif
 
     LOG("Current working directory : {}", utils::getWorkingDirectory());
 
-    while(!game.getWindow()->isDone())
+    while (!game.getWindow()->isDone())
     {
-        //Game loop
+        // Game loop
         game.update();
         game.render();
         game.lateUpdate();

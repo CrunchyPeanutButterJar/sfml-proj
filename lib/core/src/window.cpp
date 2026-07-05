@@ -19,13 +19,15 @@ Window::~Window()
 
 void Window::setup(const std::string& l_title, const sf::Vector2u& l_size)
 {
-    m_windowTitle = l_title;
-    m_windowSize = l_size;
-    m_isDone = false;
+    m_windowTitle  = l_title;
+    m_windowSize   = l_size;
+    m_isDone       = false;
     m_isFullscreen = false;
 
-    m_eventManager.addCallback(0, "Window_Close", [&capture0 = *this](const auto&) { capture0.setAsDone(); });
-    m_eventManager.addCallback(0, "Window_ToggleFullscreen", [&capture0 = *this](const auto&) { capture0.toggleFullscreen(); });
+    m_eventManager.addCallback(0, "Window_Close",
+                               [&capture0 = *this](const auto&) { capture0.setAsDone(); });
+    m_eventManager.addCallback(0, "Window_ToggleFullscreen",
+                               [&capture0 = *this](const auto&) { capture0.toggleFullscreen(); });
 
     create();
 }
@@ -54,35 +56,34 @@ auto Window::getEventManager() -> core::EventManager&
 auto Window::getViewSpace() const -> sf::FloatRect
 {
     const sf::Vector2f ViewCenter = m_window.getView().getCenter();
-    const sf::Vector2f ViewSize = m_window.getView().getSize();
+    const sf::Vector2f ViewSize   = m_window.getView().getSize();
     const sf::Vector2f ViewSizeHalf{ViewSize.x / 2, ViewSize.y / 2};
 
     return {ViewCenter - ViewSizeHalf, ViewSize};
 }
 
-
 void Window::update(core::EventManager::StateType l_state)
 {
     sf::Event event{};
 
-    while(m_window.pollEvent(event))
+    while (m_window.pollEvent(event))
     {
-        if(event.type == sf::Event::LostFocus)
+        if (event.type == sf::Event::LostFocus)
         {
             m_isFocused = false;
         }
-        else if(event.type == sf::Event::GainedFocus)
+        else if (event.type == sf::Event::GainedFocus)
         {
             m_isFocused = true;
         }
 
-        if(m_isFocused)
+        if (m_isFocused)
         {
             m_eventManager.handleEvent(event);
         }
     }
 
-    if(m_isFocused)
+    if (m_isFocused)
     {
         m_eventManager.update(l_state, m_window);
     }

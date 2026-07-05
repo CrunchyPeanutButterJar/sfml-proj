@@ -23,7 +23,7 @@ auto CPosition::getOldPosition() const -> const sf::Vector2f&
 void CPosition::setPosition(const sf::Vector2f& l_pos)
 {
     m_positionOld = m_position;
-    m_position = l_pos;
+    m_position    = l_pos;
 }
 
 void CPosition::moveBy(const sf::Vector2f& l_delta)

@@ -1,16 +1,17 @@
-#include <gtest/gtest.h>
-#include <gmock/gmock.h>
 #include <cmath>
-#include <utils/utilities.hpp>
-#include <utils/bitmask.hpp>
+#include <gmock/gmock.h>
+#include <gtest/gtest.h>
 #include <sstream>
+#include <utils/bitmask.hpp>
+#include <utils/utilities.hpp>
 
 TEST(Tokenizer, consume_typed_tokens)
 {
     using namespace ::testing;
 
     std::ostringstream ss;
-    ss << "vec3d   1.0    2.0    3.14 \n\n\n    \nage   18 \n\n\n\n\n   #this is a comment do ignoree     this line       \nname joe\nfamilyName    Rustom    ";
+    ss << "vec3d   1.0    2.0    3.14 \n\n\n    \nage   18 \n\n\n\n\n   #this is a comment do "
+          "ignoree     this line       \nname joe\nfamilyName    Rustom    ";
 
     utils::Tokens tokens{std::istringstream(ss.str())};
 
@@ -34,7 +35,7 @@ TEST(Tokenizer, consume_typed_tokens)
     EXPECT_EQ(name, "joe");
 
     std::string family_name;
-    
+
     std::tie(std::ignore, family_name) = *consumeTokens<std::string, std::string>(tokens);
     EXPECT_EQ(family_name, "Rustom");
 
@@ -52,17 +53,16 @@ TEST(Tokenizer, ignore_whole_comment_line)
     EXPECT_TRUE(tokens.empty());
 }
 
-
 TEST(Tokenizer, consume_tokens_return_nullopt_in_case_of_failure)
 {
     using namespace ::testing;
-    
+
     {
         std::ostringstream ss;
         ss << "      \n\n\n\n\n\n\n#this is a comment       \n\n\n\n\n";
 
         utils::Tokens tokens{std::istringstream(ss.str())};
-        auto result = consumeTokens<int, float, double>(tokens);
+        auto          result = consumeTokens<int, float, double>(tokens);
         EXPECT_FALSE(result.has_value());
     }
 
@@ -71,7 +71,7 @@ TEST(Tokenizer, consume_tokens_return_nullopt_in_case_of_failure)
         ss << "      \n\n\n\n\n\n\n joeeee tempppp       \n\n\n\n\n";
 
         utils::Tokens tokens{std::istringstream(ss.str())};
-        auto result = consumeTokens<int, float, double>(tokens);
+        auto          result = consumeTokens<int, float, double>(tokens);
         EXPECT_FALSE(result.has_value());
     }
 }
@@ -87,7 +87,7 @@ TEST(Tokenizer, skips_line_correctly)
     EXPECT_EQ(*token, "joe");
 }
 
-TEST(number_theory, euclid_division_pgcd_ppcm) 
+TEST(number_theory, euclid_division_pgcd_ppcm)
 {
     using namespace ::testing;
 
@@ -104,20 +104,20 @@ TEST(number_theory, euclid_division_pgcd_ppcm)
     size_t h = 1080;
 
     size_t d = utils::pgcd(1920, 1080);
-    size_t a = w/d;
-    size_t b = h/d;
+    size_t a = w / d;
+    size_t b = h / d;
     EXPECT_EQ(a, 16);
     EXPECT_EQ(b, 9);
 
-    EXPECT_EQ(utils::pgcd(55,1), 1);
+    EXPECT_EQ(utils::pgcd(55, 1), 1);
 }
 
 TEST(bitmask, smoke_test)
 {
     const utils::Bitset PositionComponent = 1 << 0;
-    const utils::Bitset SpriteComponent = 1 << 1;
-    const utils::Bitset MovableComponent = 1 << 2;
-    const utils::Bitset StateComponent = 1 << 3;
+    const utils::Bitset SpriteComponent   = 1 << 1;
+    const utils::Bitset MovableComponent  = 1 << 2;
+    const utils::Bitset StateComponent    = 1 << 3;
 
     utils::Bitmask mask{PositionComponent | SpriteComponent | MovableComponent | StateComponent};
     EXPECT_TRUE(mask.getBit(0));
@@ -136,7 +136,7 @@ TEST(bitmask, smoke_test)
     EXPECT_TRUE(mask.getBit(1));
     EXPECT_FALSE(mask.getBit(2));
     EXPECT_FALSE(mask.getBit(3));
-    
+
     mask.toggleBit(1);
     EXPECT_FALSE(mask.getBit(0));
     EXPECT_FALSE(mask.getBit(1));

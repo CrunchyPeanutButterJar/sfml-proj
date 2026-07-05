@@ -5,41 +5,25 @@
 
 namespace utils
 {
-template<typename UnderlyingType, typename PhantomTypeParam>
-class PhantomType
+template <typename UnderlyingType, typename PhantomTypeParam> class PhantomType
 {
-public:
+  public:
     using ReflectionType = UnderlyingType;
 
-    template<typename... Args>
+    template <typename... Args>
     explicit PhantomType(Args&&... args) : m_value{std::forward<Args>(args)...} {};
 
-    auto get() -> UnderlyingType&
-    {
-        return m_value;
-    }
+    auto get() -> UnderlyingType& { return m_value; }
 
-    [[nodiscard]] auto get() const -> const UnderlyingType&
-    {
-        return m_value;
-    }
+    [[nodiscard]] auto get() const -> const UnderlyingType& { return m_value; }
 
-    [[nodiscard]] auto reflection() const -> const ReflectionType&
-    {
-        return m_value;
-    }
+    [[nodiscard]] auto reflection() const -> const ReflectionType& { return m_value; }
 
-    operator UnderlyingType&()
-    {
-        return m_value;
-    }
+    operator UnderlyingType&() { return m_value; }
 
-    operator const UnderlyingType&() const
-    {
-        return m_value;
-    }
+    operator const UnderlyingType&() const { return m_value; }
 
-private:
+  private:
     UnderlyingType m_value;
 };
 } // namespace utils

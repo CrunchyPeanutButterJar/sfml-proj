@@ -2,9 +2,9 @@
 
 using namespace utils;
 
-Bitmask::Bitmask():m_bits(0){}
+Bitmask::Bitmask() : m_bits(0) {}
 
-Bitmask::Bitmask(Bitset l_bits) :m_bits(l_bits) {}
+Bitmask::Bitmask(Bitset l_bits) : m_bits(l_bits) {}
 
 auto Bitmask::getMask() const -> Bitset
 {
