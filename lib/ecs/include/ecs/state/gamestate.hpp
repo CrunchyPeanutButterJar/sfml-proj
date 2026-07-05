@@ -1,15 +1,17 @@
-#ifndef GAMESTATE_HPP
-#define GAMESTATE_HPP
+#ifndef ECS_STATE_GAMESTATE_HPP
+#define ECS_STATE_GAMESTATE_HPP
 
 #include <SFML/System/Time.hpp>
 
-#include <map.hpp>
-#include <basestate.hpp>
 #include <core/graphics/spritesheet.hpp>
+#include <ecs/map.hpp>
+#include <ecs/state/basestate.hpp>
 
+namespace ecs::state
+{
 class GameState : public BaseState
 {
-public:
+  public:
     GameState(StateManager& l_stateManager);
     ~GameState() override;
 
@@ -21,9 +23,10 @@ public:
 
     void onCreate() override;
 
-private:
+  private:
     sf::Time m_elapsed;
-    Map m_gameMap;
+    Map      m_gameMap;
 };
+} // namespace ecs::state
 
 #endif

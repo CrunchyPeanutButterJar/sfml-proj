@@ -1,9 +1,9 @@
-#ifndef STATEMANAGER_HPP
-#define STATEMANAGER_HPP
+#ifndef ECS_STATE_STATEMANAGER_HPP
+#define ECS_STATE_STATEMANAGER_HPP
 
-#include <shared_context.hpp>
-#include <basestate.hpp>
 #include <core/graphics/texture_manager.hpp>
+#include <ecs/shared_context.hpp>
+#include <ecs/state/basestate.hpp>
 
 #include <SFML/System/Time.hpp>
 
@@ -14,14 +14,14 @@
 #include <utility>
 #include <vector>
 
-
+namespace ecs::state
+{
 enum class StateType : std::uint8_t
 {
     Game = 1,
 };
 
-
-using StatePtr = std::unique_ptr<BaseState>;
+using StatePtr       = std::unique_ptr<BaseState>;
 using StateContainer = std::vector<std::pair<StateType, StatePtr>>;
 
 using StateFactory = std::unordered_map<StateType, std::function<StatePtr(StateManager*)>>;
@@ -30,7 +30,7 @@ using StateTypeContainer = std::unordered_set<StateType>;
 
 class StateManager
 {
-public:
+  public:
     StateManager(SharedContext l_sharedContext);
 
     void update(const sf::Time& l_elapsed);
@@ -45,14 +45,14 @@ public:
 
     auto getContext() -> SharedContext&;
 
-private:
-    template<typename StateImpl> void registerState(StateType l_stateType);
+  private:
+    template <typename StateImpl> void registerState(StateType l_stateType);
 
-
-    SharedContext m_context;
-    StateContainer m_states;
-    StateFactory m_stateFactory;
+    SharedContext      m_context;
+    StateContainer     m_states;
+    StateFactory       m_stateFactory;
     StateTypeContainer m_toBeRemoved;
 };
+} // namespace ecs::state
 
 #endif

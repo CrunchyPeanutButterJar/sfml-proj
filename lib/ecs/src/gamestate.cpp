@@ -1,6 +1,6 @@
 #include <SFML/System/Time.hpp>
 #include <SFML/Window/WindowBase.hpp>
-#include <gamestate.hpp>
+#include <ecs/state/gamestate.hpp>
 #include <utils/utilities.hpp>
 
 #include <core/event_manager.hpp>
@@ -10,10 +10,12 @@
 #include <ecs/entity/entity_manager.hpp>
 #include <ecs/messaging/entity_message.hpp>
 #include <ecs/messaging/message.hpp>
+#include <ecs/state/statemanager.hpp>
 #include <ecs/system/system_manager.hpp>
-#include <statemanager.hpp>
 
 #include <SFML/Window/Keyboard.hpp>
+
+using namespace ecs::state;
 
 GameState::GameState(StateManager& l_stateManager)
     : BaseState(l_stateManager), m_gameMap{m_stateManager.getContext(), *this}

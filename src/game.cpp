@@ -60,7 +60,7 @@ Game::Game()
       m_entityManager{m_systemManager, m_stateManager.getContext().m_textureManager},
       m_systemManager{m_entityManager}
 {
-    m_stateManager.switchTo(StateType::Game);
+    m_stateManager.switchTo(ecs::state::StateType::Game);
 }
 
 void Game::update()

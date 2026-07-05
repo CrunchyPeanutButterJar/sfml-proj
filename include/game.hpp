@@ -5,7 +5,7 @@
 
 #include <ecs/entity/entity_manager.hpp>
 #include <ecs/system/system_manager.hpp>
-#include <statemanager.hpp>
+#include <ecs/state/statemanager.hpp>
 #include <core/window.hpp>
 
 class Game
@@ -28,7 +28,7 @@ private:
     sf::Time m_elapsed;
 
     core::Window m_window;
-    StateManager m_stateManager;
+    ecs::state::StateManager m_stateManager;
     ecs::entity::EntityManager m_entityManager;
     ecs::system::SystemManager m_systemManager;
     core::graphics::TextureManager m_textureManager;

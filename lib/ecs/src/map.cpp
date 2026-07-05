@@ -2,13 +2,14 @@
 #include <core/window.hpp>
 #include <ecs/entity/c_position.hpp>
 #include <ecs/entity/entity_manager.hpp>
-#include <map.hpp>
+#include <ecs/map.hpp>
 #include <utils/assert.hpp>
 #include <utils/utilities.hpp>
 
 using namespace core::graphics;
+using namespace ecs;
 
-Map::Map(SharedContext& l_context, BaseState& l_currentState)
+Map::Map(SharedContext& l_context, state::BaseState& l_currentState)
     : m_context(l_context), m_currentState(l_currentState)
 {
 }

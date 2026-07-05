@@ -1,6 +1,8 @@
-#include <basestate.hpp>
 #include <core/window.hpp>
-#include <statemanager.hpp>
+#include <ecs/state/basestate.hpp>
+#include <ecs/state/statemanager.hpp>
+
+using namespace ecs::state;
 
 BaseState::BaseState(StateManager& l_stateManager)
     : m_stateManager(l_stateManager),

@@ -1,11 +1,11 @@
 #include <algorithm>
+#include <ecs/state/statemanager.hpp>
 #include <ranges>
-#include <statemanager.hpp>
 
 #include <core/window.hpp>
-#include <gamestate.hpp>
+#include <ecs/state/gamestate.hpp>
 
-#include <algorithm>
+using namespace ecs::state;
 
 void StateManager::switchTo(StateType l_state)
 {
