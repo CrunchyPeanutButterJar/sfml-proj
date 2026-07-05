@@ -4,6 +4,6 @@
 namespace core
 {
 class EventManager;
-};
+} // namespace core
 
 #endif

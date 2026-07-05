@@ -23,21 +23,21 @@ class SpriteSheet
 public:
     SpriteSheet(core::graphics::TextureManager& l_textureManager);
 
-    bool loadSheet(const std::string& l_filePath);
+    auto loadSheet(const std::string& l_filePath) -> bool;
 
     void cropSprite(const sf::IntRect& l_rect);
 
-    bool setAnimation(const std::string& l_name, bool l_play = false, bool l_Loop = false);
+    auto setAnimation(const std::string& l_name, bool l_play = false, bool l_Loop = false) -> bool;
     void nextAnimation();//temp for testing purposes
 
     void setSpriteSize(const sf::Vector2u& l_size); 
     void setSpritePosition(const sf::Vector2f& l_pos);
     void setDirection(core::Direction l_dir);
 
-    core::animation::BaseAnimation *getCurrentAnimation() const;
-    const sf::Vector2u& getSpriteSize() const; 
-    const sf::Vector2f& getSpritePosition() const;
-    core::Direction getDirection() const;
+    auto getCurrentAnimation() const -> core::animation::BaseAnimation *;
+    auto getSpriteSize() const -> const sf::Vector2u&; 
+    auto getSpritePosition() const -> const sf::Vector2f&;
+    auto getDirection() const -> core::Direction;
 
     void update(float l_dt);
     void draw(sf::RenderWindow* l_window);
@@ -52,6 +52,6 @@ private:
     core::graphics::TextureManager* m_textureManager;
     std::vector<std::shared_ptr<sf::Texture>> m_textures;
 };
-};
+} // namespace core::graphics
 
 #endif

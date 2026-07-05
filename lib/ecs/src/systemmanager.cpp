@@ -11,12 +11,12 @@ SystemManager::SystemManager(EntityManager& l_entityManager) : m_entityManager{l
     m_systems[System::Renderer] = std::make_unique<SRenderer>(*this);
 }
 
-EntityManager& SystemManager::getEntityManager()
+auto SystemManager::getEntityManager() -> EntityManager&
 {
     return m_entityManager;
 }
 
-MessageHandler& SystemManager::getMessageHandler()
+auto SystemManager::getMessageHandler() -> MessageHandler&
 {
     return m_messageHandler;
 }

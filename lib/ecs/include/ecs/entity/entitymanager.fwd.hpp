@@ -4,5 +4,5 @@
 namespace ecs::entity
 {
 class EntityManager;
-}
+} // namespace ecs::entity
 #endif

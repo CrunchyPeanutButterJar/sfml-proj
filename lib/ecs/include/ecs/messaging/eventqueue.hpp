@@ -13,12 +13,12 @@ class EventQueue
 {
 public:
     void addEvent(EventId l_event);
-    std::optional<EventId> processEvent();
+    auto processEvent() -> std::optional<EventId>;
     void clear();
 
 private:
     std::queue<EventId> m_queue;
 };
-};
+} // namespace ecs::messaging
 
 #endif

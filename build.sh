@@ -6,9 +6,10 @@ BUILD_TYPE="Release"
 DO_CLEAN=false
 CONAN_STEP=false
 DO_CLANG_TIDY=false
+DO_CLANG_FORMAT=false
 
 # 🔍 Analyse des options
-while getopts ":dcfrt" opt; do
+while getopts ":dcxfrt" opt; do
   case $opt in
     d)
       BUILD_TYPE="Debug"
@@ -16,7 +17,7 @@ while getopts ":dcfrt" opt; do
     c)
       DO_CLEAN=true
       ;;
-    f)
+    x)
       echo "🔄 Étape Conan forcée."
       CONAN_STEP=true
       ;;
@@ -30,15 +31,24 @@ while getopts ":dcfrt" opt; do
       echo "Lancement de clang-tidy"
       DO_CLANG_TIDY=true
       ;;
+    f)
+      echo "Lancement de clang-format"
+      DO_CLANG_FORMAT=true
+      ;;
     \?)
       echo "❌ Option invalide: -$OPTARG"
-      echo "Usage: $0 [-d] [-c] [-f](pour forcer l'étape Conan) [-r](pour lancer le binaire)"
+      echo "Usage: $0 [-d] [-c] [-x](pour forcer l'étape Conan) [-r](pour lancer le binaire) [-t] (pour lancer le linter) [-f] (pour lancer clang-format)"
       exit 1
       ;;
   esac
 done
 
-# 🔍 Analyse des options
+
+if $DO_CLANG_FORMAT; then
+  echo "Lancement de clang-format..."
+  exit 0
+fi
+
 if $DO_CLEAN; then
     if [ -d $BUILD_DIR ]; then
         echo "🧹 Nettoyage du dossier $BUILD_DIR..."

@@ -1,7 +1,7 @@
 #ifndef UTILS_BITMASK_HPP
 #define UTILS_BITMASK_HPP
 
-#include <stdint.h>
+#include <cstdint>
 
 namespace utils
 {
@@ -16,11 +16,11 @@ public:
     Bitmask();
     Bitmask(Bitset l_bits);
 
-    Bitset getMask() const;
+    [[nodiscard]] auto getMask() const -> Bitset;
     void setMask(Bitset l_bits);
 
-    bool matches(const Bitmask& l_other, Bitset l_relevant = 0) const;
-    bool getBit(Position l_pos) const;
+    [[nodiscard]] auto matches(const Bitmask& l_other, Bitset l_relevant = 0) const -> bool;
+    [[nodiscard]] auto getBit(Position l_pos) const -> bool;
     
     void turnOnBit(Position l_pos);
     void turnOnBits(Bitset l_bits);
@@ -31,6 +31,6 @@ private:
     Bitset m_bits;
 
 };
-};
+} // namespace utils
 
 #endif

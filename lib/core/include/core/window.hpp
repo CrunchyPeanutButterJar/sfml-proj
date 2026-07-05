@@ -19,14 +19,14 @@ public:
     void endDraw(); // Display the changes.
     void update(core::EventManager::StateType l_state);
     void setAsDone() { m_isDone = true; }
-    bool isDone() const;
-    bool isFullscreen() const;
-    sf::Vector2u getWindowSize();
+    auto isDone() const -> bool;
+    auto isFullscreen() const -> bool;
+    auto getWindowSize() -> sf::Vector2u;
     void toggleFullscreen();
     void draw(sf::Drawable& l_drawable);
-    sf::RenderWindow* getRenderWindow();
-    core::EventManager& getEventManager();
-    sf::FloatRect getViewSpace() const;
+    auto getRenderWindow() -> sf::RenderWindow*;
+    auto getEventManager() -> core::EventManager&;
+    auto getViewSpace() const -> sf::FloatRect;
 
 private:
     void setup(const std::string& l_title, const sf::Vector2u& l_size);
@@ -43,6 +43,6 @@ private:
     bool m_isFocused{}; 
 
 };
-}
+} // namespace core
 
 #endif

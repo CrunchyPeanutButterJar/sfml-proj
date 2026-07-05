@@ -39,7 +39,7 @@ ResourceManager(const std::string& l_pathFileName)
     FAILURE("Could not read path file {}", l_pathFileName);
 }
 
-std::shared_ptr<T> acquire(const std::string& l_alias)
+auto acquire(const std::string& l_alias) -> std::shared_ptr<T>
 {
     auto it = m_resources.find(l_alias);
     std::shared_ptr<T> resource;
@@ -68,7 +68,7 @@ std::shared_ptr<T> acquire(const std::string& l_alias)
     return it->second.lock();
 }
 
-std::unique_ptr<T> load(const std::string& l_path)
+auto load(const std::string& l_path) -> std::unique_ptr<T>
 {
     return static_cast<Derived*>(this)->load(l_path);
 }
@@ -78,5 +78,5 @@ private:
     std::unordered_map<std::string, std::weak_ptr<T>> m_resources;//alias - resource mapping
 
 };
-}
+} // namespace core
 #endif

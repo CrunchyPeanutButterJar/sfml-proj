@@ -13,7 +13,7 @@ public:
     CBase(Component l_type) : m_type{l_type} {}
     virtual ~CBase() = default;
 
-    Component getType() const {return m_type;}
+    [[nodiscard]] auto getType() const -> Component {return m_type;}
 
     virtual void readInput(utils::Tokens&) = 0;
 
@@ -22,6 +22,6 @@ private:
 };
 
 using CBasePtr = std::unique_ptr<CBase>;
-};
+} // namespace ecs::entity
 
 #endif

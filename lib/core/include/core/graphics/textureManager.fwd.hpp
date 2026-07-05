@@ -4,7 +4,7 @@
 namespace core::graphics
 {
     class TextureManager;
-}
+} // namespace core::graphics
 
 
 #endif

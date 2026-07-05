@@ -33,8 +33,8 @@ using MouseButtonPressedEvent = utils::PhantomType<KeyPressedEventEnumType, stru
 struct ClosedEvent{};
 struct MouseMovedEvent{}; 
 
-bool operator==(ClosedEvent /*unused*/, ClosedEvent /*unused*/) { return true; }
-bool operator==(MouseMovedEvent /*unused*/, MouseMovedEvent /*unused*/) { return true;}
+auto operator==(ClosedEvent /*unused*/, ClosedEvent /*unused*/) -> bool { return true; }
+auto operator==(MouseMovedEvent /*unused*/, MouseMovedEvent /*unused*/) -> bool { return true;}
 
 using SimplifiedEvent = std::variant<KeyPressedEvent, MouseButtonPressedEvent, MouseMovedEvent, ClosedEvent>;
 
@@ -43,27 +43,27 @@ struct Overloaded : Ts... { using Ts::operator()...; };
 
 struct Hash
 {
-    size_t operator()(const KeyPressedEvent& l_event) const
+    auto operator()(const KeyPressedEvent& l_event) const -> size_t
     {
         return std::hash<KeyPressedEventEnumType>{}(l_event.get());
     }
 
-    size_t operator()(const MouseButtonPressedEvent& l_event) const
+    auto operator()(const MouseButtonPressedEvent& l_event) const -> size_t
     {
         return std::hash<MouseButtonPressedEventEnumType>{}(l_event.get());
     }
 
-    size_t operator()(const ClosedEvent& /*unused*/) const
+    auto operator()(const ClosedEvent& /*unused*/) const -> size_t
     {
         return 1;
     }
 
-    size_t operator()(const MouseMovedEvent& /*unused*/) const
+    auto operator()(const MouseMovedEvent& /*unused*/) const -> size_t
     {
         return 2; 
     }
 
-    size_t operator()(const SimplifiedEvent& l_event) const
+    auto operator()(const SimplifiedEvent& l_event) const -> size_t
     {
         size_t index = l_event.index();
         return std::visit(
@@ -89,7 +89,7 @@ using CallbacksContainer = std::unordered_map<EventManager::StateType, Callbacks
 
 static const std::string BINDINGS_FILE_PATH{utils::getConfigDirectory() + "bindings.json"};
 
-std::optional<SerializableBindings> loadFromBindingsFile()
+auto loadFromBindingsFile() -> std::optional<SerializableBindings>
 {
     std::ifstream config_file(BINDINGS_FILE_PATH.c_str());
     
@@ -117,7 +117,7 @@ std::optional<SerializableBindings> loadFromBindingsFile()
     return result.value();
 }
 
-SerializableBindings buildDefaultBindings()
+auto buildDefaultBindings() -> SerializableBindings
 {
     SerializableBindings bindings;
 
@@ -134,7 +134,7 @@ SerializableBindings buildDefaultBindings()
     return bindings;
 }
 
-SerializableBindings buildNonCustomizableBindings()
+auto buildNonCustomizableBindings() -> SerializableBindings
 {
     SerializableBindings bindings;
 
@@ -180,7 +180,7 @@ EventManager::EventManager() : m_impl(std::make_unique<Impl>())
     }
 }
 
-bool EventManager::addCallback(StateType l_state, const std::string& l_action, Callback l_callback)
+auto EventManager::addCallback(StateType l_state, const std::string& l_action, Callback l_callback) -> bool
 {
     auto& callbacks_container = std::get<2>(m_impl->m_tuple);
     auto& callbacks = callbacks_container[l_state];
@@ -225,7 +225,7 @@ void EventManager::handleRealtimeEvents()
                 sf::Event rt_event{};
                 rt_event.type = sf::Event::KeyPressed;
                 rt_event.key.code  = (sf::Keyboard::Key)l_event.get();
-                actualEvents.emplace_back(std::move(rt_event));
+                actualEvents.emplace_back(rt_event);
             }
         },
         [&actualEvents](const MouseButtonPressedEvent& l_event)
@@ -235,14 +235,14 @@ void EventManager::handleRealtimeEvents()
                 sf::Event rt_event{};
                 rt_event.type = sf::Event::MouseButtonPressed;
                 rt_event.mouseButton.button = (sf::Mouse::Button)l_event.get();
-                actualEvents.emplace_back(std::move(rt_event));
+                actualEvents.emplace_back(rt_event);
             }
         },
         [](const auto&){}}, binding);
     }
 }
 
-static bool simplifiedEventMatchesActualEvent(const SimplifiedEvent& l_simpleEvent, const sf::Event& l_event)
+static auto simplifiedEventMatchesActualEvent(const SimplifiedEvent& l_simpleEvent, const sf::Event& l_event) -> bool
 {
   return std::visit(Overloaded
     {
@@ -265,7 +265,7 @@ static bool simplifiedEventMatchesActualEvent(const SimplifiedEvent& l_simpleEve
     }, l_simpleEvent);
 }
 
-static bool simplifiedEventMatchesActualEvent(const SimplifiedEvent& l_simpleEvent, const ActualEvents& l_events)
+static auto simplifiedEventMatchesActualEvent(const SimplifiedEvent& l_simpleEvent, const ActualEvents& l_events) -> bool
 {
     return std::any_of(l_events.begin(), l_events.end(), [&l_simpleEvent](const sf::Event& l_event){return simplifiedEventMatchesActualEvent(l_simpleEvent, l_event);});
 }
@@ -301,16 +301,16 @@ void EventManager::update(StateType l_state, const sf::WindowBase& l_window)
 EventManager::~EventManager() = default;
 
 EventManager::EventManager(EventManager&&) noexcept = default;
-EventManager& EventManager::operator=(EventManager&&) noexcept = default;
+auto EventManager::operator=(EventManager&&) noexcept -> EventManager& = default;
 
 namespace core
 {
-std::any buildBindings()
+auto buildBindings() -> std::any
 {
     return std::array{buildDefaultBindings(), buildNonCustomizableBindings()} | std::ranges::views::join | std::ranges::to<std::vector>();
 }
 
-bool bindingsAreEquivalent(const std::any& l_first, const std::any& l_second)
+auto bindingsAreEquivalent(const std::any& l_first, const std::any& l_second) -> bool
 {
     const auto& first_bindings = std::any_cast<const SerializableBindings&>(l_first);
     const auto& second_bindings = std::any_cast<const SerializableBindings&>(l_second);
@@ -318,13 +318,13 @@ bool bindingsAreEquivalent(const std::any& l_first, const std::any& l_second)
     return first_bindings == second_bindings;
 }
 
-std::any deserializeBindings(const std::string &l_jsonString)
+auto deserializeBindings(const std::string &l_jsonString) -> std::any
 {
     return rfl::json::read<SerializableBindings, rfl::AddTagsToVariants>(l_jsonString).value();
 }
 
-std::string serializeBindings(const std::any& l_serializableBindings)
+auto serializeBindings(const std::any& l_serializableBindings) -> std::string
 {
     return rfl::json::write<rfl::AddTagsToVariants>(std::any_cast<const SerializableBindings&>(l_serializableBindings));
 }
-};
+} // namespace core

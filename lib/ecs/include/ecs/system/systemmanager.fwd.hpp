@@ -4,6 +4,6 @@
 namespace ecs::system
 {
 class SystemManager;
-}
+} // namespace ecs::system
 
 #endif

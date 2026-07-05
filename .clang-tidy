@@ -5,10 +5,13 @@ Checks: >
   bugprone-*,
   cppcoreguidelines-*,
   readability-*,
+  performance-*,
+  modernize-*,
   -readability-braces-around-statements,
   llvm-header-guard,
   llvm-namespace-comment,
-  modernize-concat-nested-namespaces
+  modernize-concat-nested-namespaces,
+  misc-unused-includes
 
 # Turn all matching warnings into hard compilation/build errors
 WarningsAsErrors: 'bugprone-*,performance-*'

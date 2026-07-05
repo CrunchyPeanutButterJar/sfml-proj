@@ -48,9 +48,7 @@ m_gameMap{m_stateManager.getContext(), *this}
     });
 }
 
-GameState::~GameState()
-{
-}
+GameState::~GameState() = default;
 
 void GameState::update(const sf::Time& l_elapsed)
 {

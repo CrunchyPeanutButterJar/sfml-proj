@@ -28,7 +28,7 @@ namespace utils
     }
     #elif __linux__
     #include <unistd.h>
-    inline std::string getWorkingDirectory()
+    inline auto getWorkingDirectory() -> std::string
     {
         char cwd[1024];
         if(getcwd(cwd, sizeof(cwd)) != nullptr)
@@ -40,35 +40,35 @@ namespace utils
     }
     #endif
 
-    inline std::string getConfigDirectory()
+    inline auto getConfigDirectory() -> std::string
     {
       return getWorkingDirectory() + "config/";
     }
 
-    inline std::string getResourcesDirectory()
+    inline auto getResourcesDirectory() -> std::string
     {
       return getWorkingDirectory() + "resources/";
     }
 
     template<typename T>
-    std::string printTypeName()
+    auto printTypeName() -> std::string
     {
       return __PRETTY_FUNCTION__;
     }
 
-    std::optional<std::istringstream> readFile(const std::string& l_filePath);
+    auto readFile(const std::string& l_filePath) -> std::optional<std::istringstream>;
 
     class Tokens
     {
     public:
         Tokens(std::istringstream ss, char l_delimiter = ' ', char l_commentChar = '#');
 
-        std::optional<std::string> advance();
-		    bool empty();
+        auto advance() -> std::optional<std::string>;
+		    auto empty() -> bool;
         void skipLine();
 
         template<typename T>
-        std::optional<T> head()
+        auto head() -> std::optional<T>
         {
           if(!currentMatch())
           {
@@ -85,7 +85,7 @@ namespace utils
         }
 
     private:
-        bool currentMatch();
+        auto currentMatch() -> bool;
 
 		std::string m_currentStr;
 		std::istringstream m_ss;
@@ -94,7 +94,7 @@ namespace utils
     };
 
     template<typename... T>
-    std::optional<std::tuple<T...>> consumeTokens(Tokens& l_tokens)
+    auto consumeTokens(Tokens& l_tokens) -> std::optional<std::tuple<T...>>
     {
       bool error = false;
 
@@ -143,7 +143,7 @@ namespace utils
     }
 
     template<typename T>
-    std::optional<T> consumeToken(Tokens& l_tokens)
+    auto consumeToken(Tokens& l_tokens) -> std::optional<T>
     {
       if(auto tuple = consumeTokens<T>(l_tokens))
       {
@@ -153,9 +153,9 @@ namespace utils
       return std::nullopt;
     }
 
-    size_t ppcm(size_t n1, size_t n2);
+    auto ppcm(size_t n1, size_t n2) -> size_t;
     
-    size_t pgcd(size_t n1, size_t n2);
-};
+    auto pgcd(size_t n1, size_t n2) -> size_t;
+} // namespace utils
 
 #endif

@@ -29,7 +29,7 @@ enum class System
     State,
     SheetAnimation
 };
-}
+} // namespace ecs
 
 
 #endif

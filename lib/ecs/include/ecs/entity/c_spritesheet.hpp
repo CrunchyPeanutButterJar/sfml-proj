@@ -20,16 +20,16 @@ public:
     void readInput(utils::Tokens& l_tokens) override;
     void create(core::graphics::TextureManager& l_textureManager, std::optional<std::string> l_sheetName = {});
 
-    core::graphics::SpriteSheet* getSpriteSheet();
+    auto getSpriteSheet() -> core::graphics::SpriteSheet*;
     
     void updatePosition(const sf::Vector2f& l_vec) override;
-    const sf::Vector2u& getSize() override;
+    auto getSize() -> const sf::Vector2u& override;
     void draw(sf::RenderWindow* l_window) override;
 
 private:
     std::optional<core::graphics::SpriteSheet> m_spriteSheet;
     std::string m_sheetName;
 };
-}
+} // namespace ecs::entity
 
 #endif

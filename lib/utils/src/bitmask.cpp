@@ -6,7 +6,7 @@ Bitmask::Bitmask():m_bits(0){}
 
 Bitmask::Bitmask(Bitset l_bits) :m_bits(l_bits) {}
 
-Bitset Bitmask::getMask() const
+auto Bitmask::getMask() const -> Bitset
 {
     return m_bits;
 }
@@ -16,7 +16,7 @@ void Bitmask::setMask(Bitset l_bits)
     m_bits = l_bits;
 }
 
-bool Bitmask::matches(const Bitmask& l_other, Bitset l_relevant) const
+auto Bitmask::matches(const Bitmask& l_other, Bitset l_relevant) const -> bool
 {
     if (l_relevant == 0)
     {
@@ -26,7 +26,7 @@ bool Bitmask::matches(const Bitmask& l_other, Bitset l_relevant) const
     return (m_bits & l_relevant) == (l_other.m_bits & l_relevant);
 }
 
-bool Bitmask::getBit(Position l_pos) const
+auto Bitmask::getBit(Position l_pos) const -> bool
 {
     return (m_bits & (1 << l_pos)) != 0U;
 }

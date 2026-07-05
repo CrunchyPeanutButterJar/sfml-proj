@@ -1,7 +1,7 @@
 #ifndef UTILS_ASSERT_HPP
 #define UTILS_ASSERT_HPP
 
-#include <stdlib.h>
+#include <cstdlib>
 
 #include <fmt/format.h>
 
@@ -41,7 +41,7 @@ inline void ensureImpl(bool condition, const char* file, const char* function, i
         }
     }
 }
-}
+} // namespace utils::internal
 
 #define ASSERT_NON_FATAL(condition, ...) utils::internal::ensureImpl<false>((condition), __FILE__, __func__, __LINE__, ##__VA_ARGS__)
 

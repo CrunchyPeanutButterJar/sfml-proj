@@ -35,6 +35,6 @@ struct Tile
 {
     TileInfo* m_tileInfo;
 };
-};
+} // namespace core::graphics
 
 #endif

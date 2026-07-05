@@ -10,12 +10,12 @@ void CPosition::readInput(utils::Tokens& l_tokens)
     std::tie(m_position.x, m_position.y) = *consumeTokens<float, float>(l_tokens);
 }
 
-const sf::Vector2f& CPosition::getPosition() const
+auto CPosition::getPosition() const -> const sf::Vector2f&
 {
     return m_position;
 }
 
-const sf::Vector2f& CPosition::getOldPosition() const
+auto CPosition::getOldPosition() const -> const sf::Vector2f&
 {
     return m_positionOld;
 }

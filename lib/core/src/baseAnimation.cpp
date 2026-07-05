@@ -52,12 +52,12 @@ void BaseAnimation::update(float l_dt)
     m_elapsedTime-=m_frameTime;
 }
 
-Frame BaseAnimation::getFrame() const
+auto BaseAnimation::getFrame() const -> Frame
 {
     return m_frameCurrent;
 }
 
-bool BaseAnimation::nextFrame()
+auto BaseAnimation::nextFrame() -> bool
 {
     if(m_frameStart < m_frameEnd)
     {
@@ -80,7 +80,7 @@ bool BaseAnimation::nextFrame()
     return true;
 }
 
-bool BaseAnimation::isInAction() const
+auto BaseAnimation::isInAction() const -> bool
 {
     if(m_frameActionStart == -1 || m_frameActionEnd == -1)
     {

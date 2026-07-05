@@ -29,11 +29,11 @@ public:
     virtual void update(float l_dt);
     virtual void readInput(utils::Tokens& l_tokens) = 0;
 
-    Frame getFrame() const;
+    [[nodiscard]] auto getFrame() const -> Frame;
 
-    bool nextFrame();
+    auto nextFrame() -> bool;
 
-    bool isInAction() const;
+    [[nodiscard]] auto isInAction() const -> bool;
 
   protected:
     virtual void frameStep() = 0;
@@ -54,6 +54,6 @@ public:
   core::graphics::SpriteSheet *m_spriteSheet{};
   sf::Texture* m_texture{};
 };
-}
+} // namespace core::animation
 
 #endif

@@ -23,6 +23,6 @@ struct Message
         int m_int;
     };
 };
-};
+} // namespace ecs::messaging
 
 #endif

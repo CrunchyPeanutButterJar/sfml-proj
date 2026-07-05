@@ -15,7 +15,7 @@
 #include <vector>
 
 
-enum class StateType
+enum class StateType : std::uint8_t
 {
     Game = 1,
 };
@@ -40,10 +40,10 @@ public:
     void remove(StateType l_state);
     void processRequests();
 
-    StateType getCurrentState() const;
-    bool hasState(StateType l_state) const;
+    [[nodiscard]] auto getCurrentState() const -> StateType;
+    [[nodiscard]] auto hasState(StateType l_state) const -> bool;
 
-    SharedContext& getContext();
+    auto getContext() -> SharedContext&;
 
 private:
     template<typename StateImpl> void registerState(StateType l_stateType);

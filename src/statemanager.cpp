@@ -22,7 +22,7 @@ void StateManager::switchTo(StateType l_state)
     getContext().m_window.getRenderWindow()->setView(current_state->getView());
 }
 
-StateType StateManager::getCurrentState() const
+auto StateManager::getCurrentState() const -> StateType
 {
     return m_states.back().first;
 }
@@ -89,17 +89,17 @@ void StateManager::registerState(StateType l_stateType)
     };
 }
 
-StateManager::StateManager(SharedContext l_sharedContext) : m_context{std::move(l_sharedContext)}
+StateManager::StateManager(SharedContext l_sharedContext) : m_context{l_sharedContext}
 {
     registerState<GameState>(StateType::Game);
 }
 
-SharedContext& StateManager::getContext()
+auto StateManager::getContext() -> SharedContext&
 {
     return m_context;
 }
 
-bool StateManager::hasState(StateType l_state) const
+auto StateManager::hasState(StateType l_state) const -> bool
 {
     return std::any_of(m_states.begin(), m_states.end(), [l_state](const auto& el){ return el.first == l_state; });
 }

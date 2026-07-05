@@ -17,8 +17,8 @@ public:
     void update();
     void lateUpdate();
     void render();
-    core::Window* getWindow();
-    sf::Time getElapsed();
+    auto getWindow() -> core::Window*;
+    auto getElapsed() -> sf::Time;
 
 private:
     void restartClock();

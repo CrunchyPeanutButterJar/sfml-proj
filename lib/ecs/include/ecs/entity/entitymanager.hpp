@@ -22,17 +22,17 @@ class EntityManager
 public:
     EntityManager(system::SystemManager& l_sysManager, core::graphics::TextureManager& l_textureManager);
 
-    int addEntity(utils::Bitmask l_mask);
-    int addEntity(const std::string& l_entityFile);
-    bool removeEntity(EntityId l_id);
+    auto addEntity(utils::Bitmask l_mask) -> int;
+    auto addEntity(const std::string& l_entityFile) -> int;
+    auto removeEntity(EntityId l_id) -> bool;
 
-    bool addComponent(EntityId l_entity, Component l_component);
+    auto addComponent(EntityId l_entity, Component l_component) -> bool;
 
-    bool removeComponent(EntityId l_entity,Component l_component);
-    bool hasComponent(EntityId l_entity, Component l_component);
+    auto removeComponent(EntityId l_entity,Component l_component) -> bool;
+    auto hasComponent(EntityId l_entity, Component l_component) -> bool;
 
     template<class T>
-    T* getComponent(EntityId l_entity, Component l_component)
+    auto getComponent(EntityId l_entity, Component l_component) -> T*
     {
         auto itr = m_entities.find(l_entity);
         if(itr == m_entities.end() || !itr->second.first.getBit((unsigned int)l_component))
@@ -65,6 +65,6 @@ private:
     EntityContainer m_entities;
     ComponentFactory m_componentFactory;
 };
-};
+} // namespace ecs::entity
 
 #endif

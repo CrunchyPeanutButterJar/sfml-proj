@@ -9,7 +9,7 @@ SBase::SBase(System l_id, SystemManager& l_sysManager):
 m_systemManager{l_sysManager},
 m_id{l_id} {}
 
-bool SBase::addEntity(EntityId l_entity)
+auto SBase::addEntity(EntityId l_entity) -> bool
 {
     if(hasEntity(l_entity))
     {
@@ -19,12 +19,12 @@ bool SBase::addEntity(EntityId l_entity)
     return true;
 }
 
-bool SBase::hasEntity(EntityId l_entity)
+auto SBase::hasEntity(EntityId l_entity) -> bool
 {
     return std::find(m_entities.begin(), m_entities.end(), l_entity) != m_entities.end();
 }
 
-bool SBase::removeEntity(EntityId l_entity)
+auto SBase::removeEntity(EntityId l_entity) -> bool
 {
     auto itr = std::find(m_entities.begin(), m_entities.end(), l_entity);
     if(itr == m_entities.end())
@@ -35,12 +35,12 @@ bool SBase::removeEntity(EntityId l_entity)
     return true;
 }
 
-System SBase::getId() const
+auto SBase::getId() const -> System
 {
     return m_id;
 }
 
-bool SBase::fitsRequirements(utils::Bitmask l_bits)
+auto SBase::fitsRequirements(utils::Bitmask l_bits) -> bool
 {
     return std::any_of(m_requiredComponents.begin(), m_requiredComponents.end(),
     [l_bits](const utils::Bitmask& l_requirement)

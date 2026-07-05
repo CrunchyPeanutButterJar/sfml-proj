@@ -3,12 +3,12 @@
 
 using namespace ecs::messaging;
 
-bool Communicator::addObserver(Observer* l_observer)
+auto Communicator::addObserver(Observer* l_observer) -> bool
 {
     return m_observers.insert(l_observer).second;
 }
 
-bool Communicator::removeObserver(Observer* l_observer)
+auto Communicator::removeObserver(Observer* l_observer) -> bool
 {
     auto itr = std::find(m_observers.begin(), m_observers.end(), l_observer);
     if(itr == m_observers.end())
@@ -19,7 +19,7 @@ bool Communicator::removeObserver(Observer* l_observer)
     return true;
 }
 
-bool Communicator::hasObserver(const Observer* l_observer) const
+auto Communicator::hasObserver(const Observer* l_observer) const -> bool
 {
   auto itr = std::find(m_observers.begin(), m_observers.end(), l_observer);
   return itr != m_observers.end();

@@ -26,8 +26,8 @@ void Window::setup(const std::string& l_title, const sf::Vector2u& l_size)
     m_isDone = false;
     m_isFullscreen = false;
 
-    m_eventManager.addCallback(0, "Window_Close", std::bind(&Window::setAsDone, std::ref(*this)));
-    m_eventManager.addCallback(0, "Window_ToggleFullscreen", std::bind(&Window::toggleFullscreen, std::ref(*this)));
+    m_eventManager.addCallback(0, "Window_Close", [&capture0 = *this](const auto&) { capture0.setAsDone(); });
+    m_eventManager.addCallback(0, "Window_ToggleFullscreen", [&capture0 = *this](const auto&) { capture0.toggleFullscreen(); });
 
     create();
 }
@@ -43,17 +43,17 @@ void Window::destroy()
     m_window.close();
 }
 
-sf::RenderWindow* Window::getRenderWindow()
+auto Window::getRenderWindow() -> sf::RenderWindow*
 {
     return &m_window;
 }
 
-core::EventManager& Window::getEventManager()
+auto Window::getEventManager() -> core::EventManager&
 {
     return m_eventManager;
 }
 
-sf::FloatRect Window::getViewSpace() const
+auto Window::getViewSpace() const -> sf::FloatRect
 {
     const sf::Vector2f ViewCenter = m_window.getView().getCenter();
     const sf::Vector2f ViewSize = m_window.getView().getSize();
@@ -107,17 +107,17 @@ void Window::endDraw()
     m_window.display();
 }
 
-bool Window::isDone() const
+auto Window::isDone() const -> bool
 {
     return m_isDone;
 }
 
-bool Window::isFullscreen() const
+auto Window::isFullscreen() const -> bool
 {
     return m_isFullscreen;
 }
 
-sf::Vector2u Window::getWindowSize()
+auto Window::getWindowSize() -> sf::Vector2u
 {
     return m_windowSize;
 }

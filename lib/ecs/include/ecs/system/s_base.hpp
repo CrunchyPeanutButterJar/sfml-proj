@@ -20,13 +20,13 @@ public:
     SBase(System l_id, SystemManager& l_sysManager);
     ~SBase() override = default;
 
-    bool addEntity(EntityId l_entity);
-    bool hasEntity(EntityId l_entity);
-    bool removeEntity(EntityId l_entity);
+    auto addEntity(EntityId l_entity) -> bool;
+    auto hasEntity(EntityId l_entity) -> bool;
+    auto removeEntity(EntityId l_entity) -> bool;
 
-    System getId() const;
+    [[nodiscard]] auto getId() const -> System;
 
-    bool fitsRequirements(utils::Bitmask l_bits);
+    auto fitsRequirements(utils::Bitmask l_bits) -> bool;
 
     virtual void update(float l_dt) = 0;
     virtual void handleEvent(EntityId l_entity, messaging::EntityEvent l_event) = 0;
@@ -39,6 +39,6 @@ protected:
 };
 
 using SBasePtr = std::unique_ptr<SBase>;
-};
+} // namespace ecs::system
 
 #endif

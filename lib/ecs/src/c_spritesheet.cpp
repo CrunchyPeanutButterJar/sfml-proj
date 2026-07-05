@@ -26,7 +26,7 @@ void CSpriteSheet::create(core::graphics::TextureManager& l_textureManager, std:
     m_spriteSheet->loadSheet(utils::getResourcesDirectory() + "media/spritesheets/" + (l_sheetName? *l_sheetName: m_sheetName));
 }
 
-core::graphics::SpriteSheet* CSpriteSheet::getSpriteSheet()
+auto CSpriteSheet::getSpriteSheet() -> core::graphics::SpriteSheet*
 {
     if(m_spriteSheet)
     {
@@ -42,7 +42,7 @@ void CSpriteSheet::updatePosition(const sf::Vector2f& l_position)
     m_spriteSheet->setSpritePosition(l_position);
 }
 
-const sf::Vector2u& CSpriteSheet::getSize()
+auto CSpriteSheet::getSize() -> const sf::Vector2u&
 {
     ASSERT(m_spriteSheet.has_value(), "core::graphics::SpriteSheet {} was not loaded!", m_sheetName);
     return m_spriteSheet->getSpriteSize();

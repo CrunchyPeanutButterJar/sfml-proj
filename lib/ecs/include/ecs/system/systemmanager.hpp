@@ -22,11 +22,11 @@ class SystemManager
 public:
     SystemManager(entity::EntityManager& l_entityManager);
 
-    entity::EntityManager& getEntityManager();
-    messaging::MessageHandler& getMessageHandler();
+    auto getEntityManager() -> entity::EntityManager&;
+    auto getMessageHandler() -> messaging::MessageHandler&;
 
     template<typename T>
-    T* getSystem(System l_system)
+    auto getSystem(System l_system) -> T*
     {
         auto itr = m_systems.find(l_system);
         return itr != m_systems.end() ? dynamic_cast<T*>(itr->second.get()) : nullptr;
@@ -46,6 +46,6 @@ private:
     EntityEventContainer m_events;
     messaging::MessageHandler m_messageHandler;
 };
-};
+} // namespace ecs::system
 
 #endif

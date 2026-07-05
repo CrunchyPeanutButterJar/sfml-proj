@@ -11,7 +11,6 @@
 #include <functional>
 #include <memory>
 #include <string>
-#include <vector>
 
 namespace core
 {
@@ -27,17 +26,17 @@ public:
     void handleEvent(const sf::Event& l_event);
     void update(StateType l_state, const sf::WindowBase& l_wind);
 
-    bool addCallback(StateType l_state, const std::string& l_action, Callback l_callback);
+    auto addCallback(StateType l_state, const std::string& l_action, Callback l_callback) -> bool;
     void removeCallback(StateType l_state, const std::string& l_action);
 
     EventManager();
     ~EventManager();
 
     EventManager(const EventManager&) = delete;
-    EventManager& operator=(const EventManager&) = delete;
+    auto operator=(const EventManager&) -> EventManager& = delete;
 
     EventManager(EventManager&&) noexcept;
-    EventManager& operator=(EventManager&&) noexcept;
+    auto operator=(EventManager&&) noexcept -> EventManager&;
 
 private:
     void handleRealtimeEvents();
@@ -48,10 +47,10 @@ private:
 };
 
 //exposed for tests
-std::any buildBindings();
-std::any deserializeBindings(const std::string& l_jsonString);
-std::string serializeBindings(const std::any& l_serializableBindings);
-bool bindingsAreEquivalent(const std::any& l_first, const std::any& l_second);
-}
+auto buildBindings() -> std::any;
+auto deserializeBindings(const std::string& l_jsonString) -> std::any;
+auto serializeBindings(const std::any& l_serializableBindings) -> std::string;
+auto bindingsAreEquivalent(const std::any& l_first, const std::any& l_second) -> bool;
+} // namespace core
 
 #endif

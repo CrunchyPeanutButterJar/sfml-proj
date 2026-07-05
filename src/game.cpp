@@ -13,7 +13,7 @@
 
 using Resolution = std::pair<uint32_t, uint32_t>;
 
-static sf::Vector2u loadResolutionFromConfigFile()
+static auto loadResolutionFromConfigFile() -> sf::Vector2u
 {
     static const std::string ConfigFileName = utils::getConfigDirectory() + "config.json";
 
@@ -35,7 +35,7 @@ static sf::Vector2u loadResolutionFromConfigFile()
         FAILURE("Error while parsing invalid file : {}", ConfigFileName);
         return {};
     }
-    else
+    
     {
         const Resolution DefaultResolution{800, 600};
 
@@ -69,7 +69,7 @@ void Game::lateUpdate()
     restartClock();
 }
 
-sf::Time Game::getElapsed()
+auto Game::getElapsed() -> sf::Time
 {
     return m_elapsed;
 }
@@ -79,7 +79,7 @@ void Game::restartClock()
     m_elapsed = m_clock.restart();
 }
 
-core::Window* Game::getWindow()
+auto Game::getWindow() -> core::Window*
 {
     return &m_window;
 }

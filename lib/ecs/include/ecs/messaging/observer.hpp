@@ -11,5 +11,5 @@ public:
     virtual ~Observer() = default;
     virtual void notify(const Message& l_message) = 0;
 };
-}
+} // namespace ecs::messaging
 #endif

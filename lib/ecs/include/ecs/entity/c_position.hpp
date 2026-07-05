@@ -13,8 +13,8 @@ public:
 
     void readInput(utils::Tokens& l_tokens) override;
 
-    const sf::Vector2f& getPosition() const;
-    const sf::Vector2f& getOldPosition() const;
+    [[nodiscard]] auto getPosition() const -> const sf::Vector2f&;
+    [[nodiscard]] auto getOldPosition() const -> const sf::Vector2f&;
 
     void setPosition(const sf::Vector2f& l_pos);
 
@@ -24,6 +24,6 @@ private:
     sf::Vector2f m_position;
     sf::Vector2f m_positionOld;
 };
-}
+} // namespace ecs::entity
 
 #endif

@@ -4,7 +4,7 @@
 namespace core::graphics
 {
     class SpriteSheet;
-}
+} // namespace core::graphics
 
 
 #endif

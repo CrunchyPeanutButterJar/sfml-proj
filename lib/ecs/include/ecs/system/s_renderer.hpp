@@ -20,6 +20,6 @@ public:
 private:
     void setSheetDirection(EntityId l_entity, core::Direction l_dir);
 };
-};
+} // namespace ecs::system
 
 #endif

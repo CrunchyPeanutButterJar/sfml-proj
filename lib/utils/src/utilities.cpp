@@ -8,7 +8,7 @@ namespace utils
 
 Tokens::Tokens(std::istringstream ss, char l_delimiter, char l_commentChar) : m_ss{std::move(ss)}, m_delimiter{l_delimiter}, m_commentChar{l_commentChar} {}
 
-bool Tokens::currentMatch()
+auto Tokens::currentMatch() -> bool
 {
     constexpr auto Trim =
     [](std::string& s, const std::string& chars = " \t\n\r") 
@@ -60,12 +60,12 @@ void Tokens::skipLine()
 }
 
 
-bool Tokens::empty()
+auto Tokens::empty() -> bool
 {
     return !currentMatch();
 }
 
-std::optional<std::string> Tokens::advance()
+auto Tokens::advance() -> std::optional<std::string>
 {
     if(currentMatch())
     {
@@ -77,7 +77,7 @@ std::optional<std::string> Tokens::advance()
     return std::nullopt;
 }
 
-std::optional<std::istringstream> readFile(const std::string& l_filePath)
+auto readFile(const std::string& l_filePath) -> std::optional<std::istringstream>
 {
     std::ifstream file{l_filePath};
     if (!file)
@@ -90,7 +90,7 @@ std::optional<std::istringstream> readFile(const std::string& l_filePath)
     return std::istringstream{std::move(file_content)};
 }
 
-size_t pgcd(size_t l_n1, size_t l_n2)
+auto pgcd(size_t l_n1, size_t l_n2) -> size_t
 {
     size_t n1 = std::max(l_n1, l_n2);
     size_t n2 = std::min(l_n1, l_n2);
@@ -105,8 +105,8 @@ size_t pgcd(size_t l_n1, size_t l_n2)
     return pgcd(n2, r);
 }
 
-size_t ppcm(size_t l_n1, size_t l_n2)
+auto ppcm(size_t l_n1, size_t l_n2) -> size_t
 {
     return l_n1 * l_n2 / pgcd(l_n1, l_n2);
 }
-};
+} // namespace utils

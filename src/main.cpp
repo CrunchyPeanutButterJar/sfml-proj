@@ -2,7 +2,7 @@
 #include <utils/assert.hpp>
 #include <utils/utilities.hpp>
 
-int main(int /*argc*/, char* /*argv*/[])
+auto main(int /*argc*/, char* /*argv*/[]) -> int
 {
     Game game;
 

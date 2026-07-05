@@ -14,9 +14,9 @@ public:
     ~CDrawable() override = default;
 
     virtual void updatePosition(const sf::Vector2f& l_vec) = 0;
-    virtual const sf::Vector2u& getSize() = 0;
+    virtual auto getSize() -> const sf::Vector2u& = 0;
     virtual void draw(sf::RenderWindow* l_window) = 0;
 };
-};
+} // namespace ecs::entity
 
 #endif

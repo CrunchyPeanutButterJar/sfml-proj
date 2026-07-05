@@ -1,6 +1,6 @@
 #include <gtest/gtest.h>
 #include <gmock/gmock.h>
-#include <math.h>
+#include <cmath>
 #include <utils/utilities.hpp>
 #include <utils/bitmask.hpp>
 #include <sstream>

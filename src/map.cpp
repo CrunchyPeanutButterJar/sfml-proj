@@ -14,7 +14,7 @@ m_currentState(l_currentState)
 {    
 }
 
-sf::Vector2u Map::convertCoordinates(TileId l_id)
+auto Map::convertCoordinates(TileId l_id) -> sf::Vector2u
 {
     ASSERT(m_mapSize.x != 0 && m_mapSize.y != 0, "Map dimensions invalid");
     const auto [nRows, nCols] = m_mapSize;
@@ -25,7 +25,7 @@ sf::Vector2u Map::convertCoordinates(TileId l_id)
     return {i_row, i_col};
 }
 
-TileId Map::convertCoordinates(size_t iRow, size_t iCol)
+auto Map::convertCoordinates(size_t iRow, size_t iCol) -> TileId
 {
     ASSERT(m_mapSize.x != 0 && m_mapSize.y != 0, "Map dimensions invalid");
     const auto [nRows, nCols] = m_mapSize;
@@ -205,7 +205,7 @@ void Map::draw()
 
 }
 
-ecs::EntityId Map::getPlayerId()
+auto Map::getPlayerId() -> ecs::EntityId
 {
     ASSERT(m_playerId.has_value(), "did not load player id");
     return *m_playerId;

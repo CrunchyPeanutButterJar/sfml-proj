@@ -19,6 +19,6 @@ protected:
     void cropSprite() override;
 };
 
-};
+} // namespace core::animation
 
 #endif

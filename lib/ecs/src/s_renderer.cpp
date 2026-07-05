@@ -15,7 +15,7 @@ SRenderer::SRenderer(SystemManager& l_systemManager) : SBase{System::Renderer, l
     utils::Bitmask req;
     req.turnOnBit((utils::Bitmask::Position)Component::Position);
     req.turnOnBit((utils::Bitmask::Position)Component::SpriteSheet);
-    m_requiredComponents.push_back(std::move(req));
+    m_requiredComponents.push_back(req);
 
     m_systemManager.getMessageHandler().subscribe(EntityMessage::Direction_Changed,this);
 }
@@ -39,7 +39,7 @@ void SRenderer::notify(const Message& l_message)
 {
     if(hasEntity(l_message.m_receiver))
     {
-        EntityMessage m = (EntityMessage) l_message.m_type;
+        auto m = (EntityMessage) l_message.m_type;
         switch(m)
         {
             case EntityMessage::Direction_Changed:

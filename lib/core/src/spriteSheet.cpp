@@ -11,7 +11,7 @@ using namespace core::graphics;
 
 SpriteSheet::SpriteSheet(core::graphics::TextureManager& l_textureManager) : m_textureManager(&l_textureManager) {}
 
-bool SpriteSheet::loadSheet(const std::string& l_filePath)
+auto SpriteSheet::loadSheet(const std::string& l_filePath) -> bool
 {
     if(auto fstream = utils::readFile(l_filePath))
     {
@@ -93,22 +93,22 @@ void SpriteSheet::setDirection(core::Direction l_dir)
     m_currentAnimation->cropSprite();
 }
 
-const sf::Vector2u& SpriteSheet::getSpriteSize() const
+auto SpriteSheet::getSpriteSize() const -> const sf::Vector2u&
 {
     return m_spriteSize;
 }
 
-const sf::Vector2f& SpriteSheet::getSpritePosition() const
+auto SpriteSheet::getSpritePosition() const -> const sf::Vector2f&
 {
     return m_sprite.getPosition();
 }
 
-core::Direction SpriteSheet::getDirection() const
+auto SpriteSheet::getDirection() const -> core::Direction
 {
     return m_direction;
 }
 
-core::animation::BaseAnimation* SpriteSheet::getCurrentAnimation() const
+auto SpriteSheet::getCurrentAnimation() const -> core::animation::BaseAnimation*
 {
     return m_currentAnimation;
 }
@@ -119,7 +119,7 @@ void SpriteSheet::cropSprite(const sf::IntRect& l_rect)
     m_sprite.setScale(m_spriteScale);
 }
 
-bool SpriteSheet::setAnimation(const std::string& l_name, bool l_play, bool l_loop)
+auto SpriteSheet::setAnimation(const std::string& l_name, bool l_play, bool l_loop) -> bool
 {
     auto itr = m_animations.find(l_name);
     const bool Found = itr != m_animations.end();

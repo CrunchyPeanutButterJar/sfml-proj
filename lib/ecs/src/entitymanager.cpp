@@ -20,7 +20,7 @@ m_textureManager(l_textureManager)
     addComponentType<CSpriteSheet>(Component::SpriteSheet);
 }
 
-int EntityManager::addEntity(utils::Bitmask l_mask)
+auto EntityManager::addEntity(utils::Bitmask l_mask) -> int
 {
     EntityId entity = m_idCounter++;
     ASSERT(m_entities.emplace(entity, EntityData{}).second, "Invalid Entity Id Counter {}", entity);
@@ -36,7 +36,7 @@ int EntityManager::addEntity(utils::Bitmask l_mask)
     return entity;
 }
 
-int EntityManager::addEntity(const std::string& l_entityFile)
+auto EntityManager::addEntity(const std::string& l_entityFile) -> int
 {
     static const std::string EntityDir = utils::getResourcesDirectory() + "media/entities/";
     int entity_id = -1;
@@ -89,7 +89,7 @@ int EntityManager::addEntity(const std::string& l_entityFile)
     return entity_id;
 }
 
-bool EntityManager::removeEntity(EntityId l_id)
+auto EntityManager::removeEntity(EntityId l_id) -> bool
 {
     auto itr = m_entities.find(l_id);
     if(itr == m_entities.end())
@@ -101,7 +101,7 @@ bool EntityManager::removeEntity(EntityId l_id)
     return true;
 }
 
-bool EntityManager::addComponent(EntityId l_entity, Component l_component)
+auto EntityManager::addComponent(EntityId l_entity, Component l_component) -> bool
 {
     auto itr = m_entities.find(l_entity);
     if(itr == m_entities.end() || itr->second.first.getBit((unsigned int)l_component))
@@ -121,7 +121,7 @@ bool EntityManager::addComponent(EntityId l_entity, Component l_component)
     return true;
 }
 
-bool EntityManager::removeComponent(EntityId l_entity, Component l_component)
+auto EntityManager::removeComponent(EntityId l_entity, Component l_component) -> bool
 {
     auto itr = m_entities.find(l_entity);
     if(itr == m_entities.end() || !itr->second.first.getBit((unsigned int)l_component))
@@ -141,7 +141,7 @@ bool EntityManager::removeComponent(EntityId l_entity, Component l_component)
     return true;
 }
 
-bool EntityManager::hasComponent(EntityId l_entity, Component l_component)
+auto EntityManager::hasComponent(EntityId l_entity, Component l_component) -> bool
 {
     auto itr = m_entities.find(l_entity);
     if(itr == m_entities.end())

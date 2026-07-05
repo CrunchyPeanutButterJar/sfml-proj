@@ -19,12 +19,12 @@ public:
     void loadMap(const std::string& l_path);
     void update(float l_dt);
     void draw();
-    ecs::EntityId getPlayerId();
+    auto getPlayerId() -> ecs::EntityId;
 
 private:
     void loadTileset(const std::string& l_path);
-    core::graphics::TileId convertCoordinates(size_t iRow, size_t iCol);
-    sf::Vector2u convertCoordinates(core::graphics::TileId l_id);
+    auto convertCoordinates(size_t iRow, size_t iCol) -> core::graphics::TileId;
+    auto convertCoordinates(core::graphics::TileId l_id) -> sf::Vector2u;
 
 
     SharedContext& m_context;

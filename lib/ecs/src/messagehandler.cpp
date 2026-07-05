@@ -2,12 +2,12 @@
 
 using namespace ecs::messaging;
 
-bool MessageHandler::subscribe(EntityMessage l_type, Observer* l_observer)
+auto MessageHandler::subscribe(EntityMessage l_type, Observer* l_observer) -> bool
 {
     return m_communicators[l_type].addObserver(l_observer);
 }
 
-bool MessageHandler::unsubscribe(EntityMessage l_type, Observer* l_observer)
+auto MessageHandler::unsubscribe(EntityMessage l_type, Observer* l_observer) -> bool
 {
     return m_communicators[l_type].removeObserver(l_observer);
 }

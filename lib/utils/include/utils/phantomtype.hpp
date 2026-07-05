@@ -14,17 +14,17 @@ public:
     template<typename... Args>
     explicit PhantomType(Args&&... args) : m_value{std::forward<Args>(args)...} {};
 
-    UnderlyingType& get()
+    auto get() -> UnderlyingType&
     {
         return m_value;
     }
 
-    const UnderlyingType& get() const
+    [[nodiscard]] auto get() const -> const UnderlyingType&
     {
         return m_value;
     }
 
-    const ReflectionType& reflection() const
+    [[nodiscard]] auto reflection() const -> const ReflectionType&
     {
         return m_value;
     }
@@ -42,6 +42,6 @@ public:
 private:
     UnderlyingType m_value;
 };
-}
+} // namespace utils
 
 #endif

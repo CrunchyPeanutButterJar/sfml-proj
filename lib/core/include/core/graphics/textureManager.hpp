@@ -12,13 +12,15 @@ public:
     TextureManager();
 
     TextureManager(const TextureManager&) = delete;
-    TextureManager& operator=(const TextureManager&) = delete;
+    auto operator=(const TextureManager&) -> TextureManager& = delete;
     
     TextureManager(TextureManager&&) = default;
-    TextureManager& operator=(TextureManager&&) = default;
+    auto operator=(TextureManager&&) -> TextureManager& = default;
+
+    ~TextureManager() = default;
 
 
-    static std::unique_ptr<sf::Texture> load(const std::string &l_path);
+    static auto load(const std::string &l_path) -> std::unique_ptr<sf::Texture>;
 };
 } // namespace core::graphics
 #endif

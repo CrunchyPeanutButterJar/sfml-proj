@@ -7,7 +7,7 @@ void EventQueue::addEvent(EventId l_event)
     m_queue.push(l_event);
 }
 
-std::optional<EventId> EventQueue::processEvent()
+auto EventQueue::processEvent() -> std::optional<EventId>
 {
     if(m_queue.empty())
     {

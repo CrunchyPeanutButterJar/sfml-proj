@@ -4,6 +4,6 @@
 namespace core
 {
     class Window;
-};
+} // namespace core
 
 #endif

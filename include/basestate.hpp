@@ -22,12 +22,12 @@ public:
     virtual void onCreate() = 0;
 
     void setTransparent(bool l_transparent) { m_transparent = l_transparent; }
-    bool isTransparent() const { return m_transparent; }
+    auto isTransparent() const -> bool { return m_transparent; }
 
     void setTranscendent(bool l_transcendent) { m_transcendent = l_transcendent; }
-    bool isTranscendent() const { return m_transcendent; }
+    auto isTranscendent() const -> bool { return m_transcendent; }
 
-    sf::View getView() const { return m_view;}
+    auto getView() const -> sf::View { return m_view;}
 
 protected:
     StateManager& m_stateManager;
