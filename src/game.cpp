@@ -52,8 +52,8 @@ static auto loadResolutionFromConfigFile() -> sf::Vector2u
 
 Game::Game()
     : m_window{"MyGame", loadResolutionFromConfigFile()},
-      m_stateManager{{m_window, m_window.getEventManager(), m_entityManager, m_systemManager,
-                      m_textureManager}},
+      m_stateManager{{.m_window=m_window, .m_eventManager=m_window.getEventManager(), .m_entityManager=m_entityManager, .m_systemManager=m_systemManager,
+                      .m_textureManager=m_textureManager}},
       m_entityManager{m_systemManager, m_stateManager.getContext().m_textureManager},
       m_systemManager{m_entityManager}
 {
