@@ -59,7 +59,7 @@ m_systemManager{m_entityManager}
 
 void Game::Update()
 {
-    m_window.Update(m_stateManager.GetCurrentState());
+    m_window.Update((EventManager::StateType)m_stateManager.GetCurrentState());
     m_stateManager.Update(m_elapsed);
 }
 

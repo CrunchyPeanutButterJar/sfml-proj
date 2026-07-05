@@ -1,10 +1,10 @@
 #include <SFML/Graphics/Rect.hpp>
 #include <map.hpp>
-#include <window.hpp>
+#include <core/window.hpp>
 #include <utils/assert.hpp>
 #include <utils/utilities.hpp>
-#include <entitymanager.hpp>
-#include <c_position.hpp>
+#include <ecs/entity/entitymanager.hpp>
+#include <ecs/entity/c_position.hpp>
 
 Map::Map(SharedContext& l_context, BaseState& l_currentState):
 m_context(l_context),

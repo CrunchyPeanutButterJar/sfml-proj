@@ -1,7 +1,7 @@
 #include <statemanager.hpp>
 
 #include <gamestate.hpp>
-#include <window.hpp>
+#include <core/window.hpp>
 
 #include <algorithm>
 

@@ -3,7 +3,7 @@
 
 #include <sharedContext.hpp>
 #include <basestate.hpp>
-#include <textureManager.hpp>
+#include <core/graphics/textureManager.hpp>
 
 #include <SFML/System/Time.hpp>
 

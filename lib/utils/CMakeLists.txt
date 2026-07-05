@@ -1,12 +1,10 @@
 file(GLOB SOURCES src/*.cpp)
 
-
-find_package(reflectcpp REQUIRED)
 find_package(fmt REQUIRED)
 
 add_library(utils STATIC ${SOURCES})
 target_include_directories(utils PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include)
-target_link_libraries(utils PUBLIC fmt::fmt reflectcpp::reflectcpp)
+target_link_libraries(utils PUBLIC fmt::fmt)
 
 find_package(GTest REQUIRED)
 enable_testing()

@@ -1,6 +1,6 @@
 #include <basestate.hpp>
 #include <statemanager.hpp>
-#include <window.hpp>
+#include <core/window.hpp>
 
 BaseState::BaseState(StateManager& l_stateManager) : m_stateManager(l_stateManager)
 {

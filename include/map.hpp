@@ -1,8 +1,8 @@
 #ifndef MAP_HPP
 #define MAP_HPP
 
-#include <ecs_types.hpp>
-#include <tiles.hpp>
+#include <ecs/ecs_types.hpp>
+#include <core/graphics/tiles.hpp>
 #include <unordered_map>
 #include <basestate.hpp>
 #include <sharedContext.hpp>

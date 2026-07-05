@@ -1,0 +1,41 @@
+#ifndef S_BASE_HPP
+#define S_BASE_HPP
+
+#include <ecs/system/systemmanager.fwd.hpp>
+#include <ecs/ecs_types.hpp>
+#include <ecs/messaging/entityevents.hpp>
+#include <ecs/messaging/observer.hpp>
+#include <utils/bitmask.hpp>
+#include <vector>
+#include <memory>
+
+using EntityList = std::vector<EntityId>;
+using Requirements = std::vector<Bitmask>;
+
+class S_Base : public Observer
+{
+public:
+    S_Base(System l_id, SystemManager& l_sysManager);
+    virtual ~S_Base() = default;
+
+    bool addEntity(EntityId l_entity);
+    bool hasEntity(EntityId l_entity);
+    bool removeEntity(EntityId l_entity);
+
+    System getId() const;
+
+    bool fitsRequirements(Bitmask l_bits);
+
+    virtual void update(float l_dt) = 0;
+    virtual void handleEvent(EntityId l_entity, EntityEvent l_event) = 0;
+
+protected:
+    SystemManager& m_systemManager;
+    System m_id;
+    Requirements m_requiredComponents;
+    EntityList m_entities;
+};
+
+using S_BasePtr = std::unique_ptr<S_Base>;
+
+#endif

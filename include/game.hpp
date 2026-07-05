@@ -3,10 +3,10 @@
 
 #include <SFML/Graphics.hpp>
 
-#include <entitymanager.hpp>
-#include <systemmanager.hpp>
+#include <ecs/entity/entitymanager.hpp>
+#include <ecs/system/systemmanager.hpp>
 #include <statemanager.hpp>
-#include <window.hpp>
+#include <core/window.hpp>
 
 class Game
 {

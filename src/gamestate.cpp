@@ -1,17 +1,17 @@
-#include "utils/utilities.hpp"
+#include <utils/utilities.hpp>
 #include <SFML/System/Time.hpp>
 #include <SFML/Window/WindowBase.hpp>
 #include <gamestate.hpp>
 
-#include <eventmanager.hpp>
-#include <entitymanager.hpp>
-#include <message.hpp>
-#include <entitymessage.hpp>
-#include <systemmanager.hpp>
+#include <core/eventmanager.hpp>
+#include <ecs/entity/entitymanager.hpp>
+#include <ecs/messaging/message.hpp>
+#include <ecs/messaging/entitymessage.hpp>
+#include <ecs/system/systemmanager.hpp>
 #include <statemanager.hpp>
-#include <c_position.hpp>
-#include <c_spritesheet.hpp>
-#include <window.hpp>
+#include <ecs/entity/c_position.hpp>
+#include <ecs/entity/c_spritesheet.hpp>
+#include <core/window.hpp>
 
 #include <SFML/Window/Keyboard.hpp>
 
@@ -30,7 +30,7 @@ m_gameMap{m_stateManager.GetContext(), *this}
     auto* sprite = entityManager.getComponent<C_SpriteSheet>(playerId, Component::SpriteSheet);
     sprite->getSpriteSheet()->nextAnimation();
 
-    eventManager.AddCallback(StateType::Game, "Mouse_Moved",
+    eventManager.AddCallback((EventManager::StateType)StateType::Game, "Mouse_Moved",
     [&entityManager, playerId](const sf::Window::WindowBase& l_window)
     {
         auto* position = entityManager.getComponent<C_Position>(playerId, Component::Position);
@@ -38,7 +38,7 @@ m_gameMap{m_stateManager.GetContext(), *this}
         position->setPosition({(float)ix, (float)iy});
     });
 
-    eventManager.AddCallback(StateType::Game, "Game_MoveLeft",
+    eventManager.AddCallback((EventManager::StateType)StateType::Game, "Game_MoveLeft",
     [playerId, &messageHandler](const sf::WindowBase&)
     {
         static bool moveLeft = true;

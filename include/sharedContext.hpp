@@ -1,11 +1,11 @@
 #ifndef SHAREDCONTEXT_HPP
 #define SHAREDCONTEXT_HPP
 
-#include <textureManager.fwd.hpp>
-#include <eventmanager.fwd.hpp>
-#include <entitymanager.fwd.hpp>
-#include <systemmanager.fwd.hpp>
-#include <window.fwd.hpp>
+#include <core/graphics/textureManager.fwd.hpp>
+#include <core/eventmanager.fwd.hpp>
+#include <ecs/entity/entitymanager.fwd.hpp>
+#include <ecs/system/systemmanager.fwd.hpp>
+#include <core/window.fwd.hpp>
 
 struct SharedContext
 {
