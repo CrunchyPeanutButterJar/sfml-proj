@@ -27,5 +27,5 @@ TilesStart
 TilesEnd
 
 EntitiesStart
-player.entity 32. 32.
+player.entity 160. 160.
 EntitiesEnd

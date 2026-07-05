@@ -1,3 +1,6 @@
+#include "core/directions.hpp"
+#include "ecs/ecs_types.hpp"
+#include "ecs/messaging/message_handler.hpp"
 #include <SFML/System/Time.hpp>
 #include <SFML/Window/WindowBase.hpp>
 #include <ecs/state/gamestate.hpp>
@@ -7,15 +10,29 @@
 #include <core/window.hpp>
 #include <ecs/entity/c_position.hpp>
 #include <ecs/entity/c_spritesheet.hpp>
-#include <ecs/entity/entity_manager.hpp>
 #include <ecs/messaging/entity_message.hpp>
 #include <ecs/messaging/message.hpp>
 #include <ecs/state/statemanager.hpp>
 #include <ecs/system/system_manager.hpp>
+#include <ecs/system/s_movement.hpp>
 
 #include <SFML/Window/Keyboard.hpp>
 
 using namespace ecs::state;
+
+static void moveEntity(ecs::messaging::MessageHandler& l_messageHandler, ecs::EntityId l_entity, core::Direction l_dir)
+{
+    using namespace ecs::messaging;
+
+    Message message
+    {
+        .m_type = (MessageType)EntityMessage::Move,
+        .m_receiver = (int) l_entity,
+        .m_int = (int) l_dir
+    };
+
+    l_messageHandler.dispatch(message);
+}
 
 GameState::GameState(StateManager& l_stateManager)
     : BaseState(l_stateManager), m_gameMap{m_stateManager.getContext(), *this}
@@ -23,37 +40,25 @@ GameState::GameState(StateManager& l_stateManager)
     m_gameMap.loadMap(utils::getConfigDirectory() + "map.map");
 
     auto& event_manager   = m_stateManager.getContext().m_eventManager;
-    auto& entity_manager  = m_stateManager.getContext().m_entityManager;
+    auto& system_manager  = m_stateManager.getContext().m_systemManager;
     auto& message_handler = m_stateManager.getContext().m_systemManager.getMessageHandler();
 
+    system_manager.getSystem<ecs::system::SMovement>(System::Movement)->setMap(&m_gameMap);
+
     ecs::EntityId player_id = m_gameMap.getPlayerId();
-
-    auto* sprite = entity_manager.getComponent<ecs::entity::CSpriteSheet>(
-        player_id, ecs::Component::SpriteSheet);
-    sprite->getSpriteSheet()->nextAnimation();
-
-    event_manager.addCallback((core::EventManager::StateType)StateType::Game, "Mouse_Moved",
-                              [&entity_manager, player_id](const sf::Window::WindowBase& l_window)
-                              {
-                                  auto* position =
-                                      entity_manager.getComponent<ecs::entity::CPosition>(
-                                          player_id, ecs::Component::Position);
-                                  auto [ix, iy] = sf::Mouse::getPosition(l_window);
-                                  position->setPosition({(float)ix, (float)iy});
-                              });
 
     event_manager.addCallback(
         (core::EventManager::StateType)StateType::Game, "Game_MoveLeft",
         [player_id, &message_handler](const sf::WindowBase&)
         {
-            static bool             move_left = true;
-            ecs::messaging::Message msg{
-                .m_type =
-                    (ecs::messaging::MessageType)ecs::messaging::EntityMessage::Direction_Changed,
-                .m_receiver = (int)player_id,
-                .m_int      = (int)(move_left ? core::Direction::Left : core::Direction::Right)};
-            message_handler.dispatch(msg);
-            move_left = !move_left;
+            moveEntity(message_handler, player_id, core::Direction::Left);   
+        });
+
+    event_manager.addCallback(
+        (core::EventManager::StateType)StateType::Game, "Game_MoveRight",
+        [player_id, &message_handler](const sf::WindowBase&)
+        {
+            moveEntity(message_handler, player_id, core::Direction::Right);   
         });
 }
 

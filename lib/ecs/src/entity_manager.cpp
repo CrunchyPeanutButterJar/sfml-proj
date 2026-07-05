@@ -2,6 +2,9 @@
 #include <ecs/ecs_types.hpp>
 #include <ecs/entity/c_position.hpp>
 #include <ecs/entity/c_spritesheet.hpp>
+#include <ecs/entity/c_state.hpp>
+#include <ecs/entity/c_movable.hpp>
+#include <ecs/entity/c_controller.hpp>
 #include <ecs/entity/entity_manager.hpp>
 #include <ecs/system/system_manager.hpp>
 #include <utils/assert.hpp>
@@ -18,6 +21,9 @@ EntityManager::EntityManager(SystemManager&                  l_sysManager,
 {
     addComponentType<CPosition>(Component::Position);
     addComponentType<CSpriteSheet>(Component::SpriteSheet);
+    addComponentType<CState>(Component::State);
+    addComponentType<CMovable>(Component::Movable);
+    addComponentType<CController>(Component::Controller);
 }
 
 auto EntityManager::addEntity(utils::Bitmask l_mask) -> int

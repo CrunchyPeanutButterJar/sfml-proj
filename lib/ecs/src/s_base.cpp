@@ -44,5 +44,5 @@ auto SBase::fitsRequirements(utils::Bitmask l_bits) -> bool
 {
     return std::any_of(m_requiredComponents.begin(), m_requiredComponents.end(),
                        [l_bits](const utils::Bitmask& l_requirement)
-                       { return l_requirement.matches(l_bits, l_bits.getMask()); });
+                       { return l_bits.matches(l_requirement, l_requirement.getMask()); });
 }

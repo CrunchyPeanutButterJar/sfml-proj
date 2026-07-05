@@ -4,6 +4,7 @@
 #include <SFML/System/Vector2.hpp>
 #include <core/graphics/tiles.hpp>
 #include <ecs/ecs_types.hpp>
+#include <ecs/map.fwd.hpp>
 #include <ecs/shared_context.hpp>
 #include <ecs/state/basestate.hpp>
 #include <optional>
@@ -22,6 +23,8 @@ class Map
     void update(float l_dt);
     void draw();
     auto getPlayerId() -> ecs::EntityId;
+    auto getTile(size_t iRow, size_t iCol) -> const core::graphics::Tile*;
+    auto getTileSheetConfig() const -> const core::graphics::TileSheetConfig&;
 
   private:
     void loadTileset(const std::string& l_path);

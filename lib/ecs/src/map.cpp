@@ -1,4 +1,5 @@
 #include <SFML/Graphics/Rect.hpp>
+#include <SFML/System/Vector2.hpp>
 #include <core/window.hpp>
 #include <ecs/entity/c_position.hpp>
 #include <ecs/entity/entity_manager.hpp>
@@ -207,6 +208,21 @@ void Map::draw()
             }
         }
     }
+}
+
+auto Map::getTile(size_t iRow, size_t iCol) -> const core::graphics::Tile*
+{
+    if (auto itr = m_tileMap.find(convertCoordinates(iRow, iCol)); itr != m_tileMap.end())
+    {
+        return &itr->second;
+    }
+
+    return nullptr;
+}
+
+auto Map::getTileSheetConfig() const -> const core::graphics::TileSheetConfig&
+{
+    return m_tileSheetConfig;
 }
 
 auto Map::getPlayerId() -> ecs::EntityId

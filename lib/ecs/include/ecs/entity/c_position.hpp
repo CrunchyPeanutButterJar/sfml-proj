@@ -3,6 +3,7 @@
 
 #include <SFML/System/Vector2.hpp>
 #include <ecs/entity/c_base.hpp>
+#include <ecs/entity/c_position.fwd.hpp>
 
 namespace ecs::entity
 {

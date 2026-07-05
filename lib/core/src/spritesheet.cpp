@@ -63,6 +63,7 @@ auto SpriteSheet::loadSheet(const std::string& l_filePath) -> bool
                 FAILURE("Invalid Key {} read in config file {}", key, l_filePath);
             }
         }
+        setSpriteSize(m_spriteSize);
 
         return true;
     }
