@@ -98,23 +98,23 @@ namespace Utils
     {
       bool error = false;
 
-      static constexpr auto to_type = 
+      static constexpr auto ToType = 
       []<typename Type>(const std::string& l_token, bool& l_error, Type*) -> Type
       {
-        static const std::string type_name = printTypeName<Type>();
+        static const std::string TypeName = printTypeName<Type>();
 
         std::istringstream iss(l_token);
         Type value;
         iss >> value;
         if(iss.fail())
         {
-          FAILURE_NON_FATAL( "Failed to parse token str {} to type {}", l_token, type_name);
+          FAILURE_NON_FATAL( "Failed to parse token str {} to type {}", l_token, TypeName);
           l_error = true;
         }
         return value;
       };
 
-      static constexpr auto consume_token = 
+      static constexpr auto ConsumeToken = 
       [] (Tokens& l_tokens, bool& l_error) -> std::string
       {
         auto token = l_tokens.advance();
@@ -127,13 +127,13 @@ namespace Utils
         return token.value();
       };
 
-      static constexpr auto to_tuple =
+      static constexpr auto ToTuple =
       [] (Tokens& l_tokens, bool& l_error) -> std::tuple<T...>
       {
-        return std::make_tuple(to_type(consume_token(l_tokens, l_error), l_error, (T*) nullptr)...);
+        return std::make_tuple(ToType(ConsumeToken(l_tokens, l_error), l_error, (T*) nullptr)...);
       };
 
-      auto tuple = to_tuple(l_tokens, error);
+      auto tuple = ToTuple(l_tokens, error);
       if(!error)
       {
         return tuple;

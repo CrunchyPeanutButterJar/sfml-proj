@@ -40,6 +40,35 @@ CheckOptions:
     value:           'camelBack'
   - key:             readability-identifier-naming.MethodCase
     value:           'camelBack'
+    
+  # Regular member variables
+  - key:             readability-identifier-naming.MemberCase
+    value:           'camelBack'
+  - key:             readability-identifier-naming.MemberPrefix
+    value:           'm_'
+
+  # Const member variables
+  - key:             readability-identifier-naming.MemberConstantCase
+    value:           'CamelCase'
+  - key:             readability-identifier-naming.MemberConstantPrefix
+    value:           'm_'
+
+  # For other (non-member) constants:
+  - key:             readability-identifier-naming.GlobalConstantCase
+    value:           'UPPER_CASE'
+  - key:             readability-identifier-naming.StaticConstantCase
+    value:           'CamelCase'
+  - key:             readability-identifier-naming.LocalConstantCase
+    value:           'CamelCase'
+
+  # Don’t enforce naming rules for enums
+  - key:            readability-identifier-naming.EnumCase
+    value:          Ignored
+  - key:            readability-identifier-naming.EnumConstantCase
+    value:          Ignored
+  - key:            readability-identifier-naming.ScopedEnumConstantCase
+    value:          Ignored
+
 
   - key: llvm-header-guard.HeaderGuardPrefix
     value: ''                # no global prefix

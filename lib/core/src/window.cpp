@@ -53,11 +53,11 @@ EventManager& Window::getEventManager()
 
 sf::FloatRect Window::getViewSpace() const
 {
-    const sf::Vector2f view_center = m_window.getView().getCenter();
-    const sf::Vector2f view_size = m_window.getView().getSize();
-    const sf::Vector2f view_size_half{view_size.x / 2, view_size.y / 2};
+    const sf::Vector2f ViewCenter = m_window.getView().getCenter();
+    const sf::Vector2f ViewSize = m_window.getView().getSize();
+    const sf::Vector2f ViewSizeHalf{ViewSize.x / 2, ViewSize.y / 2};
 
-    return {view_center - view_size_half, view_size};
+    return {ViewCenter - ViewSizeHalf, ViewSize};
 }
 
 

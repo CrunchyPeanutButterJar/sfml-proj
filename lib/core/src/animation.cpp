@@ -24,8 +24,8 @@ void Animation::cropSprite()
 
 void Animation::frameStep()
 {
-    const bool advanced = nextFrame();
-    if(!advanced)
+    const bool Advanced = nextFrame();
+    if(!Advanced)
     {
         if(m_loop)
         {

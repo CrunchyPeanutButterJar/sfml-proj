@@ -26,7 +26,7 @@ bool Bitmask::matches(const Bitmask& l_other, Bitset l_relevant) const
 
 bool Bitmask::getBit(Position l_pos) const
 {
-    return (m_bits & (1 << l_pos)) != 0u;
+    return (m_bits & (1 << l_pos)) != 0U;
 }
 
 void Bitmask::turnOnBit(Position l_pos)

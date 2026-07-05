@@ -34,9 +34,9 @@ int EntityManager::addEntity(Bitmask l_mask)
 
 int EntityManager::addEntity(const std::string& l_entityFile)
 {
-    static const std::string entity_dir = Utils::getResourcesDirectory() + "media/entities/";
+    static const std::string EntityDir = Utils::getResourcesDirectory() + "media/entities/";
     int entity_id = -1;
-    auto file_stream = Utils::readFile(entity_dir + l_entityFile);
+    auto file_stream = Utils::readFile(EntityDir + l_entityFile);
     if(!file_stream)
     {
         FAILURE_NON_FATAL("Could not open entity file {}", l_entityFile);
@@ -67,11 +67,11 @@ int EntityManager::addEntity(const std::string& l_entityFile)
                 FAILURE_NON_FATAL("Invalid entity file {} : `Component` field found before `Attributes` field ", l_entityFile);
                 return -1;
             }
-            const auto c_id = *consumeToken<unsigned int>(tokens);
-            auto* component = getComponent<CBase>(entity_id, (Component) c_id);
+            const auto CId = *consumeToken<unsigned int>(tokens);
+            auto* component = getComponent<CBase>(entity_id, (Component) CId);
             if(component == nullptr)
             {
-                FAILURE_NON_FATAL("Could not find component {}", c_id);
+                FAILURE_NON_FATAL("Could not find component {}", CId);
                 return -1;
             }
             component->readInput(tokens);

@@ -85,11 +85,11 @@ using ActualEvents = std::vector<sf::Event>;
 using Callbacks = std::unordered_map<std::string, Callback>;
 using CallbacksContainer = std::unordered_map<EventManager::StateType, Callbacks>;
 
-static const std::string bindings_file_path{Utils::getConfigDirectory() + "bindings.json"};
+static const std::string BINDINGS_FILE_PATH{Utils::getConfigDirectory() + "bindings.json"};
 
 std::optional<SerializableBindings> loadFromBindingsFile()
 {
-    std::ifstream config_file(bindings_file_path.c_str());
+    std::ifstream config_file(BINDINGS_FILE_PATH.c_str());
     
     if(!config_file.good())
     {
@@ -103,14 +103,14 @@ std::optional<SerializableBindings> loadFromBindingsFile()
     config_file.close();
 
     auto result = rfl::json::read<SerializableBindings, rfl::AddTagsToVariants>(json_string);
-    ASSERT_NON_FATAL(result, "Failed to read bindings from file {}", bindings_file_path);
+    ASSERT_NON_FATAL(result, "Failed to read bindings from file {}", BINDINGS_FILE_PATH);
     
     if(!result)
     {
         return std::nullopt;
     }
 
-    LOG("Reading from binding file {}", bindings_file_path);
+    LOG("Reading from binding file {}", BINDINGS_FILE_PATH);
 
     return result.value();
 }
@@ -181,22 +181,22 @@ EventManager::EventManager() : m_impl(std::make_unique<Impl>())
     auto& bindings = std::get<0>(m_impl->m_tuple);
     std::get<1>(m_impl->m_tuple).reserve(128);
 
-    const auto non_customizable_bindings = buildNonCustomizableBindings();
+    const auto NonCustomizableBindings = buildNonCustomizableBindings();
 
     if(auto customized_serialized_bindings = loadFromBindingsFile())
     {
-        bindings = std::array{*customized_serialized_bindings, non_customizable_bindings} | std::ranges::views::join | std::ranges::to<std::vector>();
+        bindings = std::array{*customized_serialized_bindings, NonCustomizableBindings} | std::ranges::views::join | std::ranges::to<std::vector>();
     }
     else
     {
-        const auto default_customizable_bindings = buildDefaultBindings();
-        bindings = std::array{default_customizable_bindings, non_customizable_bindings} | std::ranges::views::join | std::ranges::to<std::vector>();
+        const auto DefaultCustomizableBindings = buildDefaultBindings();
+        bindings = std::array{DefaultCustomizableBindings, NonCustomizableBindings} | std::ranges::views::join | std::ranges::to<std::vector>();
 
-        std::ofstream config_file(bindings_file_path.data());
+        std::ofstream config_file(BINDINGS_FILE_PATH.data());
 
-        const auto json_string = rfl::json::write < rfl::AddTagsToVariants>(default_customizable_bindings);
-        config_file << json_string;
-        ASSERT_NON_FATAL(!config_file.fail(), "Failed to write default bindings to file {}", bindings_file_path);
+        const auto JsonString = rfl::json::write < rfl::AddTagsToVariants>(DefaultCustomizableBindings);
+        config_file << JsonString;
+        ASSERT_NON_FATAL(!config_file.fail(), "Failed to write default bindings to file {}", BINDINGS_FILE_PATH);
         config_file.close();
     }
 }

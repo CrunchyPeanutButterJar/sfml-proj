@@ -120,11 +120,11 @@ void SpriteSheet::cropSprite(const sf::IntRect& l_rect)
 bool SpriteSheet::setAnimation(const std::string& l_name, bool l_play, bool l_loop)
 {
     auto itr = m_animations.find(l_name);
-    const bool found = itr != m_animations.end();
+    const bool Found = itr != m_animations.end();
 
-    if (!found || itr->second.get() == m_currentAnimation)
+    if (!Found || itr->second.get() == m_currentAnimation)
     {
-      ASSERT_NON_FATAL(found, "Attempt to set an invalid animation : {}", l_name);
+      ASSERT_NON_FATAL(Found, "Attempt to set an invalid animation : {}", l_name);
       return false;
     }
 

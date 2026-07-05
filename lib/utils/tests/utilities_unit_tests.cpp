@@ -114,12 +114,12 @@ TEST(number_theory, euclid_division_pgcd_ppcm)
 
 TEST(bitmask, smoke_test)
 {
-    const Bitset position_component = 1 << 0;
-    const Bitset sprite_component = 1 << 1;
-    const Bitset movable_component = 1 << 2;
-    const Bitset state_component = 1 << 3;
+    const Bitset PositionComponent = 1 << 0;
+    const Bitset SpriteComponent = 1 << 1;
+    const Bitset MovableComponent = 1 << 2;
+    const Bitset StateComponent = 1 << 3;
 
-    Bitmask mask{position_component | sprite_component | movable_component | state_component};
+    Bitmask mask{PositionComponent | SpriteComponent | MovableComponent | StateComponent};
     EXPECT_TRUE(mask.getBit(0));
     EXPECT_TRUE(mask.getBit(1));
     EXPECT_TRUE(mask.getBit(2));
@@ -144,13 +144,13 @@ TEST(bitmask, smoke_test)
     EXPECT_FALSE(mask.getBit(3));
 
     Bitmask move_and_position{};
-    move_and_position.setMask(movable_component | position_component);
+    move_and_position.setMask(MovableComponent | PositionComponent);
 
     Bitmask move_and_state{};
-    move_and_state.setMask(movable_component | state_component);
+    move_and_state.setMask(MovableComponent | StateComponent);
 
-    EXPECT_TRUE(move_and_position.matches(move_and_state, movable_component));
-    EXPECT_TRUE(move_and_state.matches(move_and_position, movable_component));
+    EXPECT_TRUE(move_and_position.matches(move_and_state, MovableComponent));
+    EXPECT_TRUE(move_and_state.matches(move_and_position, MovableComponent));
 
     EXPECT_FALSE(move_and_position.matches(move_and_state));
 }

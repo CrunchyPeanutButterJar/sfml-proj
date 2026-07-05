@@ -37,14 +37,14 @@ static sf::Vector2u loadResolutionFromConfigFile()
     }
     else
     {
-        const Resolution defaultResolution{800, 600};
+        const Resolution DefaultResolution{800, 600};
 
         std::ofstream config{ConfigFileName};
         ASSERT_NON_FATAL(config.good(), "Error while writing to file : {}", ConfigFileName);
-        config << rfl::json::write<rfl::AddTagsToVariants>(defaultResolution);
-        
-        LOG("Loaded default Config with width = {} and height = {}", defaultResolution.first, defaultResolution.second);
-        return {defaultResolution.first, defaultResolution.second};
+        config << rfl::json::write<rfl::AddTagsToVariants>(DefaultResolution);
+
+        LOG("Loaded default Config with width = {} and height = {}", DefaultResolution.first, DefaultResolution.second);
+        return {DefaultResolution.first, DefaultResolution.second};
     }
 } 
 

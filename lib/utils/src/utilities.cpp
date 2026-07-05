@@ -10,14 +10,14 @@ Tokens::Tokens(std::istringstream ss, char l_delimiter, char l_commentChar) : m_
 
 bool Tokens::currentMatch()
 {
-    constexpr auto trim =
+    constexpr auto Trim =
     [](std::string& s, const std::string& chars = " \t\n\r") 
     {
         s.erase(0, s.find_first_not_of(chars));//ltrim
         if (auto pos = s.find_last_not_of(chars); pos != std::string::npos) s.erase(pos + 1);//rtrim
     };
 
-    constexpr auto read = 
+    constexpr auto Read = 
     [](auto& l_ss, const std::string& l_delimiters) -> std::string
     {
         std::string token;
@@ -40,8 +40,8 @@ bool Tokens::currentMatch()
         return false;
     }
     
-    m_currentStr = read(m_ss, {m_delimiter, '\n'});//new line always a delimiter
-    trim(m_currentStr);
+    m_currentStr = Read(m_ss, {m_delimiter, '\n'});//new line always a delimiter
+    Trim(m_currentStr);
     if(!m_currentStr.empty() && m_currentStr[0] == m_commentChar)
     {
         std::getline(m_ss, m_currentStr, '\n');
