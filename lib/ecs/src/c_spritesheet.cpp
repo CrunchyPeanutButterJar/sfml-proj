@@ -1,4 +1,7 @@
+#include <SFML/Graphics/Color.hpp>
 #include <ecs/entity/c_spritesheet.hpp>
+
+#include <SFML/Graphics/RectangleShape.hpp>
 
 #include <core/graphics/texture_manager.hpp>
 #include <utils/assert.hpp>
@@ -50,10 +53,27 @@ auto CSpriteSheet::getSize() -> const sf::Vector2u&
     return m_spriteSheet->getSpriteSize();
 }
 
+bool CSpriteSheet::debug_overlay = false;
+
 void CSpriteSheet::draw(sf::RenderWindow* l_window)
 {
     ASSERT(m_spriteSheet.has_value(), "core::graphics::SpriteSheet {} was not loaded!",
            m_sheetName);
     ASSERT(l_window != nullptr, "RenderWindow is nullptr!");
     m_spriteSheet->draw(l_window);
+
+    if (debug_overlay)
+    {
+        const auto [Width, Height] = m_spriteSheet->getSpriteSize();
+        sf::RectangleShape outline{{(float)Width, (float)Height}};
+        outline.setOutlineColor(sf::Color::Red);
+        outline.setOutlineThickness(3.);
+        outline.setFillColor(sf::Color::Transparent);
+
+        outline.setOrigin((float)Width - (float)Width / 2., (float)Height);
+
+        outline.setPosition(m_spriteSheet->getSpritePosition());
+
+        l_window->draw(outline);
+    }
 }

@@ -27,6 +27,8 @@ class CSpriteSheet : public CDrawable
     auto getSize() -> const sf::Vector2u& override;
     void draw(sf::RenderWindow* l_window) override;
 
+    static bool debug_overlay;
+
   private:
     std::optional<core::graphics::SpriteSheet> m_spriteSheet;
     std::string                                m_sheetName;

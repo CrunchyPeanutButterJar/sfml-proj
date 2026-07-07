@@ -96,6 +96,7 @@ void SState::notify(const messaging::Message& l_message)
         ASSERT(l_message.m_receiver >= 0, "ill formed message, receiver is not valid {}",
                l_message.m_receiver);
         m_systemManager.addEvent(l_message.m_receiver, (EventId)new_event);
+        changeState(l_message.m_receiver, entity::EntityState::Running, false);
 
         break;
     }

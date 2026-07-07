@@ -46,12 +46,23 @@ GameState::GameState(StateManager& l_stateManager)
     ecs::EntityId player_id = m_gameMap.getPlayerId();
 
     event_manager.addCallback((core::EventManager::StateType)StateType::Game, "Game_MoveLeft",
-                              [player_id, &message_handler](const sf::WindowBase&)
+                              [player_id, &message_handler](const sf::WindowBase&, auto)
                               { moveEntity(message_handler, player_id, core::Direction::Left); });
 
     event_manager.addCallback((core::EventManager::StateType)StateType::Game, "Game_MoveRight",
-                              [player_id, &message_handler](const sf::WindowBase&)
+                              [player_id, &message_handler](const sf::WindowBase&, auto)
                               { moveEntity(message_handler, player_id, core::Direction::Right); });
+
+    event_manager.addCallback((core::EventManager::StateType)StateType::Game,
+                              "Game_ToggleSpriteSheetOverlay",
+                              [](const auto&, bool is_real_time)
+                              {
+                                  if (!is_real_time)
+                                  {
+                                      ecs::entity::CSpriteSheet::debug_overlay =
+                                          !ecs::entity::CSpriteSheet::debug_overlay;
+                                  }
+                              });
 }
 
 GameState::~GameState() = default;

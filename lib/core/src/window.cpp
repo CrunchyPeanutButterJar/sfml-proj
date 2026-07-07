@@ -25,9 +25,13 @@ void Window::setup(const std::string& l_title, const sf::Vector2u& l_size)
     m_isFullscreen = false;
 
     m_eventManager.addCallback(0, "Window_Close",
-                               [&capture0 = *this](const auto&) { capture0.setAsDone(); });
+                               [&capture0 = *this](const auto&, auto) { capture0.setAsDone(); });
     m_eventManager.addCallback(0, "Window_ToggleFullscreen",
-                               [&capture0 = *this](const auto&) { capture0.toggleFullscreen(); });
+                               [&capture0 = *this](const auto&, auto l_is_realtime)
+                               {
+                                   if (!l_is_realtime)
+                                       capture0.toggleFullscreen();
+                               });
 
     create();
 }

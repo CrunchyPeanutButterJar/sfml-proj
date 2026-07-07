@@ -15,7 +15,7 @@
 namespace core
 {
 
-using Callback = std::function<void(const sf::WindowBase&)>;
+using Callback = std::function<void(const sf::WindowBase&, bool /*l_is_real_time*/)>;
 
 class EventManager
 {

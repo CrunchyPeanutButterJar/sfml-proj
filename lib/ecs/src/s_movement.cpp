@@ -26,18 +26,6 @@ SMovement::SMovement(SystemManager& l_system_manager) : SBase{System::Movement, 
     m_systemManager.getMessageHandler().subscribe(messaging::EntityMessage::Is_Moving, this);
 }
 
-static void changeState(messaging::MessageHandler& l_messageHandler, EntityId l_entity,
-                        entity::EntityState l_state)
-{
-    using namespace ecs::messaging;
-
-    Message message{.m_type     = (MessageType)EntityMessage::Switch_State,
-                    .m_receiver = (int)l_entity,
-                    .m_int      = (int)l_state};
-
-    l_messageHandler.dispatch(message);
-}
-
 void SMovement::update(float l_dt)
 {
     if (m_map == nullptr)
@@ -52,11 +40,6 @@ void SMovement::update(float l_dt)
         auto* movable  = entities.getComponent<entity::CMovable>(entity, ecs::Component::Movable);
         movementStep(l_dt, movable, position);
         position->moveBy(movable->getVelocity() * l_dt);
-
-        if (movable->getVelocity() != sf::Vector2f{0., 0.})
-        {
-            changeState(m_systemManager.getMessageHandler(), entity, entity::EntityState::Running);
-        }
     }
 }
 

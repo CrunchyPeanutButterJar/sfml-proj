@@ -139,6 +139,9 @@ auto buildDefaultBindings() -> SerializableBindings
     bindings.emplace_back("Game_MoveRight", SimplifiedEvents{KeyPressedEvent{sf::Keyboard::D}});
     bindings.emplace_back("Game_MoveLeft", SimplifiedEvents{KeyPressedEvent{sf::Keyboard::A}});
 
+    bindings.emplace_back("Game_ToggleSpriteSheetOverlay",
+                          SimplifiedEvents{KeyPressedEvent{sf::Keyboard::O}});
+
     return bindings;
 }
 
@@ -280,11 +283,12 @@ static auto simplifiedEventMatchesActualEvent(const SimplifiedEvent& l_simpleEve
         l_simpleEvent);
 }
 
-static auto simplifiedEventMatchesActualEvent(const SimplifiedEvent& l_simpleEvent,
-                                              const ActualEvents&    l_events) -> bool
+static auto countMatchingEvents(const SimplifiedEvent& l_simpleEvent,
+                                const ActualEvents&    l_events) -> size_t
 {
-    return std::any_of(l_events.begin(), l_events.end(), [&l_simpleEvent](const sf::Event& l_event)
-                       { return simplifiedEventMatchesActualEvent(l_simpleEvent, l_event); });
+    return std::count_if(l_events.begin(), l_events.end(),
+                         [&l_simpleEvent](const sf::Event& l_event)
+                         { return simplifiedEventMatchesActualEvent(l_simpleEvent, l_event); });
 }
 
 void EventManager::update(StateType l_state, const sf::WindowBase& l_window)
@@ -294,23 +298,30 @@ void EventManager::update(StateType l_state, const sf::WindowBase& l_window)
 
     for (const auto& [action, binding] : bindings)
     {
+        size_t matching_events_count = 0;
         if (std::all_of(binding.begin(), binding.end(),
-                        [&actualEvents](const auto& l_expectedEvent) {
-                            return simplifiedEventMatchesActualEvent(l_expectedEvent, actualEvents);
+                        [&actualEvents, &matching_events_count](const auto& l_expectedEvent)
+                        {
+                            auto count = countMatchingEvents(l_expectedEvent, actualEvents);
+                            matching_events_count += count;
+                            return count > 0;
                         }))
         {
             const auto& state_callbacks = callbacksContainer[l_state];
             auto        it              = state_callbacks.find(action);
+
+            const bool IsRealtime = matching_events_count == binding.size();
+
             if (it != state_callbacks.end())
             {
-                it->second(l_window);
+                it->second(l_window, IsRealtime);
             }
 
             const auto& other_callbacks = callbacksContainer[StateType{0}];
             auto        other_it        = other_callbacks.find(action);
             if (other_it != other_callbacks.end())
             {
-                other_it->second(l_window);
+                other_it->second(l_window, IsRealtime);
             }
         }
     }
