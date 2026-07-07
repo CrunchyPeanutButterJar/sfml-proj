@@ -1,8 +1,8 @@
-#include <ecs/system/s_renderer.hpp>
 #include <ecs/system/s_control.hpp>
 #include <ecs/system/s_movement.hpp>
-#include <ecs/system/s_state.hpp>
+#include <ecs/system/s_renderer.hpp>
 #include <ecs/system/s_sheet_animation.hpp>
+#include <ecs/system/s_state.hpp>
 #include <ecs/system/system_manager.hpp>
 #include <utils/assert.hpp>
 
@@ -12,11 +12,11 @@ using namespace ecs::entity;
 
 SystemManager::SystemManager(EntityManager& l_entityManager) : m_entityManager{l_entityManager}
 {
-    m_systems[System::Renderer] = std::make_unique<SRenderer>(*this);
-    m_systems[System::Control] = std::make_unique<SControl>(*this);
-    m_systems[System::Movement]  = std::make_unique<SMovement>(*this);
-    m_systems[System::SheetAnimation]   = std::make_unique<SSheetAnimation>(*this);
-    m_systems[System::State] = std::make_unique<SState>(*this);
+    m_systems[System::Renderer]       = std::make_unique<SRenderer>(*this);
+    m_systems[System::Control]        = std::make_unique<SControl>(*this);
+    m_systems[System::Movement]       = std::make_unique<SMovement>(*this);
+    m_systems[System::SheetAnimation] = std::make_unique<SSheetAnimation>(*this);
+    m_systems[System::State]          = std::make_unique<SState>(*this);
 }
 
 auto SystemManager::getEntityManager() -> EntityManager&

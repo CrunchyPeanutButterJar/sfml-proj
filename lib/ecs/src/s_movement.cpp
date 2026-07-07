@@ -26,7 +26,8 @@ SMovement::SMovement(SystemManager& l_system_manager) : SBase{System::Movement, 
     m_systemManager.getMessageHandler().subscribe(messaging::EntityMessage::Is_Moving, this);
 }
 
-static void changeState(messaging::MessageHandler& l_messageHandler, EntityId l_entity, entity::EntityState l_state)
+static void changeState(messaging::MessageHandler& l_messageHandler, EntityId l_entity,
+                        entity::EntityState l_state)
 {
     using namespace ecs::messaging;
 
@@ -52,7 +53,7 @@ void SMovement::update(float l_dt)
         movementStep(l_dt, movable, position);
         position->moveBy(movable->getVelocity() * l_dt);
 
-        if(movable->getVelocity() != sf::Vector2f{0., 0.})
+        if (movable->getVelocity() != sf::Vector2f{0., 0.})
         {
             changeState(m_systemManager.getMessageHandler(), entity, entity::EntityState::Running);
         }
@@ -132,8 +133,8 @@ void SMovement::notify(const messaging::Message& l_message)
 {
     using namespace messaging;
 
-    auto& entities = m_systemManager.getEntityManager();
-    const auto MessageType    = (EntityMessage)l_message.m_type;
+    auto&      entities    = m_systemManager.getEntityManager();
+    const auto MessageType = (EntityMessage)l_message.m_type;
 
     switch (MessageType)
     {
@@ -143,7 +144,8 @@ void SMovement::notify(const messaging::Message& l_message)
         {
             return;
         }
-        auto* movable = entities.getComponent<entity::CMovable>(l_message.m_receiver, Component::Movable);
+        auto* movable =
+            entities.getComponent<entity::CMovable>(l_message.m_receiver, Component::Movable);
         if (movable->getVelocity() != sf::Vector2f{0., 0.})
         {
             return;
@@ -152,7 +154,7 @@ void SMovement::notify(const messaging::Message& l_message)
     }
     break;
     default:
-    break;
+        break;
     }
 }
 

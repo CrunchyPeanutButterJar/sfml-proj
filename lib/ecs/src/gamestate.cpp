@@ -13,23 +13,21 @@
 #include <ecs/messaging/entity_message.hpp>
 #include <ecs/messaging/message.hpp>
 #include <ecs/state/statemanager.hpp>
-#include <ecs/system/system_manager.hpp>
 #include <ecs/system/s_movement.hpp>
+#include <ecs/system/system_manager.hpp>
 
 #include <SFML/Window/Keyboard.hpp>
 
 using namespace ecs::state;
 
-static void moveEntity(ecs::messaging::MessageHandler& l_messageHandler, ecs::EntityId l_entity, core::Direction l_dir)
+static void moveEntity(ecs::messaging::MessageHandler& l_messageHandler, ecs::EntityId l_entity,
+                       core::Direction l_dir)
 {
     using namespace ecs::messaging;
 
-    Message message
-    {
-        .m_type = (MessageType)EntityMessage::Move,
-        .m_receiver = (int) l_entity,
-        .m_int = (int) l_dir
-    };
+    Message message{.m_type     = (MessageType)EntityMessage::Move,
+                    .m_receiver = (int)l_entity,
+                    .m_int      = (int)l_dir};
 
     l_messageHandler.dispatch(message);
 }
@@ -47,19 +45,13 @@ GameState::GameState(StateManager& l_stateManager)
 
     ecs::EntityId player_id = m_gameMap.getPlayerId();
 
-    event_manager.addCallback(
-        (core::EventManager::StateType)StateType::Game, "Game_MoveLeft",
-        [player_id, &message_handler](const sf::WindowBase&)
-        {
-            moveEntity(message_handler, player_id, core::Direction::Left);   
-        });
+    event_manager.addCallback((core::EventManager::StateType)StateType::Game, "Game_MoveLeft",
+                              [player_id, &message_handler](const sf::WindowBase&)
+                              { moveEntity(message_handler, player_id, core::Direction::Left); });
 
-    event_manager.addCallback(
-        (core::EventManager::StateType)StateType::Game, "Game_MoveRight",
-        [player_id, &message_handler](const sf::WindowBase&)
-        {
-            moveEntity(message_handler, player_id, core::Direction::Right);   
-        });
+    event_manager.addCallback((core::EventManager::StateType)StateType::Game, "Game_MoveRight",
+                              [player_id, &message_handler](const sf::WindowBase&)
+                              { moveEntity(message_handler, player_id, core::Direction::Right); });
 }
 
 GameState::~GameState() = default;
