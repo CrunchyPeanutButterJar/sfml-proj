@@ -8,11 +8,13 @@
 
 #include <core/event_manager.hpp>
 #include <core/window.hpp>
+#include <ecs/entity/c_collidable.hpp>
 #include <ecs/entity/c_position.hpp>
 #include <ecs/entity/c_spritesheet.hpp>
 #include <ecs/messaging/entity_message.hpp>
 #include <ecs/messaging/message.hpp>
 #include <ecs/state/statemanager.hpp>
+#include <ecs/system/s_collision.hpp>
 #include <ecs/system/s_movement.hpp>
 #include <ecs/system/system_manager.hpp>
 
@@ -42,6 +44,7 @@ GameState::GameState(StateManager& l_stateManager)
     auto& message_handler = m_stateManager.getContext().m_systemManager.getMessageHandler();
 
     system_manager.getSystem<ecs::system::SMovement>(System::Movement)->setMap(&m_gameMap);
+    system_manager.getSystem<ecs::system::SCollision>(System::Collision)->setMap(&m_gameMap);
 
     ecs::EntityId player_id = m_gameMap.getPlayerId();
 
@@ -63,6 +66,16 @@ GameState::GameState(StateManager& l_stateManager)
                                           !ecs::entity::CSpriteSheet::debug_overlay;
                                   }
                               });
+
+    event_manager.addCallback(
+        (core::EventManager::StateType)StateType::Game, "Game_ToggleCollidableDebugOverlay",
+        [](const auto&, bool is_real_time)
+        {
+            if (!is_real_time)
+            {
+                ecs::entity::CCollidable::debug_overlay = !ecs::entity::CCollidable::debug_overlay;
+            }
+        });
 }
 
 GameState::~GameState() = default;

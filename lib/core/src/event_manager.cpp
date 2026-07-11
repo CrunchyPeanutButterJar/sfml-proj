@@ -141,6 +141,8 @@ auto buildDefaultBindings() -> SerializableBindings
 
     bindings.emplace_back("Game_ToggleSpriteSheetOverlay",
                           SimplifiedEvents{KeyPressedEvent{sf::Keyboard::O}});
+    bindings.emplace_back("Game_ToggleCollidableDebugOverlay",
+                          SimplifiedEvents{KeyPressedEvent{sf::Keyboard::P}});
 
     return bindings;
 }

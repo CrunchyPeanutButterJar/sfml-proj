@@ -1,5 +1,6 @@
 #include <core/graphics/texture_manager.hpp>
 #include <ecs/ecs_types.hpp>
+#include <ecs/entity/c_collidable.hpp>
 #include <ecs/entity/c_controller.hpp>
 #include <ecs/entity/c_movable.hpp>
 #include <ecs/entity/c_position.hpp>
@@ -24,6 +25,7 @@ EntityManager::EntityManager(SystemManager&                  l_sysManager,
     addComponentType<CState>(Component::State);
     addComponentType<CMovable>(Component::Movable);
     addComponentType<CController>(Component::Controller);
+    addComponentType<CCollidable>(Component::Collidable);
 }
 
 auto EntityManager::addEntity(utils::Bitmask l_mask) -> int

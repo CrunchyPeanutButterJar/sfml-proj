@@ -48,9 +48,12 @@ void SMovement::setMap(Map* l_map)
     m_map = l_map;
 }
 
+static float gravity = 500.F;
+
 void SMovement::movementStep(float l_dt, entity::CMovable* l_movable,
                              entity::CPosition* /*l_position*/)
 {
+    l_movable->accelerate({0.F, gravity});
     l_movable->addVelocity(l_movable->getAcceleration() * l_dt);
     // TODO: account for friction
     l_movable->applyFriction({10., 0});

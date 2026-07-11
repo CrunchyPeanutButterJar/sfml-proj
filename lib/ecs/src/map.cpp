@@ -31,7 +31,6 @@ auto Map::convertCoordinates(size_t iRow, size_t iCol) -> TileId
     ASSERT(m_mapSize.x != 0 && m_mapSize.y != 0, "Map dimensions invalid");
     const auto [nRows, nCols] = m_mapSize;
 
-    ASSERT(iRow < nRows && iCol < nCols, "Coordinates out of bounds! {} {}", iRow, iCol);
     return iRow * nCols + iCol;
 }
 
@@ -229,4 +228,9 @@ auto Map::getPlayerId() -> ecs::EntityId
 {
     ASSERT(m_playerId.has_value(), "did not load player id");
     return *m_playerId;
+}
+
+auto Map::getMapSize() const -> const sf::Vector2u&
+{
+    return m_mapSize;
 }

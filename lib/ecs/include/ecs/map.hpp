@@ -25,6 +25,7 @@ class Map
     auto getPlayerId() -> ecs::EntityId;
     auto getTile(size_t iRow, size_t iCol) -> const core::graphics::Tile*;
     auto getTileSheetConfig() const -> const core::graphics::TileSheetConfig&;
+    auto getMapSize() const -> const sf::Vector2u&;
 
   private:
     void loadTileset(const std::string& l_path);

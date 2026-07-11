@@ -1,4 +1,5 @@
 #include <SFML/Graphics/Rect.hpp>
+#include <core/window.hpp>
 #include <ecs/entity/c_drawable.hpp>
 #include <ecs/entity/c_position.hpp>
 #include <ecs/entity/c_spritesheet.hpp>
@@ -48,6 +49,20 @@ void SRenderer::notify(const Message& l_message)
     }
 }
 
+static void doDraw(core::Window& l_window, ecs::entity::CPosition* l_position,
+                   ecs::entity::CDrawable* l_drawable)
+{
+    sf::FloatRect drawable_bounds;
+    drawable_bounds.left   = l_position->getPosition().x - (l_drawable->getSize().x / 2.);
+    drawable_bounds.top    = l_position->getPosition().y - (l_drawable->getSize().y);
+    drawable_bounds.height = l_drawable->getSize().y;
+    drawable_bounds.width  = l_drawable->getSize().x;
+    if (l_window.getViewSpace().intersects(drawable_bounds))
+    {
+        l_drawable->draw(l_window.getRenderWindow());
+    }
+}
+
 void SRenderer::render(core::Window& l_window)
 {
     auto& entity_manager = m_systemManager.getEntityManager();
@@ -55,14 +70,11 @@ void SRenderer::render(core::Window& l_window)
     {
         auto* position = entity_manager.getComponent<CPosition>(entity, Component::Position);
         auto* drawable = entity_manager.getComponent<CDrawable>(entity, Component::SpriteSheet);
-        sf::FloatRect drawable_bounds;
-        drawable_bounds.left   = position->getPosition().x - (drawable->getSize().x / 2.);
-        drawable_bounds.top    = position->getPosition().y - (drawable->getSize().y);
-        drawable_bounds.height = drawable->getSize().y;
-        drawable_bounds.width  = drawable->getSize().x;
-        if (l_window.getViewSpace().intersects(drawable_bounds))
+        doDraw(l_window, position, drawable);
+        if (auto* collidable =
+                entity_manager.getComponent<CDrawable>(entity, Component::Collidable))
         {
-            drawable->draw(l_window.getRenderWindow());
+            doDraw(l_window, position, collidable);
         }
     }
 }
