@@ -1,3 +1,5 @@
+#include "ecs/messaging/entity_events.hpp"
+#include "ecs/messaging/event_queue.hpp"
 #include <SFML/Graphics/Rect.hpp>
 #include <ecs/entity/c_collidable.hpp>
 #include <ecs/entity/c_position.hpp>
@@ -54,10 +56,10 @@ namespace
 {
 struct CollisionElement
 {
-    float                     m_width{};
-    float                     m_height{};
-    core::graphics::TileInfo* m_tile{};
-    sf::FloatRect             m_tileBounds;
+    float                       m_width{};
+    float                       m_height{};
+    const core::graphics::Tile* m_tile{};
+    sf::FloatRect               m_tileBounds;
 
     [[nodiscard]] auto getArea() const -> float { return m_width * m_height; }
 };
@@ -102,7 +104,7 @@ void SCollision::mapCollisions(EntityId l_entity, entity::CPosition* l_position,
                 entity_aabb.intersects(TileAABB, intersection);
                 collisions.push(CollisionElement{.m_width      = intersection.width,
                                                  .m_height     = intersection.height,
-                                                 .m_tile       = tile->m_tileInfo,
+                                                 .m_tile       = tile,
                                                  .m_tileBounds = TileAABB});
             }
         }
@@ -156,8 +158,14 @@ void SCollision::mapCollisions(EntityId l_entity, entity::CPosition* l_position,
             l_collidable->setPosition(l_position->getPosition());
             m_systemManager.addEvent(l_entity,
                                      (messaging::EventId)messaging::EntityEvent::Colliding_Y);
-            l_collidable->collideOnY();
+            l_collidable->collideOnY(Collision.m_tile);
         }
+    }
+
+    if (l_collidable->getGroundTile() == nullptr)
+    {
+        m_systemManager.addEvent(l_entity,
+                                 (messaging::EventId)messaging::EntityEvent::Not_Grounded);
     }
 }
 

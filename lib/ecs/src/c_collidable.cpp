@@ -1,3 +1,4 @@
+#include "core/graphics/tiles.hpp"
 #include "ecs/ecs_types.hpp"
 #include <SFML/Graphics/RectangleShape.hpp>
 #include <SFML/System/Vector2.hpp>
@@ -24,13 +25,20 @@ void CCollidable::collideOnX()
     m_collidingOnX = true;
 }
 
-void CCollidable::collideOnY()
+void CCollidable::collideOnY(const core::graphics::Tile* l_tile)
 {
     m_collidingOnY = true;
+    m_groundTile   = l_tile;
+}
+
+auto CCollidable::getGroundTile() const -> const core::graphics::Tile*
+{
+    return m_groundTile;
 }
 
 void CCollidable::resetCollisionFlags()
 {
+    m_groundTile   = nullptr;
     m_collidingOnX = false;
     m_collidingOnY = false;
 }

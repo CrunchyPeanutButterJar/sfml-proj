@@ -3,6 +3,7 @@
 
 #include <SFML/System/Vector2.hpp>
 #include <core/directions.hpp>
+#include <core/graphics/tiles.fwd.hpp>
 #include <ecs/entity/c_movable.fwd.hpp>
 #include <ecs/entity/c_position.fwd.hpp>
 #include <ecs/map.fwd.hpp>
@@ -29,8 +30,7 @@ class SMovement : public SBase
 
   private:
     static void movementStep(float l_dt, entity::CMovable* l_movable,
-                             entity::CPosition* l_position);
-    auto        getTileFriction(size_t iRow, size_t iCol) -> const sf::Vector2f&;
+                             const core::graphics::Tile* l_tile, float l_gravity);
     void        setDirection(EntityId l_entity, core::Direction l_dir);
     void        stopEntity(EntityId l_entity, Axis l_axis);
 

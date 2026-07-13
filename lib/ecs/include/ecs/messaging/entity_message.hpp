@@ -6,6 +6,7 @@ namespace ecs::messaging
 enum class EntityMessage
 {
     Move,
+    Jump,
     Is_Moving,
     State_Changed,
     Direction_Changed,

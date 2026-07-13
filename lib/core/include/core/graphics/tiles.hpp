@@ -4,6 +4,7 @@
 #include <SFML/Graphics/Sprite.hpp>
 #include <SFML/System/Vector2.hpp>
 #include <core/graphics/texture_manager.hpp>
+#include <core/graphics/tiles.fwd.hpp>
 #include <utils/utilities.hpp>
 
 #include <string>
@@ -11,7 +12,6 @@
 namespace core::graphics
 {
 
-using TileId = unsigned int;
 struct TileSheetConfig
 {
     size_t                       m_tileSize{};

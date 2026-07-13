@@ -20,6 +20,7 @@ class CMovable : public CBase
     void accelerate(const sf::Vector2f& l_vec);
 
     void move(core::Direction l_dir);
+    void jump();
 
     void setAcceleration(const sf::Vector2f& l_vec);
     void setVelocity(const sf::Vector2f& l_vec);

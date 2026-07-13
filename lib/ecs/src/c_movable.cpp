@@ -82,6 +82,11 @@ void CMovable::move(core::Direction l_dir)
     }
 }
 
+void CMovable::jump()
+{
+    m_acceleration.y -= m_speed.y;
+}
+
 auto CMovable::getVelocity() const -> const sf::Vector2f&
 {
     return m_velocity;

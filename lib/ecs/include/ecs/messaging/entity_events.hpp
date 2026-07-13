@@ -11,6 +11,10 @@ enum class EntityEvent
     Colliding_Y,
     Moving_Left,
     Moving_Right,
+    Jump_Attempt,
+    Jumped,
+    Falling,
+    Not_Grounded,
     Became_Idle,
     Began_Moving
 };

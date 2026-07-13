@@ -78,6 +78,21 @@ void SSheetAnimation::notify(const messaging::Message& l_message)
             changeAnimation(Entity, "Attack", true, false);
             break;
         }
+        case EntityState::Jumping:
+        {
+            changeAnimation(Entity, "Jump", true, false);
+            break;
+        }
+        case EntityState::Falling:
+        {
+            changeAnimation(Entity, "Fall", true, true);
+            break;
+        }
+        case EntityState::Landing:
+        {
+            changeAnimation(Entity, "Land", true, false);
+            break;
+        }
         case EntityState::Hurt:
         {
             changeAnimation(Entity, "Hurt", true, false);
@@ -86,6 +101,10 @@ void SSheetAnimation::notify(const messaging::Message& l_message)
         case EntityState::Dying:
         {
             changeAnimation(Entity, "Dead", true, false);
+            break;
+        }
+        case EntityState::Count:
+        {
             break;
         }
         }

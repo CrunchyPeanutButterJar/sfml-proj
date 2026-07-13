@@ -64,7 +64,7 @@ void Map::loadMap(const std::string& l_path)
         }
         else if (key == "Gravity")
         {
-            *consumeToken<float>(tokens); // discard for now
+            m_gravity = *consumeToken<float>(tokens);
         }
         else if (key == "Size")
         {
@@ -233,4 +233,9 @@ auto Map::getPlayerId() -> ecs::EntityId
 auto Map::getMapSize() const -> const sf::Vector2u&
 {
     return m_mapSize;
+}
+
+auto Map::getGravity() const -> float
+{
+    return m_gravity;
 }

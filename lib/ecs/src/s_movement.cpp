@@ -1,11 +1,15 @@
 #include "core/directions.hpp"
 #include "ecs/ecs_types.hpp"
+#include "ecs/entity/c_collidable.hpp"
 #include "ecs/entity/c_state.fwd.hpp"
 #include "ecs/messaging/entity_events.hpp"
 #include "ecs/messaging/entity_message.hpp"
+#include "ecs/messaging/event_queue.hpp"
 #include "ecs/messaging/message.hpp"
 #include "ecs/messaging/message_handler.hpp"
+#include "utils/assert.hpp"
 #include <SFML/System/Vector2.hpp>
+#include <core/graphics/tiles.hpp>
 #include <ecs/entity/c_movable.hpp>
 #include <ecs/entity/c_position.hpp>
 #include <ecs/entity/entity_manager.hpp>
@@ -38,7 +42,15 @@ void SMovement::update(float l_dt)
     {
         auto* position = entities.getComponent<entity::CPosition>(entity, ecs::Component::Position);
         auto* movable  = entities.getComponent<entity::CMovable>(entity, ecs::Component::Movable);
-        movementStep(l_dt, movable, position);
+        const core::graphics::Tile* ground_tile = nullptr;
+
+        if (auto* collidable =
+                entities.getComponent<entity::CCollidable>(entity, ecs::Component::Collidable))
+        {
+            ground_tile = collidable->getGroundTile();
+        }
+
+        movementStep(l_dt, movable, ground_tile, m_map->getGravity());
         position->moveBy(movable->getVelocity() * l_dt);
     }
 }
@@ -48,43 +60,36 @@ void SMovement::setMap(Map* l_map)
     m_map = l_map;
 }
 
-static float gravity = 500.F;
-
 void SMovement::movementStep(float l_dt, entity::CMovable* l_movable,
-                             entity::CPosition* /*l_position*/)
+                             const core::graphics::Tile* l_tile, float l_gravity)
 {
-    l_movable->accelerate({0.F, gravity});
+    static const sf::Vector2f DefaultFriction{5, 0.};
+
+    l_movable->accelerate({0.F, l_gravity});
     l_movable->addVelocity(l_movable->getAcceleration() * l_dt);
-    // TODO: account for friction
-    l_movable->applyFriction({10., 0});
+    if (l_tile != nullptr)
+    {
+        l_movable->applyFriction(l_tile->m_tileInfo->m_friction);
+    }
+    else
+    {
+        l_movable->applyFriction(DefaultFriction);
+    }
     l_movable->setAcceleration({0., 0.});
 
-    const auto [VX, VY]    = l_movable->getVelocity();
-    const auto MaxVelocity = l_movable->getMaxVelocity();
+    // const auto [VX, VY]    = l_movable->getVelocity();
+    // const auto MaxVelocity = l_movable->getMaxVelocity();
 
-    float magnitude = sqrt(VX * VX + VY * VY);
-    if (magnitude <= MaxVelocity)
-    {
-        return;
-    }
+    // float magnitude = sqrt(VX * VX + VY * VY);
+    // if (magnitude <= MaxVelocity)
+    // {
+    //     return;
+    // }
 
-    const auto VXMax = MaxVelocity * VX / magnitude;
-    const auto VYMax = MaxVelocity * VY / magnitude;
+    // const auto VXMax = MaxVelocity * VX / magnitude;
+    // const auto VYMax = MaxVelocity * VY / magnitude;
 
-    l_movable->setVelocity({VXMax, VYMax});
-}
-
-auto SMovement::getTileFriction(size_t iRow, size_t iCol) -> const sf::Vector2f&
-{
-    static const sf::Vector2f DefaultFriction{0., 0.};
-
-    const auto* tile = m_map->getTile(iRow, iCol);
-    if (tile == nullptr)
-    {
-        return DefaultFriction;
-    }
-
-    return tile->m_tileInfo->m_friction;
+    // l_movable->setVelocity({VXMax, VYMax});
 }
 
 void SMovement::stopEntity(EntityId l_entity, Axis l_axis)
@@ -168,6 +173,20 @@ void SMovement::handleEvent(EntityId l_entity, messaging::EntityEvent l_event)
     case EntityEvent::Moving_Left:
     {
         setDirection(l_entity, core::Direction::Left);
+        break;
+    }
+    case EntityEvent::Not_Grounded:
+    {
+        if (hasEntity(l_entity))
+        {
+            auto* movable = m_systemManager.getEntityManager().getComponent<entity::CMovable>(
+                l_entity, Component::Movable);
+            if (movable->getVelocity().y > 0)
+            {
+                m_systemManager.addEvent(l_entity, (EventId)EntityEvent::Falling);
+            }
+        }
+        break;
     }
     break;
     default:

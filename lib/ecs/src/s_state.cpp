@@ -8,6 +8,7 @@
 #include <ecs/entity/entity_manager.hpp>
 #include <ecs/system/s_state.hpp>
 #include <ecs/system/system_manager.hpp>
+#include <unordered_map>
 
 namespace ecs::system
 {
@@ -32,7 +33,10 @@ void SState::update(float /*l_dt*/)
         auto*      state        = entities.getComponent<entity::CState>(entity, Component::State);
         const auto CurrentState = state->getState();
         if (CurrentState == entity::EntityState::Walking ||
-            CurrentState == entity::EntityState::Running)
+            CurrentState == entity::EntityState::Running ||
+            CurrentState == entity::EntityState::Jumping ||
+            CurrentState == entity::EntityState::Falling ||
+            CurrentState == entity::EntityState::Landing)
         {
             messaging::Message msg{
                 .m_type     = (messaging::MessageType)messaging::EntityMessage::Is_Moving,
@@ -52,6 +56,21 @@ void SState::handleEvent(EntityId l_entity, messaging::EntityEvent l_event)
     case messaging::EntityEvent::Became_Idle:
     {
         changeState(l_entity, entity::EntityState::Idle, false);
+        break;
+    }
+    case messaging::EntityEvent::Jumped:
+    {
+        changeState(l_entity, entity::EntityState::Jumping, false);
+        break;
+    }
+    case messaging::EntityEvent::Falling:
+    {
+        changeState(l_entity, entity::EntityState::Falling, false);
+        break;
+    }
+    case messaging::EntityEvent::Colliding_Y:
+    {
+        changeState(l_entity, entity::EntityState::Landing, false);
         break;
     }
     default:
@@ -114,11 +133,50 @@ void SState::notify(const messaging::Message& l_message)
     }
 }
 
+static auto getTransitionsGraph()
+{
+    std::array<std::array<bool, (size_t)entity::EntityState::Count>,
+               (size_t)entity::EntityState::Count>
+        transitions{};
+
+    for (size_t i = 0; i < (size_t)entity::EntityState::Count; i++)
+    {
+        transitions[i][(size_t)entity::EntityState::Dying] = true;
+    }
+
+    transitions[(size_t)entity::EntityState::Idle][(size_t)entity::EntityState::Running] = true;
+    transitions[(size_t)entity::EntityState::Idle][(size_t)entity::EntityState::Walking] = true;
+    transitions[(size_t)entity::EntityState::Idle][(size_t)entity::EntityState::Jumping] = true;
+
+    transitions[(size_t)entity::EntityState::Running][(size_t)entity::EntityState::Idle]    = true;
+    transitions[(size_t)entity::EntityState::Running][(size_t)entity::EntityState::Walking] = true;
+    transitions[(size_t)entity::EntityState::Running][(size_t)entity::EntityState::Jumping] = true;
+    transitions[(size_t)entity::EntityState::Running][(size_t)entity::EntityState::Falling] = true;
+
+    transitions[(size_t)entity::EntityState::Jumping][(size_t)entity::EntityState::Falling] = true;
+
+    transitions[(size_t)entity::EntityState::Falling][(size_t)entity::EntityState::Landing] = true;
+
+    transitions[(size_t)entity::EntityState::Landing][(size_t)entity::EntityState::Running] = true;
+    transitions[(size_t)entity::EntityState::Landing][(size_t)entity::EntityState::Walking] = true;
+    transitions[(size_t)entity::EntityState::Landing][(size_t)entity::EntityState::Jumping] = true;
+
+    return transitions;
+}
+
+static auto transitionIsValid(entity::EntityState l_prevState,
+                              entity::EntityState l_newState) -> bool
+{
+    static const auto Transitions = getTransitionsGraph();
+
+    return Transitions[(size_t)l_prevState][(size_t)l_newState];
+}
+
 void SState::changeState(EntityId l_entity, entity::EntityState l_state, bool l_force)
 {
     auto& entities = m_systemManager.getEntityManager();
     auto* state    = entities.getComponent<entity::CState>(l_entity, Component::State);
-    if (!l_force && state->getState() == entity::EntityState::Dying)
+    if (!l_force && !transitionIsValid(state->getState(), l_state))
     {
         return;
     }

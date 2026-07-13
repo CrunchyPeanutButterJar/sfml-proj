@@ -56,6 +56,17 @@ GameState::GameState(StateManager& l_stateManager)
                               [player_id, &message_handler](const sf::WindowBase&, auto)
                               { moveEntity(message_handler, player_id, core::Direction::Right); });
 
+    event_manager.addCallback(
+        (core::EventManager::StateType)StateType::Game, "Game_Jump",
+        [player_id, &message_handler](const auto&, auto)
+        {
+            ecs::messaging::Message msg{
+                .m_type     = (ecs::messaging::MessageType)ecs::messaging::EntityMessage::Jump,
+                .m_receiver = (int)player_id,
+                .m_bool     = false /*ignored*/};
+            message_handler.dispatch(msg);
+        });
+
     event_manager.addCallback((core::EventManager::StateType)StateType::Game,
                               "Game_ToggleSpriteSheetOverlay",
                               [](const auto&, bool is_real_time)

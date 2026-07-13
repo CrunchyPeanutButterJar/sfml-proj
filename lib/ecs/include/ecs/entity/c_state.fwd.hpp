@@ -11,8 +11,12 @@ enum class EntityState : std::uint8_t
     Walking,
     Running,
     Attacking,
+    Jumping,
+    Falling,
+    Landing,
     Hurt,
-    Dying
+    Dying,
+    Count
 };
 
 class CState;

@@ -26,6 +26,7 @@ class Map
     auto getTile(size_t iRow, size_t iCol) -> const core::graphics::Tile*;
     auto getTileSheetConfig() const -> const core::graphics::TileSheetConfig&;
     auto getMapSize() const -> const sf::Vector2u&;
+    auto getGravity() const -> float;
 
   private:
     void loadTileset(const std::string& l_path);
@@ -41,6 +42,7 @@ class Map
     sf::Sprite                      m_background;
     std::shared_ptr<sf::Texture>    m_backgroundTexture;
     std::optional<ecs::EntityId>    m_playerId;
+    float                           m_gravity{512.};
 };
 } // namespace ecs
 

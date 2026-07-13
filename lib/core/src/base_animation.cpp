@@ -69,7 +69,7 @@ auto BaseAnimation::nextFrame() -> bool
     }
     else
     {
-        if (m_frameCurrent <= m_frameEnd)
+        if (m_frameCurrent <= m_frameStart)
         {
             return false;
         }
