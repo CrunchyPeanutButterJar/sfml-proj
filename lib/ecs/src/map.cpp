@@ -4,6 +4,7 @@
 #include <ecs/entity/c_position.hpp>
 #include <ecs/entity/entity_manager.hpp>
 #include <ecs/map.hpp>
+#include <optional>
 #include <utils/assert.hpp>
 #include <utils/utilities.hpp>
 
@@ -26,12 +27,16 @@ auto Map::convertCoordinates(TileId l_id) -> sf::Vector2u
     return {i_row, i_col};
 }
 
-auto Map::convertCoordinates(size_t iRow, size_t iCol) -> TileId
+auto Map::convertCoordinates(size_t iRow, size_t iCol) const -> std::optional<TileId>
 {
     ASSERT(m_mapSize.x != 0 && m_mapSize.y != 0, "Map dimensions invalid");
     const auto [nRows, nCols] = m_mapSize;
+    if (iRow >= nRows || iCol >= nCols)
+    {
+        return std::nullopt;
+    }
 
-    return iRow * nCols + iCol;
+    return (iRow * nCols) + iCol;
 }
 
 void Map::loadMap(const std::string& l_path)
@@ -80,10 +85,12 @@ void Map::loadMap(const std::string& l_path)
                 ASSERT_NON_FATAL(it != m_tileSet.end(), "Invalid tile id {}", tileId);
                 if (it != m_tileSet.end())
                 {
-                    TileInfo& tile_info = it->second;
-                    ASSERT_NON_FATAL(
-                        m_tileMap.emplace(convertCoordinates(iRow, iCol), Tile{&tile_info}).second,
-                        "Overriding existing tile at coordinates ({}, {})", iRow, iCol);
+                    TileInfo& tile_info  = it->second;
+                    auto      tile_index = convertCoordinates(iRow, iCol);
+                    ASSERT(tile_index.has_value(), "");
+                    ASSERT_NON_FATAL(m_tileMap.emplace(tile_index.value(), Tile{&tile_info}).second,
+                                     "Overriding existing tile at coordinates ({}, {})", iRow,
+                                     iCol);
                 }
             }
             tokens.advance();
@@ -198,7 +205,13 @@ void Map::draw()
     {
         for (TileId i_col = i_col_begin; i_col < nCols; i_col++)
         {
-            if (auto it = m_tileMap.find(convertCoordinates(i_row, i_col)); it != m_tileMap.end())
+            auto tile_index = convertCoordinates(i_row, i_col);
+            if (!tile_index.has_value())
+            {
+                continue;
+            }
+
+            if (auto it = m_tileMap.find(tile_index.value()); it != m_tileMap.end())
             {
                 auto& tile      = it->second;
                 auto& tile_info = *tile.m_tileInfo;
@@ -211,9 +224,14 @@ void Map::draw()
 
 auto Map::getTile(size_t iRow, size_t iCol) -> const core::graphics::Tile*
 {
-    if (auto itr = m_tileMap.find(convertCoordinates(iRow, iCol)); itr != m_tileMap.end())
+    auto tile_index = convertCoordinates(iRow, iCol);
+
+    if (tile_index.has_value())
     {
-        return &itr->second;
+        if (auto itr = m_tileMap.find(tile_index.value()); itr != m_tileMap.end())
+        {
+            return &itr->second;
+        }
     }
 
     return nullptr;

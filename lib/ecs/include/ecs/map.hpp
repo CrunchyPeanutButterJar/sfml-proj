@@ -30,7 +30,8 @@ class Map
 
   private:
     void loadTileset(const std::string& l_path);
-    auto convertCoordinates(size_t iRow, size_t iCol) -> core::graphics::TileId;
+    auto convertCoordinates(size_t iRow,
+                            size_t iCol) const -> std::optional<core::graphics::TileId>;
     auto convertCoordinates(core::graphics::TileId l_id) -> sf::Vector2u;
 
     SharedContext&                  m_context;
