@@ -6,6 +6,7 @@
 #include <string>
 #include <tuple>
 #include <utils/assert.hpp>
+#include <utils/utilities.fwd.hpp>
 
 namespace utils
 {
@@ -61,6 +62,8 @@ class Tokens
   public:
     Tokens(std::istringstream ss, char l_delimiter = ' ', char l_commentChar = '#');
 
+    void captureQuotedStrings(std::optional<char> l_quoteChar);
+
     auto advance() -> std::optional<std::string>;
     auto empty() -> bool;
     void skipLine();
@@ -84,10 +87,11 @@ class Tokens
   private:
     auto currentMatch() -> bool;
 
-    std::string        m_currentStr;
-    std::istringstream m_ss;
-    const char         m_delimiter;
-    const char         m_commentChar;
+    std::string         m_currentStr;
+    std::istringstream  m_ss;
+    const char          m_delimiter;
+    const char          m_commentChar;
+    std::optional<char> m_quoteChar;
 };
 
 template <typename... T> auto consumeTokens(Tokens& l_tokens) -> std::optional<std::tuple<T...>>
@@ -98,6 +102,11 @@ template <typename... T> auto consumeTokens(Tokens& l_tokens) -> std::optional<s
                                                      Type*) -> Type
     {
         static const std::string TypeName = printTypeName<Type>();
+
+        if constexpr (std::is_same_v<Type, std::string>)
+        {
+            return l_token;
+        }
 
         std::istringstream iss(l_token);
         Type               value;

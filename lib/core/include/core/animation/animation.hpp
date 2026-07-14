@@ -2,7 +2,7 @@
 #define CORE_ANIMATION_ANIMATION_HPP
 
 #include <core/animation/base_animation.hpp>
-#include <utils/utilities.hpp>
+#include <utils/utilities.fwd.hpp>
 
 namespace core::animation
 {

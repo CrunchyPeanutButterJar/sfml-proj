@@ -1,5 +1,6 @@
 #include <SFML/System/Vector2.hpp>
 #include <ecs/entity/c_position.hpp>
+#include <utils/utilities.hpp>
 
 using namespace ecs::entity;
 

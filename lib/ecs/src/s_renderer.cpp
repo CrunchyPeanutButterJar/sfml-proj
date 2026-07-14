@@ -6,6 +6,7 @@
 #include <ecs/entity/entity_manager.hpp>
 #include <ecs/system/s_renderer.hpp>
 #include <ecs/system/system_manager.hpp>
+#include <utils/utilities.hpp>
 
 using namespace ecs::system;
 using namespace ecs::messaging;

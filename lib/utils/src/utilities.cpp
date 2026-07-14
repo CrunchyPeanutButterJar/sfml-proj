@@ -13,20 +13,28 @@ Tokens::Tokens(std::istringstream ss, char l_delimiter, char l_commentChar)
 
 auto Tokens::currentMatch() -> bool
 {
-    constexpr auto Trim = [](std::string& s, const std::string& chars = " \t\n\r")
+    constexpr auto Ltrim = [](std::string& s, const std::string& chars = " \t\n\r")
     {
-        s.erase(0, s.find_first_not_of(chars)); // ltrim
+        s.erase(0, s.find_first_not_of(chars));
+    };
+
+    constexpr auto Rtrim = [](std::string& s, const std::string& chars = " \t\n\r")
+    {
         if (auto pos = s.find_last_not_of(chars); pos != std::string::npos)
-            s.erase(pos + 1); // rtrim
+            s.erase(pos + 1);
     };
 
     constexpr auto Read = [](auto& l_ss, const std::string& l_delimiters) -> std::string
     {
         std::string token;
         char        c = 0;
-        while (l_ss.get(c) && !l_delimiters.contains(c))
+        while (l_ss.get(c))
         {
             token.push_back(c);
+            if (l_delimiters.contains(c))
+            {
+                break;
+            }
         }
 
         return token;
@@ -43,7 +51,31 @@ auto Tokens::currentMatch() -> bool
     }
 
     m_currentStr = Read(m_ss, {m_delimiter, '\n'}); // new line always a delimiter
-    Trim(m_currentStr);
+    Ltrim(m_currentStr);
+
+    if (m_quoteChar && !m_currentStr.empty() && m_currentStr[0] == m_quoteChar.value())
+    {
+        auto str     = Read(m_ss, {m_quoteChar.value()});
+        m_currentStr = m_currentStr.substr(1) + std::move(str);
+        if (m_currentStr.back() == m_quoteChar.value())
+        {
+            m_currentStr.pop_back(); // remove quote char
+        }
+        else
+        {
+            FAILURE_NON_FATAL("quoted string not closed properly {} with {}", m_currentStr,
+                              m_quoteChar.value());
+        }
+        return currentMatch();
+    }
+
+    if (m_currentStr.back() == m_delimiter)
+    {
+        m_currentStr.pop_back();
+    }
+
+    Rtrim(m_currentStr);
+
     if (!m_currentStr.empty() && m_currentStr[0] == m_commentChar)
     {
         std::getline(m_ss, m_currentStr, '\n');
@@ -76,6 +108,11 @@ auto Tokens::advance() -> std::optional<std::string>
     }
 
     return std::nullopt;
+}
+
+void Tokens::captureQuotedStrings(std::optional<char> l_quoteChar)
+{
+    m_quoteChar = l_quoteChar;
 }
 
 auto readFile(const std::string& l_filePath) -> std::optional<std::istringstream>

@@ -7,6 +7,7 @@
 #include <ecs/entity/entity_manager.hpp>
 #include <ecs/system/s_control.hpp>
 #include <ecs/system/system_manager.hpp>
+#include <utils/utilities.hpp>
 
 namespace ecs::system
 {

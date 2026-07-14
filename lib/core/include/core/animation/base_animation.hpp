@@ -3,7 +3,7 @@
 
 #include <SFML/Graphics/Texture.hpp>
 #include <core/graphics/spritesheet.fwd.hpp>
-#include <utils/utilities.hpp>
+#include <utils/utilities.fwd.hpp>
 
 namespace core::animation
 {

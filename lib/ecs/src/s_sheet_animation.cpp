@@ -7,7 +7,7 @@
 #include <ecs/entity/entity_manager.hpp>
 #include <ecs/system/s_sheet_animation.hpp>
 #include <ecs/system/system_manager.hpp>
-
+#include <utils/utilities.hpp>
 namespace ecs::system
 {
 SSheetAnimation::SSheetAnimation(SystemManager& l_systemManager)

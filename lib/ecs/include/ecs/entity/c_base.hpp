@@ -3,7 +3,7 @@
 
 #include <ecs/ecs_types.hpp>
 #include <memory>
-#include <utils/utilities.hpp>
+#include <utils/utilities.fwd.hpp>
 
 namespace ecs::entity
 {

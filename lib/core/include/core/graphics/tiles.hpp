@@ -5,7 +5,7 @@
 #include <SFML/System/Vector2.hpp>
 #include <core/graphics/texture_manager.hpp>
 #include <core/graphics/tiles.fwd.hpp>
-#include <utils/utilities.hpp>
+#include <utils/utilities.fwd.hpp>
 
 #include <string>
 

@@ -87,6 +87,24 @@ TEST(Tokenizer, skips_line_correctly)
     EXPECT_EQ(*token, "joe");
 }
 
+TEST(Tokenizer, capture_quoted_strings)
+{
+    std::ostringstream ss;
+    ss << "      \n\n\n\n\n\n\n  \"this is a   string \n \n i want to capture\"       \n\n  joe   "
+          "\n\n\n";
+
+    utils::Tokens tokens{std::istringstream{ss.str()}};
+    tokens.captureQuotedStrings('"');
+
+    const auto QuotedString = *consumeToken<std::string>(tokens);
+    EXPECT_EQ(QuotedString, "this is a   string \n \n i want to capture");
+
+    const auto Joe = *consumeToken<std::string>(tokens);
+    EXPECT_EQ(Joe, "joe");
+
+    EXPECT_TRUE(tokens.empty());
+}
+
 TEST(number_theory, euclid_division_pgcd_ppcm)
 {
     using namespace ::testing;

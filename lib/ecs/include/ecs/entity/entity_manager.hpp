@@ -45,7 +45,6 @@ class EntityManager
             std::find_if(components.begin(), components.end(), [l_component](const CBasePtr& l_c)
                          { return l_c->getType() == l_component; });
 
-        ASSERT_NON_FATAL(component != components.end(), "Could not find component!");
         return component == components.end() ? nullptr : dynamic_cast<T*>(component->get());
     }
 

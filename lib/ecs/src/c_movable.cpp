@@ -2,6 +2,7 @@
 #include <cmath>
 #include <core/directions.hpp>
 #include <ecs/entity/c_movable.hpp>
+#include <utils/utilities.hpp>
 
 static auto maxAbs(float l_x, float l_m /* > 0*/) -> float
 {

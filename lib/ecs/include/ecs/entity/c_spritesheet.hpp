@@ -7,7 +7,7 @@
 #include <core/graphics/texture_manager.fwd.hpp>
 #include <ecs/entity/c_drawable.hpp>
 #include <optional>
-#include <utils/utilities.hpp>
+#include <utils/utilities.fwd.hpp>
 
 #include <string>
 

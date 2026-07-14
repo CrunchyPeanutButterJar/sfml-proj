@@ -9,6 +9,7 @@
 #include <ecs/system/s_state.hpp>
 #include <ecs/system/system_manager.hpp>
 #include <unordered_map>
+#include <utils/utilities.hpp>
 
 namespace ecs::system
 {
