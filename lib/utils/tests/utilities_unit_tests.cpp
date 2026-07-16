@@ -105,6 +105,20 @@ TEST(Tokenizer, capture_quoted_strings)
     EXPECT_TRUE(tokens.empty());
 }
 
+TEST(Tokenizer, capture_strings_test)
+{
+    std::ostringstream ss;
+    ss << "      \n\n\n\n\n\n\n     joe and jp   ---          \n\n\n\n      -----"
+          "\n\n\n";
+
+    utils::Tokens tokens{std::istringstream{ss.str()}, '-'};
+
+    const auto Str = *consumeToken<std::string>(tokens);
+    EXPECT_EQ(Str, "joe and jp");
+
+    EXPECT_TRUE(tokens.empty());
+}
+
 TEST(number_theory, euclid_division_pgcd_ppcm)
 {
     using namespace ::testing;

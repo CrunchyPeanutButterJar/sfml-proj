@@ -14,9 +14,7 @@ Tokens::Tokens(std::istringstream ss, char l_delimiter, char l_commentChar)
 auto Tokens::currentMatch() -> bool
 {
     constexpr auto Ltrim = [](std::string& s, const std::string& chars = " \t\n\r")
-    {
-        s.erase(0, s.find_first_not_of(chars));
-    };
+    { s.erase(0, s.find_first_not_of(chars)); };
 
     constexpr auto Rtrim = [](std::string& s, const std::string& chars = " \t\n\r")
     {
@@ -69,7 +67,7 @@ auto Tokens::currentMatch() -> bool
         return currentMatch();
     }
 
-    if (m_currentStr.back() == m_delimiter)
+    if (m_currentStr.back() == m_delimiter || m_currentStr.back() == '\n')
     {
         m_currentStr.pop_back();
     }

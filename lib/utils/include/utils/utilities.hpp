@@ -74,6 +74,12 @@ class Tokens
         {
             return std::nullopt;
         }
+
+        if constexpr (std::is_same_v<T, std::string>)
+        {
+            return m_currentStr;
+        }
+
         std::istringstream iss(m_currentStr);
         T                  value;
         iss >> value;
