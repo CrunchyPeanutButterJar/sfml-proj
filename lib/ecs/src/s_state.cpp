@@ -6,6 +6,7 @@
 #include "utils/bitmask.hpp"
 #include <ecs/entity/c_state.hpp>
 #include <ecs/entity/entity_manager.hpp>
+#include <ecs/messaging/event_queue.hpp>
 #include <ecs/system/s_state.hpp>
 #include <ecs/system/system_manager.hpp>
 #include <unordered_map>
@@ -39,13 +40,7 @@ void SState::update(float /*l_dt*/)
             CurrentState == entity::EntityState::Falling ||
             CurrentState == entity::EntityState::Landing)
         {
-            messaging::Message msg{
-                .m_type     = (messaging::MessageType)messaging::EntityMessage::Is_Moving,
-                .m_receiver = (int)entity,
-                .m_bool     = false /*ignored*/
-            };
-
-            m_systemManager.getMessageHandler().dispatch(msg);
+            m_systemManager.addEvent(entity, (messaging::EventId)messaging::EntityEvent::Is_Moving);
         }
     }
 }

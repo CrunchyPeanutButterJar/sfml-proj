@@ -8,13 +8,14 @@
 #include <ecs/messaging/message_handler.hpp>
 #include <ecs/system/s_base.hpp>
 #include <ecs/system/system_manager.fwd.hpp>
+#include <map>
 #include <unordered_map>
 #include <utils/bitmask.hpp>
 
 namespace ecs::system
 {
 
-using SystemContainer      = std::unordered_map<System, SBasePtr>;
+using SystemContainer      = std::map<System, SBasePtr>;
 using EntityEventContainer = std::unordered_map<EntityId, messaging::EventQueue>;
 
 class SystemManager

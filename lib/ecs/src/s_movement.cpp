@@ -26,8 +26,6 @@ SMovement::SMovement(SystemManager& l_system_manager) : SBase{System::Movement, 
     req.turnOnBit((utils::Bitmask::Position)Component::Position);
     req.turnOnBit((utils::Bitmask::Position)Component::Movable);
     m_requiredComponents.emplace_back(req);
-
-    m_systemManager.getMessageHandler().subscribe(messaging::EntityMessage::Is_Moving, this);
 }
 
 void SMovement::update(float l_dt)
@@ -120,34 +118,7 @@ void SMovement::setDirection(EntityId l_entity, core::Direction l_dir)
     m_systemManager.getMessageHandler().dispatch(msg);
 }
 
-void SMovement::notify(const messaging::Message& l_message)
-{
-    using namespace messaging;
-
-    auto&      entities    = m_systemManager.getEntityManager();
-    const auto MessageType = (EntityMessage)l_message.m_type;
-
-    switch (MessageType)
-    {
-    case EntityMessage::Is_Moving:
-    {
-        if (!hasEntity(l_message.m_receiver))
-        {
-            return;
-        }
-        auto* movable =
-            entities.getComponent<entity::CMovable>(l_message.m_receiver, Component::Movable);
-        if (movable->getVelocity() != sf::Vector2f{0., 0.})
-        {
-            return;
-        }
-        m_systemManager.addEvent(l_message.m_receiver, (EventId)EntityEvent::Became_Idle);
-    }
-    break;
-    default:
-        break;
-    }
-}
+void SMovement::notify(const messaging::Message& /*l_message*/) {}
 
 void SMovement::handleEvent(EntityId l_entity, messaging::EntityEvent l_event)
 {
@@ -187,6 +158,20 @@ void SMovement::handleEvent(EntityId l_entity, messaging::EntityEvent l_event)
             }
         }
         break;
+    }
+    case EntityEvent::Is_Moving:
+    {
+        if (!hasEntity(l_entity))
+        {
+            return;
+        }
+        auto& entities = m_systemManager.getEntityManager();
+        auto* movable  = entities.getComponent<entity::CMovable>(l_entity, Component::Movable);
+        if (movable->getVelocity() != sf::Vector2f{0., 0.})
+        {
+            return;
+        }
+        m_systemManager.addEvent(l_entity, (EventId)EntityEvent::Became_Idle);
     }
     break;
     default:

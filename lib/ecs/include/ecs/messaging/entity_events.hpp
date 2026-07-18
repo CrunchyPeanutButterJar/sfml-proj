@@ -16,6 +16,7 @@ enum class EntityEvent
     Falling,
     Not_Grounded,
     Became_Idle,
+    Is_Moving,
     Began_Moving
 };
 } // namespace ecs::messaging
