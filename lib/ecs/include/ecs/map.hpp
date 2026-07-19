@@ -3,10 +3,10 @@
 
 #include <SFML/System/Vector2.hpp>
 #include <core/graphics/tiles.hpp>
+#include <core/state/basestate.hpp>
 #include <ecs/ecs_types.hpp>
 #include <ecs/map.fwd.hpp>
 #include <ecs/shared_context.hpp>
-#include <ecs/state/basestate.hpp>
 #include <optional>
 #include <unordered_map>
 
@@ -18,7 +18,7 @@ using TileMap   = std::unordered_map<core::graphics::TileId, core::graphics::Til
 class Map
 {
   public:
-    Map(SharedContext& l_context, state::BaseState& l_currentState);
+    Map(SharedContext* l_context, core::state::BaseState& l_currentState);
     void loadMap(const std::string& l_path);
     void update(float l_dt);
     void draw();
@@ -34,8 +34,8 @@ class Map
                             size_t iCol) const -> std::optional<core::graphics::TileId>;
     auto convertCoordinates(core::graphics::TileId l_id) -> sf::Vector2u;
 
-    SharedContext&                  m_context;
-    state::BaseState&               m_currentState;
+    SharedContext*                  m_context;
+    core::state::BaseState&         m_currentState;
     TileSheet                       m_tileSet;
     core::graphics::TileSheetConfig m_tileSheetConfig;
     TileMap                         m_tileMap;

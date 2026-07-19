@@ -1,5 +1,6 @@
 #include <game.hpp>
 
+#include <gamestate.hpp>
 #include <utils/assert.hpp>
 #include <utils/utilities.hpp>
 
@@ -52,15 +53,16 @@ static auto loadResolutionFromConfigFile() -> sf::Vector2u
 
 Game::Game()
     : m_window{"MyGame", loadResolutionFromConfigFile()},
-      m_stateManager{ecs::SharedContextBuilder::build({.m_window       = m_window,
-                                                       .m_eventManager = m_window.getEventManager(),
-                                                       .m_textureManager = m_textureManager,
-                                                       .m_entityManager  = m_entityManager,
-                                                       .m_systemManager  = m_systemManager})},
-      m_entityManager{m_systemManager, m_stateManager.getContext().m_textureManager},
+      m_stateManager{core::state::StateManager::build<GameState>(
+          ecs::SharedContextBuilder::build({.m_window         = m_window,
+                                            .m_eventManager   = m_window.getEventManager(),
+                                            .m_textureManager = m_textureManager,
+                                            .m_entityManager  = m_entityManager,
+                                            .m_systemManager  = m_systemManager}))},
+      m_entityManager{m_systemManager, m_stateManager.getContext()->m_textureManager},
       m_systemManager{m_entityManager}
 {
-    m_stateManager.switchTo(ecs::state::StateType::Game);
+    m_stateManager.switchTo(StateType::Game);
 }
 
 void Game::update()

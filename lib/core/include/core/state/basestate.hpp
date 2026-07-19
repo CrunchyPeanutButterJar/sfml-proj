@@ -1,10 +1,10 @@
-#ifndef ECS_STATE_BASESTATE_HPP
-#define ECS_STATE_BASESTATE_HPP
+#ifndef CORE_STATE_BASESTATE_HPP
+#define CORE_STATE_BASESTATE_HPP
 
 #include <SFML/Graphics/View.hpp>
 #include <SFML/System/Time.hpp>
 
-namespace ecs::state
+namespace core::state
 {
 class StateManager;
 
@@ -41,6 +41,6 @@ class BaseState
 
     friend class StateManager;
 };
-} // namespace ecs::state
+} // namespace core::state
 
 #endif

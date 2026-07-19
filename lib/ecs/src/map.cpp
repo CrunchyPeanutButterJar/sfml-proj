@@ -11,7 +11,7 @@
 using namespace core::graphics;
 using namespace ecs;
 
-Map::Map(SharedContext& l_context, state::BaseState& l_currentState)
+Map::Map(SharedContext* l_context, core::state::BaseState& l_currentState)
     : m_context(l_context), m_currentState(l_currentState)
 {
 }
@@ -56,7 +56,7 @@ void Map::loadMap(const std::string& l_path)
         {
             std::string texture_alias = *consumeToken<std::string>(tokens);
             ASSERT_NON_FATAL(m_backgroundTexture == nullptr, "Overriding background texture");
-            m_backgroundTexture = m_context.m_textureManager.acquire(texture_alias);
+            m_backgroundTexture = m_context->m_textureManager.acquire(texture_alias);
             ASSERT_NON_FATAL(m_backgroundTexture != nullptr,
                              "Could not load background texture with alias {}", texture_alias);
             if (m_backgroundTexture != nullptr)
@@ -101,8 +101,8 @@ void Map::loadMap(const std::string& l_path)
             while (temp = *tokens.head<std::string>(), temp != "EntitiesEnd")
             {
                 auto  name     = *consumeToken<std::string>(tokens);
-                auto& entities = m_context.m_entityManager;
-                int   entity   = m_context.m_entityManager.addEntity(name);
+                auto& entities = m_context->m_entityManager;
+                int   entity   = m_context->m_entityManager.addEntity(name);
                 if (entity < 0)
                 {
                     FAILURE_NON_FATAL("Failed to load entity {}", name);
@@ -155,7 +155,7 @@ void Map::loadTileset(const std::string& l_path)
         {
             ASSERT_NON_FATAL(!filled_texture, "Overriding tilesheet texture in {}", l_path);
             std::string texture_alias   = *consumeToken<std::string>(tokens);
-            m_tileSheetConfig.m_texture = m_context.m_textureManager.acquire(texture_alias);
+            m_tileSheetConfig.m_texture = m_context->m_textureManager.acquire(texture_alias);
             ASSERT_NON_FATAL(m_tileSheetConfig.m_texture != nullptr,
                              "Error loading texture alias {}", texture_alias);
             filled_texture = true;
@@ -182,15 +182,15 @@ void Map::loadTileset(const std::string& l_path)
 
 void Map::update(float /*unused*/)
 {
-    sf::FloatRect view_space = m_context.m_window.getViewSpace();
+    sf::FloatRect view_space = m_context->m_window.getViewSpace();
     m_background.setPosition(view_space.left, view_space.top);
 }
 
 void Map::draw()
 {
-    auto* window = m_context.m_window.getRenderWindow();
+    auto* window = m_context->m_window.getRenderWindow();
     window->draw(m_background);
-    const sf::FloatRect ViewSpace = m_context.m_window.getViewSpace();
+    const sf::FloatRect ViewSpace = m_context->m_window.getViewSpace();
 
     float x = ViewSpace.left;
     float y = ViewSpace.top;

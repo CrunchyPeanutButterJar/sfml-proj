@@ -1,9 +1,11 @@
 #include "core/directions.hpp"
 #include "ecs/ecs_types.hpp"
 #include "ecs/messaging/message_handler.hpp"
+#include "ecs/shared_context.hpp"
 #include <SFML/System/Time.hpp>
 #include <SFML/Window/WindowBase.hpp>
-#include <ecs/state/gamestate.hpp>
+#include <core/state/statemanager.hpp>
+#include <gamestate.hpp>
 #include <utils/utilities.hpp>
 
 #include <core/event_manager.hpp>
@@ -13,14 +15,13 @@
 #include <ecs/entity/c_spritesheet.hpp>
 #include <ecs/messaging/entity_message.hpp>
 #include <ecs/messaging/message.hpp>
-#include <ecs/state/statemanager.hpp>
 #include <ecs/system/s_collision.hpp>
 #include <ecs/system/s_movement.hpp>
 #include <ecs/system/system_manager.hpp>
 
 #include <SFML/Window/Keyboard.hpp>
 
-using namespace ecs::state;
+using namespace ecs;
 
 static void moveEntity(ecs::messaging::MessageHandler& l_messageHandler, ecs::EntityId l_entity,
                        core::Direction l_dir)
@@ -34,14 +35,16 @@ static void moveEntity(ecs::messaging::MessageHandler& l_messageHandler, ecs::En
     l_messageHandler.dispatch(message);
 }
 
-GameState::GameState(StateManager& l_stateManager)
-    : BaseState(l_stateManager), m_gameMap{m_stateManager.getContext(), *this}
+GameState::GameState(core::state::StateManager& l_stateManager)
+    : BaseState(l_stateManager), m_gameMap{m_stateManager.getContext<ecs::SharedContext>(), *this}
 {
     m_gameMap.loadMap(utils::getConfigDirectory() + "map.map");
 
-    auto& event_manager   = m_stateManager.getContext().m_eventManager;
-    auto& system_manager  = m_stateManager.getContext().m_systemManager;
-    auto& message_handler = m_stateManager.getContext().m_systemManager.getMessageHandler();
+    auto* context = m_stateManager.getContext<ecs::SharedContext>();
+
+    auto& event_manager   = context->m_eventManager;
+    auto& system_manager  = context->m_systemManager;
+    auto& message_handler = context->m_systemManager.getMessageHandler();
 
     system_manager.getSystem<ecs::system::SMovement>(System::Movement)->setMap(&m_gameMap);
     system_manager.getSystem<ecs::system::SCollision>(System::Collision)->setMap(&m_gameMap);
@@ -95,8 +98,10 @@ void GameState::update(const sf::Time& l_elapsed)
 {
     m_elapsed += l_elapsed;
 
+    auto* context = m_stateManager.getContext<ecs::SharedContext>();
+
     m_gameMap.update(l_elapsed.asSeconds());
-    m_stateManager.getContext().m_systemManager.update(l_elapsed.asSeconds());
+    context->m_systemManager.update(l_elapsed.asSeconds());
 
     float timestep = 1.0F / 60;
 
@@ -108,8 +113,10 @@ void GameState::update(const sf::Time& l_elapsed)
 
 void GameState::draw()
 {
-    auto& system_manager = m_stateManager.getContext().m_systemManager;
-    auto& window         = m_stateManager.getContext().m_window;
+    auto* context = m_stateManager.getContext<ecs::SharedContext>();
+
+    auto& system_manager = context->m_systemManager;
+    auto& window         = context->m_window;
 
     m_gameMap.draw();
     system_manager.draw(window);

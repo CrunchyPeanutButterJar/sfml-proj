@@ -4,7 +4,7 @@
 #include <core/shared_context.hpp>
 #include <ecs/entity/entity_manager.fwd.hpp>
 #include <ecs/system/system_manager.fwd.hpp>
-
+#include <memory>
 namespace ecs
 {
 
@@ -29,11 +29,12 @@ struct SharedContextBuilder
     entity::EntityManager&          m_entityManager;
     system::SystemManager&          m_systemManager;
 
-    static auto build(SharedContextBuilder l_builder) -> SharedContext
+    static auto build(SharedContextBuilder l_builder) -> std::unique_ptr<SharedContext>
     {
-        return SharedContext{core::SharedContext{l_builder.m_window, l_builder.m_eventManager,
-                                                 l_builder.m_textureManager},
-                             l_builder.m_entityManager, l_builder.m_systemManager};
+        return std::make_unique<SharedContext>(
+            core::SharedContext{l_builder.m_window, l_builder.m_eventManager,
+                                l_builder.m_textureManager},
+            l_builder.m_entityManager, l_builder.m_systemManager);
     }
 };
 

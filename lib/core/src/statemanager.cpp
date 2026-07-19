@@ -1,11 +1,10 @@
 #include <algorithm>
-#include <ecs/state/statemanager.hpp>
+#include <core/state/statemanager.hpp>
 #include <ranges>
 
 #include <core/window.hpp>
-#include <ecs/state/gamestate.hpp>
 
-using namespace ecs::state;
+using namespace core::state;
 
 void StateManager::switchTo(StateType l_state)
 {
@@ -23,7 +22,7 @@ void StateManager::switchTo(StateType l_state)
     std::iter_swap(itr, m_states.end() - 1);
     auto& current_state = m_states.back().second;
     current_state->activate();
-    getContext().m_window.getRenderWindow()->setView(current_state->getView());
+    getContext()->m_window.getRenderWindow()->setView(current_state->getView());
 }
 
 auto StateManager::getCurrentState() const -> StateType
@@ -61,7 +60,7 @@ void StateManager::draw()
     auto itr     = std::prev(m_states.end(), r_index + 1);
     for (; itr != m_states.end(); ++itr)
     {
-        getContext().m_window.getRenderWindow()->setView(itr->second->getView());
+        getContext()->m_window.getRenderWindow()->setView(itr->second->getView());
         itr->second->draw();
     }
 }
@@ -84,25 +83,9 @@ void StateManager::processRequests()
     }
 }
 
-template <typename StateImpl> void StateManager::registerState(StateType l_stateType)
+auto StateManager::getContext() -> SharedContext*
 {
-    m_stateFactory[l_stateType] = [](StateManager* stateManager) -> StatePtr
-    {
-        auto state = std::make_unique<StateImpl>(*stateManager);
-        state->onCreate();
-
-        return state;
-    };
-}
-
-StateManager::StateManager(SharedContext l_sharedContext) : m_context{l_sharedContext}
-{
-    registerState<GameState>(StateType::Game);
-}
-
-auto StateManager::getContext() -> SharedContext&
-{
-    return m_context;
+    return m_context.get();
 }
 
 auto StateManager::hasState(StateType l_state) const -> bool
