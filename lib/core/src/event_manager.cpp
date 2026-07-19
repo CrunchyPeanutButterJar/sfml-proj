@@ -93,7 +93,7 @@ using SerializableBindings = std::vector<Binding>;
 using ActualEvents = std::vector<sf::Event>;
 
 using Callbacks          = std::unordered_map<std::string, Callback>;
-using CallbacksContainer = std::unordered_map<EventManager::StateType, Callbacks>;
+using CallbacksContainer = std::unordered_map<core::state::StateType, Callbacks>;
 
 static const std::string BINDINGS_FILE_PATH{utils::getConfigDirectory() + "bindings.json"};
 
@@ -202,7 +202,7 @@ EventManager::EventManager() : m_impl(std::make_unique<Impl>())
     }
 }
 
-auto EventManager::addCallback(StateType l_state, const std::string& l_action,
+auto EventManager::addCallback(core::state::StateType l_state, const std::string& l_action,
                                Callback l_callback) -> bool
 {
     auto& callbacks_container = std::get<2>(m_impl->m_tuple);
@@ -217,7 +217,7 @@ auto EventManager::addCallback(StateType l_state, const std::string& l_action,
     return true;
 }
 
-void EventManager::removeCallback(StateType l_state, const std::string& l_action)
+void EventManager::removeCallback(core::state::StateType l_state, const std::string& l_action)
 {
     auto& callbacks_container = std::get<2>(m_impl->m_tuple);
     auto& callbacks           = callbacks_container[l_state];
@@ -295,7 +295,7 @@ static auto countMatchingEvents(const SimplifiedEvent& l_simpleEvent,
                          { return simplifiedEventMatchesActualEvent(l_simpleEvent, l_event); });
 }
 
-void EventManager::update(StateType l_state, const sf::WindowBase& l_window)
+void EventManager::update(core::state::StateType l_state, const sf::WindowBase& l_window)
 {
     handleRealtimeEvents();
     auto& [bindings, actualEvents, callbacksContainer] = m_impl->m_tuple;
@@ -321,7 +321,7 @@ void EventManager::update(StateType l_state, const sf::WindowBase& l_window)
                 it->second(l_window, IsRealtime);
             }
 
-            const auto& other_callbacks = callbacksContainer[StateType{0}];
+            const auto& other_callbacks = callbacksContainer[0];
             auto        other_it        = other_callbacks.find(action);
             if (other_it != other_callbacks.end())
             {

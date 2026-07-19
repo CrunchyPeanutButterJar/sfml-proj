@@ -51,16 +51,16 @@ GameState::GameState(core::state::StateManager& l_stateManager)
 
     ecs::EntityId player_id = m_gameMap.getPlayerId();
 
-    event_manager.addCallback((core::EventManager::StateType)StateType::Game, "Game_MoveLeft",
+    event_manager.addCallback(StateType::Game, "Game_MoveLeft",
                               [player_id, &message_handler](const sf::WindowBase&, auto)
                               { moveEntity(message_handler, player_id, core::Direction::Left); });
 
-    event_manager.addCallback((core::EventManager::StateType)StateType::Game, "Game_MoveRight",
+    event_manager.addCallback(StateType::Game, "Game_MoveRight",
                               [player_id, &message_handler](const sf::WindowBase&, auto)
                               { moveEntity(message_handler, player_id, core::Direction::Right); });
 
     event_manager.addCallback(
-        (core::EventManager::StateType)StateType::Game, "Game_Jump",
+        StateType::Game, "Game_Jump",
         [player_id, &message_handler](const auto&, auto)
         {
             ecs::messaging::Message msg{
@@ -70,8 +70,7 @@ GameState::GameState(core::state::StateManager& l_stateManager)
             message_handler.dispatch(msg);
         });
 
-    event_manager.addCallback((core::EventManager::StateType)StateType::Game,
-                              "Game_ToggleSpriteSheetOverlay",
+    event_manager.addCallback(StateType::Game, "Game_ToggleSpriteSheetOverlay",
                               [](const auto&, bool is_real_time)
                               {
                                   if (!is_real_time)
@@ -81,15 +80,15 @@ GameState::GameState(core::state::StateManager& l_stateManager)
                                   }
                               });
 
-    event_manager.addCallback(
-        (core::EventManager::StateType)StateType::Game, "Game_ToggleCollidableDebugOverlay",
-        [](const auto&, bool is_real_time)
-        {
-            if (!is_real_time)
-            {
-                ecs::entity::CCollidable::debug_overlay = !ecs::entity::CCollidable::debug_overlay;
-            }
-        });
+    event_manager.addCallback(StateType::Game, "Game_ToggleCollidableDebugOverlay",
+                              [](const auto&, bool is_real_time)
+                              {
+                                  if (!is_real_time)
+                                  {
+                                      ecs::entity::CCollidable::debug_overlay =
+                                          !ecs::entity::CCollidable::debug_overlay;
+                                  }
+                              });
 }
 
 GameState::~GameState() = default;

@@ -67,7 +67,7 @@ auto Window::getViewSpace() const -> sf::FloatRect
     return {ViewCenter - ViewSizeHalf, ViewSize};
 }
 
-void Window::update(core::EventManager::StateType l_state)
+void Window::update(core::state::StateType l_state)
 {
     sf::Event event{};
 

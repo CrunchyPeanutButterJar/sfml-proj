@@ -16,7 +16,7 @@ class Window
     ~Window();
     void beginDraw(); // Clear the window.
     void endDraw();   // Display the changes.
-    void update(core::EventManager::StateType l_state);
+    void update(core::state::StateType l_state);
     void setAsDone() { m_isDone = true; }
     auto isDone() const -> bool;
     auto isFullscreen() const -> bool;

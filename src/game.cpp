@@ -67,7 +67,7 @@ Game::Game()
 
 void Game::update()
 {
-    m_window.update((core::EventManager::StateType)m_stateManager.getCurrentState());
+    m_window.update(m_stateManager.getCurrentState());
     m_stateManager.update(m_elapsed);
 }
 

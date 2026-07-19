@@ -4,6 +4,7 @@
 #include <core/graphics/texture_manager.hpp>
 #include <core/shared_context.hpp>
 #include <core/state/basestate.hpp>
+#include <core/state/statemanager.fwd.hpp>
 
 #include <SFML/System/Time.hpp>
 
@@ -17,7 +18,6 @@
 namespace core::state
 {
 
-using StateType      = uint8_t;
 using StatePtr       = std::unique_ptr<BaseState>;
 using StateContainer = std::vector<std::pair<StateType, StatePtr>>;
 

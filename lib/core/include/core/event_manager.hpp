@@ -5,6 +5,7 @@
 #include <SFML/Window/WindowBase.hpp>
 
 #include <core/event_manager.fwd.hpp>
+#include <core/state/statemanager.fwd.hpp>
 
 #include <any>
 
@@ -20,13 +21,12 @@ using Callback = std::function<void(const sf::WindowBase&, bool /*l_is_real_time
 class EventManager
 {
   public:
-    using StateType = unsigned int;
-
     void handleEvent(const sf::Event& l_event);
-    void update(StateType l_state, const sf::WindowBase& l_wind);
+    void update(state::StateType l_state, const sf::WindowBase& l_wind);
 
-    auto addCallback(StateType l_state, const std::string& l_action, Callback l_callback) -> bool;
-    void removeCallback(StateType l_state, const std::string& l_action);
+    auto addCallback(state::StateType l_state, const std::string& l_action,
+                     Callback l_callback) -> bool;
+    void removeCallback(state::StateType l_state, const std::string& l_action);
 
     EventManager();
     ~EventManager();

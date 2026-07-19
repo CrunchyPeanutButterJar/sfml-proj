@@ -68,9 +68,9 @@ template <typename Derived, typename T> class ResourceManager
         return it->second.lock();
     }
 
-    auto load(const std::string& l_path) -> std::unique_ptr<T>
+    static auto load(const std::string& l_path) -> std::unique_ptr<T>
     {
-        return static_cast<Derived*>(this)->load(l_path);
+        return Derived::load(l_path);
     }
 
   private:
