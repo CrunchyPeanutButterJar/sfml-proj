@@ -38,7 +38,7 @@ CheckOptions:
 
   # Configure style rules for naming variables, classes, and functions
   - key:             readability-identifier-naming.ClassCase
-    value:           'CamelCase'
+    value:           'Camel_Snake_Case'
   - key:             readability-identifier-naming.VariableCase
     value:           'lower_case'
   - key:             readability-identifier-naming.FunctionCase

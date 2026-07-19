@@ -97,7 +97,10 @@ ctest
 cd ../
 
 if $DO_CLANG_TIDY; then
-  #clang-tidy-18 -fix-errors -fix $(git diff --name-only  HEAD~1...HEAD | grep -oE '[^[:space:]]+\.(hpp|cpp)') -p build
-  clang-tidy-18 -fix-errors -fix $(git status| grep -oE '[^[:space:]]+\.(hpp|cpp)' ) -p build
-  #clang-tidy-18 -fix-errors -fix $(find ./lib/* ./src/* -name "*.cpp" -o -name "*.hpp") -p build
+  command="clang-tidy-18 -fix-errors -fix $(git status| grep -oE '[^[:space:]]+\.(hpp|cpp)' ) -p build"
+  #command="clang-tidy-18 -fix-errors -fix $(git diff --name-only  HEAD~1...HEAD | grep -oE '[^[:space:]]+\.(hpp|cpp)') -p build"
+  #command="clang-tidy-18 -fix-errors -fix $(find ./lib/* ./src/* -name "*.cpp" -o -name "*.hpp") -p build"
+  echo "Running clang-tidy command"
+  echo $command
+  eval $command
 fi
