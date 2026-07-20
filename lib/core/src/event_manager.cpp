@@ -1,5 +1,6 @@
 #include <SFML/Window/Keyboard.hpp>
 #include <SFML/Window/WindowBase.hpp>
+#include <algorithm>
 #include <core/event_manager.hpp>
 
 #include <fstream>
@@ -55,40 +56,11 @@ template <class... Ts> struct Overloaded : Ts...
     using Ts::operator()...;
 };
 
-struct Hash
-{
-    auto operator()(const KeyPressedEvent& l_event) const -> size_t
-    {
-        return std::hash<KeyPressedEventEnumType>{}(l_event.get());
-    }
-
-    auto operator()(const MouseButtonPressedEvent& l_event) const -> size_t
-    {
-        return std::hash<MouseButtonPressedEventEnumType>{}(l_event.get());
-    }
-
-    auto operator()(const ClosedEvent& /*unused*/) const -> size_t { return 1; }
-
-    auto operator()(const MouseMovedEvent& /*unused*/) const -> size_t { return 2; }
-
-    auto operator()(const SimplifiedEvent& l_event) const -> size_t
-    {
-        size_t index = l_event.index();
-        return std::visit(
-            [index](const auto& l_arg)
-            {
-                std::size_t h1 = Hash{}(l_arg);
-                std::size_t h2 = std::hash<std::size_t>{}(index);
-                return h1 ^ (h2 + 0x9e3779b9 + (h1 << 6) + (h1 >> 2));
-            },
-            l_event);
-    }
-};
-
 using SimplifiedEvents = std::vector<SimplifiedEvent>;
 
-using Binding              = std::tuple<std::string, SimplifiedEvents>;
-using SerializableBindings = std::vector<Binding>;
+using Bindings = std::vector<SimplifiedEvents>;
+
+using SerializableBindings = std::unordered_map<std::string, Bindings>;
 
 using ActualEvents = std::vector<sf::Event>;
 
@@ -129,22 +101,22 @@ auto buildDefaultBindings() -> SerializableBindings
 {
     SerializableBindings bindings;
 
-    bindings.emplace_back("Game_MoveUp", SimplifiedEvents{KeyPressedEvent{sf::Keyboard::Up}});
-    bindings.emplace_back("Game_MoveDown", SimplifiedEvents{KeyPressedEvent{sf::Keyboard::Down}});
-    bindings.emplace_back("Game_MoveRight", SimplifiedEvents{KeyPressedEvent{sf::Keyboard::Right}});
-    bindings.emplace_back("Game_MoveLeft", SimplifiedEvents{KeyPressedEvent{sf::Keyboard::Left}});
+    bindings["Game_MoveUp"].push_back(SimplifiedEvents{KeyPressedEvent{sf::Keyboard::Up}});
+    bindings["Game_MoveDown"].push_back(SimplifiedEvents{KeyPressedEvent{sf::Keyboard::Down}});
+    bindings["Game_MoveRight"].push_back(SimplifiedEvents{KeyPressedEvent{sf::Keyboard::Right}});
+    bindings["Game_MoveLeft"].push_back(SimplifiedEvents{KeyPressedEvent{sf::Keyboard::Left}});
 
-    bindings.emplace_back("Game_Jump", SimplifiedEvents{KeyPressedEvent{sf::Keyboard::Space}});
+    bindings["Game_Jump"].push_back(SimplifiedEvents{KeyPressedEvent{sf::Keyboard::Space}});
 
-    bindings.emplace_back("Game_MoveUp", SimplifiedEvents{KeyPressedEvent{sf::Keyboard::W}});
-    bindings.emplace_back("Game_MoveDown", SimplifiedEvents{KeyPressedEvent{sf::Keyboard::S}});
-    bindings.emplace_back("Game_MoveRight", SimplifiedEvents{KeyPressedEvent{sf::Keyboard::D}});
-    bindings.emplace_back("Game_MoveLeft", SimplifiedEvents{KeyPressedEvent{sf::Keyboard::A}});
+    bindings["Game_MoveUp"].push_back(SimplifiedEvents{KeyPressedEvent{sf::Keyboard::W}});
+    bindings["Game_MoveDown"].push_back(SimplifiedEvents{KeyPressedEvent{sf::Keyboard::S}});
+    bindings["Game_MoveRight"].push_back(SimplifiedEvents{KeyPressedEvent{sf::Keyboard::D}});
+    bindings["Game_MoveLeft"].push_back(SimplifiedEvents{KeyPressedEvent{sf::Keyboard::A}});
 
-    bindings.emplace_back("Game_ToggleSpriteSheetOverlay",
-                          SimplifiedEvents{KeyPressedEvent{sf::Keyboard::O}});
-    bindings.emplace_back("Game_ToggleCollidableDebugOverlay",
-                          SimplifiedEvents{KeyPressedEvent{sf::Keyboard::P}});
+    bindings["Game_ToggleSpriteSheetOverlay"].push_back(
+        SimplifiedEvents{KeyPressedEvent{sf::Keyboard::O}});
+    bindings["Game_ToggleCollidableDebugOverlay"].push_back(
+        SimplifiedEvents{KeyPressedEvent{sf::Keyboard::P}});
 
     return bindings;
 }
@@ -153,17 +125,17 @@ auto buildNonCustomizableBindings() -> SerializableBindings
 {
     SerializableBindings bindings;
 
-    bindings.emplace_back("Key_Escape", SimplifiedEvents{KeyPressedEvent{sf::Keyboard::Escape}});
+    bindings["Key_Escape"].push_back(SimplifiedEvents{KeyPressedEvent{sf::Keyboard::Escape}});
 
-    bindings.emplace_back("Mouse_Moved", SimplifiedEvents{MouseMovedEvent{}});
-    bindings.emplace_back("Mouse_ButtonPressed",
-                          SimplifiedEvents{MouseButtonPressedEvent{sf::Mouse::Left}});
-    bindings.emplace_back("Mouse_ButtonPressed",
-                          SimplifiedEvents{MouseButtonPressedEvent{sf::Mouse::Right}});
+    bindings["Mouse_Moved"].push_back(SimplifiedEvents{MouseMovedEvent{}});
+    bindings["Mouse_ButtonPressed"].push_back(
+        SimplifiedEvents{MouseButtonPressedEvent{sf::Mouse::Left}});
+    bindings["Mouse_ButtonPressed"].push_back(
+        SimplifiedEvents{MouseButtonPressedEvent{sf::Mouse::Right}});
 
-    bindings.emplace_back("Window_Close", SimplifiedEvents{ClosedEvent{}});
-    bindings.emplace_back("Window_ToggleFullscreen",
-                          SimplifiedEvents{KeyPressedEvent{sf::Keyboard::F5}});
+    bindings["Window_Close"].push_back(SimplifiedEvents{ClosedEvent{}});
+    bindings["Window_ToggleFullscreen"].push_back(
+        SimplifiedEvents{KeyPressedEvent{sf::Keyboard::F5}});
 
     return bindings;
 }
@@ -183,13 +155,13 @@ EventManager::EventManager() : m_impl(std::make_unique<Impl>())
     if (auto customized_serialized_bindings = loadFromBindingsFile())
     {
         bindings = std::array{*customized_serialized_bindings, NonCustomizableBindings} |
-                   std::ranges::views::join | std::ranges::to<std::vector>();
+                   std::ranges::views::join | std::ranges::to<std::unordered_map>();
     }
     else
     {
         const auto DefaultCustomizableBindings = buildDefaultBindings();
         bindings = std::array{DefaultCustomizableBindings, NonCustomizableBindings} |
-                   std::ranges::views::join | std::ranges::to<std::vector>();
+                   std::ranges::views::join | std::ranges::to<std::unordered_map>();
 
         std::ofstream config_file(BINDINGS_FILE_PATH.data());
 
@@ -231,106 +203,107 @@ void EventManager::handleEvent(const sf::Event& l_event)
     actual_events.push_back(l_event);
 }
 
-void EventManager::handleRealtimeEvents()
-{
-    using Set = std::unordered_set<SimplifiedEvent, Hash>;
-
-    auto& [bindings, actualEvents, _] = m_impl->m_tuple;
-    auto unique_bindings =
-        bindings |
-        std::ranges::views::transform([](const auto& l_pair) { return std::get<1>(l_pair); }) |
-        std::ranges::views::join | std::ranges::to<Set>();
-
-    for (const auto& binding : unique_bindings)
-    {
-        std::visit(Overloaded{[&actualEvents](const KeyPressedEvent& l_event)
-                              {
-                                  if (sf::Keyboard::isKeyPressed((sf::Keyboard::Key)l_event.get()))
-                                  {
-                                      sf::Event rt_event{};
-                                      rt_event.type     = sf::Event::KeyPressed;
-                                      rt_event.key.code = (sf::Keyboard::Key)l_event.get();
-                                      actualEvents.emplace_back(rt_event);
-                                  }
-                              },
-                              [&actualEvents](const MouseButtonPressedEvent& l_event)
-                              {
-                                  if (sf::Mouse::isButtonPressed((sf::Mouse::Button)l_event.get()))
-                                  {
-                                      sf::Event rt_event{};
-                                      rt_event.type = sf::Event::MouseButtonPressed;
-                                      rt_event.mouseButton.button =
-                                          (sf::Mouse::Button)l_event.get();
-                                      actualEvents.emplace_back(rt_event);
-                                  }
-                              },
-                              [](const auto&) {}},
-                   binding);
-    }
-}
-
 static auto simplifiedEventMatchesActualEvent(const SimplifiedEvent& l_simpleEvent,
-                                              const sf::Event&       l_event) -> bool
+                                              const sf::Event&       l_event,
+                                              core::EventDetails&    l_details) -> bool
 {
     return std::visit(
-        Overloaded{[&l_event](KeyPressedEvent l_simpleEvent) {
-                       return l_event.type == sf::Event::KeyPressed &&
-                              l_simpleEvent.get() == l_event.key.code;
-                   },
-                   [&l_event](MouseButtonPressedEvent l_simpleEvent)
+        Overloaded{[&](KeyPressedEvent l_simpleEvent)
                    {
-                       return l_event.type == sf::Event::MouseButtonPressed &&
-                              l_simpleEvent.get() == l_event.mouseButton.button;
+                       if (l_event.type == sf::Event::KeyPressed &&
+                           l_simpleEvent.get() == l_event.key.code)
+                       {
+                           l_details.m_enteredText = (char)((int)'a' + l_event.key.code);
+                           return true;
+                       }
+                       return false;
                    },
-                   [&l_event](MouseMovedEvent) { return l_event.type == sf::Event::MouseMoved; },
+                   [&](MouseButtonPressedEvent l_simpleEvent)
+                   {
+                       if (l_event.type == sf::Event::MouseButtonPressed &&
+                           l_simpleEvent.get() == l_event.mouseButton.button)
+                       {
+                           l_details.m_newMousePos = {l_event.mouseButton.x, l_event.mouseButton.y};
+                           return true;
+                       }
+                       return false;
+                   },
+                   [&](MouseMovedEvent)
+                   {
+                       if (l_event.type == sf::Event::MouseMoved)
+                       {
+                           l_details.m_newMousePos = {l_event.mouseMove.x, l_event.mouseMove.y};
+                           return true;
+                       }
+                       return false;
+                   },
                    [&l_event](ClosedEvent) { return l_event.type == sf::Event::Closed; }},
         l_simpleEvent);
 }
 
-static auto countMatchingEvents(const SimplifiedEvent& l_simpleEvent,
-                                const ActualEvents&    l_events) -> size_t
+static auto simplifiedEventMatchesActualEvents(const SimplifiedEvent& l_simpleEvent,
+                                               const ActualEvents&    l_events,
+                                               core::EventDetails&    l_details) -> bool
 {
-    return std::count_if(l_events.begin(), l_events.end(),
-                         [&l_simpleEvent](const sf::Event& l_event)
-                         { return simplifiedEventMatchesActualEvent(l_simpleEvent, l_event); });
+    return std::ranges::any_of(
+        l_events, [&](const sf::Event& l_event)
+        { return simplifiedEventMatchesActualEvent(l_simpleEvent, l_event, l_details); });
 }
 
-void EventManager::update(core::state::StateType l_state, const sf::WindowBase& l_window)
+static auto simplifiedEventMatchesRealtimeInput(const SimplifiedEvent& l_expectedEvent) -> bool
 {
-    handleRealtimeEvents();
-    auto& [bindings, actualEvents, callbacksContainer] = m_impl->m_tuple;
+    return std::visit(
+        Overloaded{[](const KeyPressedEvent& l_event)
+                   { return sf::Keyboard::isKeyPressed((sf::Keyboard::Key)l_event.get()); },
+                   [](const MouseButtonPressedEvent& l_event)
+                   { return sf::Mouse::isButtonPressed((sf::Mouse::Button)l_event.get()); },
+                   [](const auto&) { return false; }},
+        l_expectedEvent);
+}
 
-    for (const auto& [action, binding] : bindings)
+void EventManager::update(core::state::StateType l_state)
+{
+    auto& [serialized_bindings, actual_events, callbacks_container] = m_impl->m_tuple;
+
+    for (const auto& [action, bindings] : serialized_bindings)
     {
-        size_t matching_events_count = 0;
-        if (std::all_of(binding.begin(), binding.end(),
-                        [&actualEvents, &matching_events_count](const auto& l_expectedEvent)
-                        {
-                            auto count = countMatchingEvents(l_expectedEvent, actualEvents);
-                            matching_events_count += count;
-                            return count > 0;
-                        }))
+
+        for (const auto& binding : bindings)
         {
-            const auto& state_callbacks = callbacksContainer[l_state];
-            auto        it              = state_callbacks.find(action);
+            EventDetails details;
 
-            const bool IsRealtime = matching_events_count == binding.size();
-
-            if (it != state_callbacks.end())
+            if (std::all_of(
+                    binding.begin(), binding.end(),
+                    [&actual_events, &realtime_contribution = details.m_realtimeContribution,
+                     &details](const auto& l_expectedEvent)
+                    {
+                        return simplifiedEventMatchesActualEvents(l_expectedEvent, actual_events,
+                                                                  details) ||
+                               (realtime_contribution
+                                    ? simplifiedEventMatchesRealtimeInput(l_expectedEvent)
+                                    : (realtime_contribution =
+                                           simplifiedEventMatchesRealtimeInput(l_expectedEvent)));
+                    }))
             {
-                it->second(l_window, IsRealtime);
-            }
+                const auto& state_callbacks = callbacks_container[l_state];
+                auto        it              = state_callbacks.find(action);
 
-            const auto& other_callbacks = callbacksContainer[0];
-            auto        other_it        = other_callbacks.find(action);
-            if (other_it != other_callbacks.end())
-            {
-                other_it->second(l_window, IsRealtime);
+                if (it != state_callbacks.end())
+                {
+                    it->second(details);
+                }
+
+                const auto& other_callbacks = callbacks_container[0];
+                auto        other_it        = other_callbacks.find(action);
+                if (other_it != other_callbacks.end())
+                {
+                    other_it->second(details);
+                }
             }
         }
     }
 
-    actualEvents.clear();
+    actual_events.clear();
 }
 
 EventManager::~EventManager() = default;
@@ -343,7 +316,7 @@ namespace core
 auto buildBindings() -> std::any
 {
     return std::array{buildDefaultBindings(), buildNonCustomizableBindings()} |
-           std::ranges::views::join | std::ranges::to<std::vector>();
+           std::ranges::views::join | std::ranges::to<std::unordered_map>();
 }
 
 auto bindingsAreEquivalent(const std::any& l_first, const std::any& l_second) -> bool

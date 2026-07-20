@@ -1,6 +1,7 @@
 #ifndef CORE_EVENT_MANAGER_HPP
 #define CORE_EVENT_MANAGER_HPP
 
+#include <SFML/System/Vector2.hpp>
 #include <SFML/Window/Event.hpp>
 #include <SFML/Window/WindowBase.hpp>
 
@@ -16,13 +17,21 @@
 namespace core
 {
 
-using Callback = std::function<void(const sf::WindowBase&, bool /*l_is_real_time*/)>;
+struct EventDetails
+{
+    std::optional<sf::Vector2i> m_newMousePos;
+    std::optional<float>        m_scrollWheelDelta;
+    std::optional<char>         m_enteredText;
+    bool                        m_realtimeContribution{false};
+};
+
+using Callback = std::function<void(const EventDetails&)>;
 
 class EventManager
 {
   public:
     void handleEvent(const sf::Event& l_event);
-    void update(state::StateType l_state, const sf::WindowBase& l_wind);
+    void update(state::StateType l_state);
 
     auto addCallback(state::StateType l_state, const std::string& l_action,
                      Callback l_callback) -> bool;
@@ -38,8 +47,6 @@ class EventManager
     auto operator=(EventManager&&) noexcept -> EventManager&;
 
   private:
-    void handleRealtimeEvents();
-
     struct Impl;
     std::unique_ptr<Impl> m_impl;
 };

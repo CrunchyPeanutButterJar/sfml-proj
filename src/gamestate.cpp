@@ -52,16 +52,16 @@ GameState::GameState(core::state::StateManager& l_stateManager)
     ecs::EntityId player_id = m_gameMap.getPlayerId();
 
     event_manager.addCallback(StateType::Game, "Game_MoveLeft",
-                              [player_id, &message_handler](const sf::WindowBase&, auto)
+                              [player_id, &message_handler](const auto&)
                               { moveEntity(message_handler, player_id, core::Direction::Left); });
 
     event_manager.addCallback(StateType::Game, "Game_MoveRight",
-                              [player_id, &message_handler](const sf::WindowBase&, auto)
+                              [player_id, &message_handler](const auto&)
                               { moveEntity(message_handler, player_id, core::Direction::Right); });
 
     event_manager.addCallback(
         StateType::Game, "Game_Jump",
-        [player_id, &message_handler](const auto&, auto)
+        [player_id, &message_handler](const auto&)
         {
             ecs::messaging::Message msg{
                 .m_type     = (ecs::messaging::MessageType)ecs::messaging::EntityMessage::Jump,
@@ -71,9 +71,9 @@ GameState::GameState(core::state::StateManager& l_stateManager)
         });
 
     event_manager.addCallback(StateType::Game, "Game_ToggleSpriteSheetOverlay",
-                              [](const auto&, bool is_real_time)
+                              [](const auto& l_details)
                               {
-                                  if (!is_real_time)
+                                  if (!l_details.m_realtimeContribution)
                                   {
                                       ecs::entity::CSpriteSheet::debug_overlay =
                                           !ecs::entity::CSpriteSheet::debug_overlay;
@@ -81,9 +81,9 @@ GameState::GameState(core::state::StateManager& l_stateManager)
                               });
 
     event_manager.addCallback(StateType::Game, "Game_ToggleCollidableDebugOverlay",
-                              [](const auto&, bool is_real_time)
+                              [](const auto& l_details)
                               {
-                                  if (!is_real_time)
+                                  if (!l_details.m_realtimeContribution)
                                   {
                                       ecs::entity::CCollidable::debug_overlay =
                                           !ecs::entity::CCollidable::debug_overlay;
