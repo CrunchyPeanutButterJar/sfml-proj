@@ -21,6 +21,7 @@ struct EventDetails
 {
     std::optional<sf::Vector2i> m_newMousePos;
     std::optional<float>        m_scrollWheelDelta;
+    std::optional<int>          m_mouseButton;
     std::optional<char>         m_enteredText;
     bool                        m_realtimeContribution{false};
 };

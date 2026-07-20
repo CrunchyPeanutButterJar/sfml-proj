@@ -26,30 +26,62 @@
 
 using namespace core;
 
-using KeyPressedEventEnumType         = int;
-using MouseButtonPressedEventEnumType = int;
+using KeyPressedEnumType         = int;
+using MouseButtonPressedEnumType = int;
 
-using KeyPressedEvent = utils::PhantomType<KeyPressedEventEnumType, struct KeyPressedEventTag>;
-using MouseButtonPressedEvent =
-    utils::PhantomType<KeyPressedEventEnumType, struct MouseButtonPressedEventTag>;
-struct ClosedEvent
+using KeyPressed  = utils::PhantomType<KeyPressedEnumType, struct KeyPressedTag>;
+using KeyReleased = utils::PhantomType<KeyPressedEnumType, struct KeyReleasedTag>;
+
+using MouseButtonPressed = utils::PhantomType<KeyPressedEnumType, struct MouseButtonPressedTag>;
+
+using MouseButtonReleased = utils::PhantomType<KeyPressedEnumType, struct MouseButtonReleasedTag>;
+
+struct Closed
 {
 };
-struct MouseMovedEvent
+struct MouseMoved
 {
 };
 
-auto operator==(ClosedEvent /*unused*/, ClosedEvent /*unused*/) -> bool
+struct MouseWheelScrolled
+{
+};
+
+struct AnyKeyPressed
+{
+};
+
+struct AnyKeyReleased
+{
+};
+
+auto operator==(Closed /*unused*/, Closed /*unused*/) -> bool
 {
     return true;
 }
-auto operator==(MouseMovedEvent /*unused*/, MouseMovedEvent /*unused*/) -> bool
+auto operator==(MouseMoved /*unused*/, MouseMoved /*unused*/) -> bool
+{
+    return true;
+}
+
+auto operator==(MouseWheelScrolled /*unused*/, MouseWheelScrolled /*unused*/) -> bool
+{
+    return true;
+}
+
+auto operator==(AnyKeyPressed /*unused*/, AnyKeyPressed /*unused*/) -> bool
+{
+    return true;
+}
+
+auto operator==(AnyKeyReleased /*unused*/, AnyKeyReleased /*unused*/) -> bool
 {
     return true;
 }
 
 using SimplifiedEvent =
-    std::variant<KeyPressedEvent, MouseButtonPressedEvent, MouseMovedEvent, ClosedEvent>;
+    std::variant<KeyPressed, KeyReleased, AnyKeyPressed, AnyKeyReleased, MouseButtonPressed,
+                 MouseButtonReleased, MouseMoved, MouseWheelScrolled, Closed>;
 
 template <class... Ts> struct Overloaded : Ts...
 {
@@ -101,22 +133,22 @@ auto buildDefaultBindings() -> SerializableBindings
 {
     SerializableBindings bindings;
 
-    bindings["Game_MoveUp"].push_back(SimplifiedEvents{KeyPressedEvent{sf::Keyboard::Up}});
-    bindings["Game_MoveDown"].push_back(SimplifiedEvents{KeyPressedEvent{sf::Keyboard::Down}});
-    bindings["Game_MoveRight"].push_back(SimplifiedEvents{KeyPressedEvent{sf::Keyboard::Right}});
-    bindings["Game_MoveLeft"].push_back(SimplifiedEvents{KeyPressedEvent{sf::Keyboard::Left}});
+    bindings["Game_MoveUp"].push_back(SimplifiedEvents{KeyPressed{sf::Keyboard::Up}});
+    bindings["Game_MoveDown"].push_back(SimplifiedEvents{KeyPressed{sf::Keyboard::Down}});
+    bindings["Game_MoveRight"].push_back(SimplifiedEvents{KeyPressed{sf::Keyboard::Right}});
+    bindings["Game_MoveLeft"].push_back(SimplifiedEvents{KeyPressed{sf::Keyboard::Left}});
 
-    bindings["Game_Jump"].push_back(SimplifiedEvents{KeyPressedEvent{sf::Keyboard::Space}});
+    bindings["Game_Jump"].push_back(SimplifiedEvents{KeyPressed{sf::Keyboard::Space}});
 
-    bindings["Game_MoveUp"].push_back(SimplifiedEvents{KeyPressedEvent{sf::Keyboard::W}});
-    bindings["Game_MoveDown"].push_back(SimplifiedEvents{KeyPressedEvent{sf::Keyboard::S}});
-    bindings["Game_MoveRight"].push_back(SimplifiedEvents{KeyPressedEvent{sf::Keyboard::D}});
-    bindings["Game_MoveLeft"].push_back(SimplifiedEvents{KeyPressedEvent{sf::Keyboard::A}});
+    bindings["Game_MoveUp"].push_back(SimplifiedEvents{KeyPressed{sf::Keyboard::W}});
+    bindings["Game_MoveDown"].push_back(SimplifiedEvents{KeyPressed{sf::Keyboard::S}});
+    bindings["Game_MoveRight"].push_back(SimplifiedEvents{KeyPressed{sf::Keyboard::D}});
+    bindings["Game_MoveLeft"].push_back(SimplifiedEvents{KeyPressed{sf::Keyboard::A}});
 
     bindings["Game_ToggleSpriteSheetOverlay"].push_back(
-        SimplifiedEvents{KeyPressedEvent{sf::Keyboard::O}});
+        SimplifiedEvents{KeyPressed{sf::Keyboard::O}});
     bindings["Game_ToggleCollidableDebugOverlay"].push_back(
-        SimplifiedEvents{KeyPressedEvent{sf::Keyboard::P}});
+        SimplifiedEvents{KeyPressed{sf::Keyboard::P}});
 
     return bindings;
 }
@@ -125,17 +157,23 @@ auto buildNonCustomizableBindings() -> SerializableBindings
 {
     SerializableBindings bindings;
 
-    bindings["Key_Escape"].push_back(SimplifiedEvents{KeyPressedEvent{sf::Keyboard::Escape}});
+    bindings["Key_Escape"].push_back(SimplifiedEvents{KeyPressed{sf::Keyboard::Escape}});
+    bindings["Key_AnyKeyPressed"].push_back(SimplifiedEvents{AnyKeyPressed{}});
+    bindings["Key_AnyKeyReleased"].push_back(SimplifiedEvents{AnyKeyReleased{}});
 
-    bindings["Mouse_Moved"].push_back(SimplifiedEvents{MouseMovedEvent{}});
-    bindings["Mouse_ButtonPressed"].push_back(
-        SimplifiedEvents{MouseButtonPressedEvent{sf::Mouse::Left}});
-    bindings["Mouse_ButtonPressed"].push_back(
-        SimplifiedEvents{MouseButtonPressedEvent{sf::Mouse::Right}});
+    bindings["Mouse_Moved"].push_back(SimplifiedEvents{MouseMoved{}});
+    bindings["Mouse_ButtonPressedLeft"].push_back(
+        SimplifiedEvents{MouseButtonPressed{sf::Mouse::Left}});
+    bindings["Mouse_ButtonPressedRight"].push_back(
+        SimplifiedEvents{MouseButtonPressed{sf::Mouse::Right}});
+    bindings["Mouse_ButtonReleasedLeft"].push_back(
+        SimplifiedEvents{MouseButtonReleased{sf::Mouse::Left}});
+    bindings["Mouse_ButtonReleasedRight"].push_back(
+        SimplifiedEvents{MouseButtonReleased{sf::Mouse::Right}});
+    bindings["Mouse_WheelScrolled"].push_back(SimplifiedEvents{MouseWheelScrolled{}});
 
-    bindings["Window_Close"].push_back(SimplifiedEvents{ClosedEvent{}});
-    bindings["Window_ToggleFullscreen"].push_back(
-        SimplifiedEvents{KeyPressedEvent{sf::Keyboard::F5}});
+    bindings["Window_Close"].push_back(SimplifiedEvents{Closed{}});
+    bindings["Window_ToggleFullscreen"].push_back(SimplifiedEvents{KeyPressed{sf::Keyboard::F5}});
 
     return bindings;
 }
@@ -208,7 +246,7 @@ static auto simplifiedEventMatchesActualEvent(const SimplifiedEvent& l_simpleEve
                                               core::EventDetails&    l_details) -> bool
 {
     return std::visit(
-        Overloaded{[&](KeyPressedEvent l_simpleEvent)
+        Overloaded{[&](KeyPressed l_simpleEvent)
                    {
                        if (l_event.type == sf::Event::KeyPressed &&
                            l_simpleEvent.get() == l_event.key.code)
@@ -218,17 +256,57 @@ static auto simplifiedEventMatchesActualEvent(const SimplifiedEvent& l_simpleEve
                        }
                        return false;
                    },
-                   [&](MouseButtonPressedEvent l_simpleEvent)
+                   [&](KeyReleased l_simpleEvent)
+                   {
+                       if (l_event.type == sf::Event::KeyReleased &&
+                           l_simpleEvent.get() == l_event.key.code)
+                       {
+                           l_details.m_enteredText = (char)((int)'a' + l_event.key.code);
+                           return true;
+                       }
+                       return false;
+                   },
+                   [&](AnyKeyPressed)
+                   {
+                       if (l_event.type == sf::Event::KeyPressed)
+                       {
+                           l_details.m_enteredText = (char)((int)'a' + l_event.key.code);
+                           return true;
+                       }
+                       return false;
+                   },
+                   [&](AnyKeyReleased)
+                   {
+                       if (l_event.type == sf::Event::KeyReleased)
+                       {
+                           l_details.m_enteredText = (char)((int)'a' + l_event.key.code);
+                           return true;
+                       }
+                       return false;
+                   },
+                   [&](MouseButtonPressed l_simpleEvent)
                    {
                        if (l_event.type == sf::Event::MouseButtonPressed &&
                            l_simpleEvent.get() == l_event.mouseButton.button)
                        {
+                           l_details.m_mouseButton = l_event.mouseButton.button;
                            l_details.m_newMousePos = {l_event.mouseButton.x, l_event.mouseButton.y};
                            return true;
                        }
                        return false;
                    },
-                   [&](MouseMovedEvent)
+                   [&](MouseButtonReleased l_simpleEvent)
+                   {
+                       if (l_event.type == sf::Event::MouseButtonReleased &&
+                           l_simpleEvent.get() == l_event.mouseButton.button)
+                       {
+                           l_details.m_mouseButton = l_event.mouseButton.button;
+                           l_details.m_newMousePos = {l_event.mouseButton.x, l_event.mouseButton.y};
+                           return true;
+                       }
+                       return false;
+                   },
+                   [&](MouseMoved)
                    {
                        if (l_event.type == sf::Event::MouseMoved)
                        {
@@ -237,7 +315,18 @@ static auto simplifiedEventMatchesActualEvent(const SimplifiedEvent& l_simpleEve
                        }
                        return false;
                    },
-                   [&l_event](ClosedEvent) { return l_event.type == sf::Event::Closed; }},
+                   [&](MouseWheelScrolled)
+                   {
+                       if (l_event.type == sf::Event::MouseWheelScrolled)
+                       {
+                           l_details.m_scrollWheelDelta = l_event.mouseWheelScroll.delta;
+                           l_details.m_newMousePos      = {l_event.mouseWheelScroll.x,
+                                                           l_event.mouseWheelScroll.y};
+                           return true;
+                       }
+                       return false;
+                   },
+                   [&l_event](Closed) { return l_event.type == sf::Event::Closed; }},
         l_simpleEvent);
 }
 
@@ -253,9 +342,9 @@ static auto simplifiedEventMatchesActualEvents(const SimplifiedEvent& l_simpleEv
 static auto simplifiedEventMatchesRealtimeInput(const SimplifiedEvent& l_expectedEvent) -> bool
 {
     return std::visit(
-        Overloaded{[](const KeyPressedEvent& l_event)
+        Overloaded{[](const KeyPressed& l_event)
                    { return sf::Keyboard::isKeyPressed((sf::Keyboard::Key)l_event.get()); },
-                   [](const MouseButtonPressedEvent& l_event)
+                   [](const MouseButtonPressed& l_event)
                    { return sf::Mouse::isButtonPressed((sf::Mouse::Button)l_event.get()); },
                    [](const auto&) { return false; }},
         l_expectedEvent);
