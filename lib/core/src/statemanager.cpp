@@ -85,7 +85,7 @@ void StateManager::processRequests()
 
 auto StateManager::getContext() -> SharedContext*
 {
-    return m_context.get();
+    return &m_context;
 }
 
 auto StateManager::hasState(StateType l_state) const -> bool

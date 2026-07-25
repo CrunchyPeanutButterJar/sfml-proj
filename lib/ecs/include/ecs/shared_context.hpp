@@ -32,15 +32,14 @@ struct SharedContextBuilder
     entity::EntityManager&          m_entityManager;
     system::SystemManager&          m_systemManager;
 
-    static auto build(SharedContextBuilder l_builder) -> std::unique_ptr<SharedContext>
+    static auto build(SharedContextBuilder l_builder) -> SharedContext
     {
-        return std::make_unique<SharedContext>(
-            core::SharedContext{.m_window         = l_builder.m_window,
-                                .m_eventManager   = l_builder.m_eventManager,
-                                .m_textureManager = l_builder.m_textureManager,
-                                .m_fontManager    = l_builder.m_fontManager,
-                                .m_guiManager     = l_builder.m_guiManager},
-            l_builder.m_entityManager, l_builder.m_systemManager);
+        return SharedContext(core::SharedContext{.m_window         = l_builder.m_window,
+                                                 .m_eventManager   = l_builder.m_eventManager,
+                                                 .m_textureManager = l_builder.m_textureManager,
+                                                 .m_fontManager    = l_builder.m_fontManager,
+                                                 .m_guiManager     = l_builder.m_guiManager},
+                             l_builder.m_entityManager, l_builder.m_systemManager);
     }
 };
 

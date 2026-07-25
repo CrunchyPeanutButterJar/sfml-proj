@@ -6,6 +6,7 @@
 #include <ecs/entity/entity_manager.hpp>
 #include <ecs/system/system_manager.hpp>
 #include <core/state/statemanager.hpp>
+#include <ecs/shared_context.hpp>
 #include <core/window.hpp>
 #include <core/gui/GUI_manager.hpp>
 #include <core/font_manager.hpp>
@@ -28,8 +29,11 @@ private:
 
     sf::Clock m_clock;
     sf::Time m_elapsed;
-
+    
     core::Window m_window;
+
+    ecs::SharedContext m_context;
+
     core::state::StateManager m_stateManager;
     ecs::entity::EntityManager m_entityManager;
     ecs::system::SystemManager m_systemManager;

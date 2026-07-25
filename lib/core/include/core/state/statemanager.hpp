@@ -28,10 +28,7 @@ using StateTypeContainer = std::unordered_set<StateType>;
 class StateManager
 {
   private:
-    StateManager(std::unique_ptr<SharedContext> l_sharedContext)
-        : m_context{std::move(l_sharedContext)}
-    {
-    }
+    StateManager(SharedContext& l_sharedContext) : m_context{l_sharedContext} {}
 
   public:
     void update(const sf::Time& l_elapsed);
@@ -46,12 +43,11 @@ class StateManager
 
     auto getContext() -> SharedContext*;
 
-    template <typename T> auto getContext() -> T* { return static_cast<T*>(m_context.get()); }
+    template <typename T> auto getContext() -> T* { return static_cast<T*>(&m_context); }
 
-    template <typename... States>
-    static auto build(std::unique_ptr<SharedContext> l_sharedContext) -> StateManager
+    template <typename... States> static auto build(SharedContext& l_sharedContext) -> StateManager
     {
-        StateManager state_manager{std::move(l_sharedContext)};
+        StateManager state_manager{l_sharedContext};
         (state_manager.registerState<States>(States::TYPE), ...);
         return state_manager;
     }
@@ -68,10 +64,10 @@ class StateManager
         };
     }
 
-    std::unique_ptr<SharedContext> m_context;
-    StateContainer                 m_states;
-    StateFactory                   m_stateFactory;
-    StateTypeContainer             m_toBeRemoved;
+    SharedContext&     m_context;
+    StateContainer     m_states;
+    StateFactory       m_stateFactory;
+    StateTypeContainer m_toBeRemoved;
 };
 } // namespace core::state
 
