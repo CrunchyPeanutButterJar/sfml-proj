@@ -57,10 +57,13 @@ Game::Game()
           ecs::SharedContextBuilder::build({.m_window         = m_window,
                                             .m_eventManager   = m_window.getEventManager(),
                                             .m_textureManager = m_textureManager,
+                                            .m_fontManager    = m_fontManager,
+                                            .m_guiManager     = m_guiManager,
                                             .m_entityManager  = m_entityManager,
                                             .m_systemManager  = m_systemManager}))},
       m_entityManager{m_systemManager, m_stateManager.getContext()->m_textureManager},
-      m_systemManager{m_entityManager}
+      m_systemManager{m_entityManager},
+      m_guiManager(&m_window.getEventManager(), m_stateManager.getContext())
 {
     m_stateManager.switchTo(StateType::Game);
 }

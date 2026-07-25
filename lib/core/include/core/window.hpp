@@ -26,6 +26,7 @@ class Window
     auto getRenderWindow() -> sf::RenderWindow*;
     auto getEventManager() -> core::EventManager&;
     auto getViewSpace() const -> sf::FloatRect;
+    auto getMousePosition() const -> sf::Vector2f;
 
   private:
     void setup(const std::string& l_title, const sf::Vector2u& l_size);

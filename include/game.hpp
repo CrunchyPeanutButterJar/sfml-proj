@@ -7,6 +7,8 @@
 #include <ecs/system/system_manager.hpp>
 #include <core/state/statemanager.hpp>
 #include <core/window.hpp>
+#include <core/gui/GUI_manager.hpp>
+#include <core/font_manager.hpp>
 
 class Game
 {
@@ -32,6 +34,8 @@ private:
     ecs::entity::EntityManager m_entityManager;
     ecs::system::SystemManager m_systemManager;
     core::graphics::TextureManager m_textureManager;
+    core::FontManager m_fontManager;
+    core::gui::GUI_Manager m_guiManager;
 };
 
 #endif

@@ -35,7 +35,7 @@ template <typename Derived, typename T> class ResourceManager
             return;
         }
 
-        FAILURE("Could not read path file {}", l_pathFileName);
+        FAILURE_NON_FATAL("Could not read path file {}", l_pathFileName);
     }
 
     auto acquire(const std::string& l_alias) -> std::shared_ptr<T>

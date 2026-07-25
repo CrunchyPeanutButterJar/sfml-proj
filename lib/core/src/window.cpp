@@ -67,6 +67,11 @@ auto Window::getViewSpace() const -> sf::FloatRect
     return {ViewCenter - ViewSizeHalf, ViewSize};
 }
 
+auto Window::getMousePosition() const -> sf::Vector2f
+{
+    return sf::Vector2f(sf::Mouse::getPosition(m_window));
+}
+
 void Window::update(core::state::StateType l_state)
 {
     sf::Event event{};
