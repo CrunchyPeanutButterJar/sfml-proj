@@ -1,0 +1,3 @@
+Interface DebugOverlay DebugOverlay.style 0 0 Movable Title "Debug Overlay"
+Element Label ToggleSpriteSheetOverlay 0 0 DebugOverlayLabel.style "SpriteSheet Overlay"
+Element Label ToggleCollidableDebugOverlay 0 32 DebugOverlayLabel.style "Collidable Overlay"

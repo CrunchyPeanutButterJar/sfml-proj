@@ -37,11 +37,16 @@ static void moveEntity(ecs::messaging::MessageHandler& l_messageHandler, ecs::En
 }
 
 template class core::RegisterBinding<BINDING("Game_ToggleSpriteSheetOverlay",
-                                             core::KeyPressed{sf::Keyboard::O}),
-                                     core::Customizable>;
+                                             core::GuiEventClick{"DebugOverlay",
+                                                                 "ToggleSpriteSheetOverlay"}),
+                                     core::NonCustomizable>;
 template class core::RegisterBinding<BINDING("Game_ToggleCollidableDebugOverlay",
-                                             core::KeyPressed{sf::Keyboard::P}),
-                                     core::Customizable>;
+                                             core::GuiEventClick{"DebugOverlay",
+                                                                 "ToggleCollidableDebugOverlay"}),
+                                     core::NonCustomizable>;
+
+template class core::RegisterBinding<
+    BINDING("Game_ToggleDebugOverlay", core::KeyPressed{sf::Keyboard::O}), core::Customizable>;
 
 template class core::RegisterBinding<BINDING("Game_MoveUp", core::KeyPressed{sf::Keyboard::Up}),
                                      core::Customizable>;
@@ -71,6 +76,12 @@ GameState::GameState(core::state::StateManager& l_stateManager)
 
     auto* context = m_stateManager.getContext<ecs::SharedContext>();
 
+    auto& gui_manager = m_stateManager.getContext()->m_guiManager;
+    gui_manager.loadInterface(StateType::Game, "DebugOverlay.interface", "DebugOverlay");
+    auto* interface = gui_manager.getInterface(StateType::Game, "DebugOverlay");
+    interface->setPosition({10, 10});
+    interface->setActive(false);
+
     auto& event_manager   = context->m_eventManager;
     auto& system_manager  = context->m_systemManager;
     auto& message_handler = context->m_systemManager.getMessageHandler();
@@ -99,23 +110,20 @@ GameState::GameState(core::state::StateManager& l_stateManager)
             message_handler.dispatch(msg);
         });
 
-    event_manager.addCallback(StateType::Game, "Game_ToggleSpriteSheetOverlay",
-                              [](const auto& l_details)
-                              {
-                                  if (!l_details.m_realtimeContribution)
-                                  {
-                                      ecs::entity::CSpriteSheet::debug_overlay =
-                                          !ecs::entity::CSpriteSheet::debug_overlay;
-                                  }
-                              });
+    event_manager.addCallback(
+        StateType::Game, "Game_ToggleSpriteSheetOverlay", [](const auto&)
+        { ecs::entity::CSpriteSheet::debug_overlay = !ecs::entity::CSpriteSheet::debug_overlay; });
 
-    event_manager.addCallback(StateType::Game, "Game_ToggleCollidableDebugOverlay",
-                              [](const auto& l_details)
+    event_manager.addCallback(
+        StateType::Game, "Game_ToggleCollidableDebugOverlay", [](const auto&)
+        { ecs::entity::CCollidable::debug_overlay = !ecs::entity::CCollidable::debug_overlay; });
+
+    event_manager.addCallback(StateType::Game, "Game_ToggleDebugOverlay",
+                              [interface](const auto& l_details)
                               {
                                   if (!l_details.m_realtimeContribution)
                                   {
-                                      ecs::entity::CCollidable::debug_overlay =
-                                          !ecs::entity::CCollidable::debug_overlay;
+                                      interface->setActive(!interface->isActive());
                                   }
                               });
 }
