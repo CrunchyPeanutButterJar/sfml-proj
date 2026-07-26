@@ -1,6 +1,7 @@
 #ifndef CORE_EVENT_MANAGER_HPP
 #define CORE_EVENT_MANAGER_HPP
 
+#include "core/gui/GUI_event.hpp"
 #include <SFML/System/Vector2.hpp>
 #include <SFML/Window/Event.hpp>
 #include <SFML/Window/WindowBase.hpp>
@@ -32,6 +33,7 @@ class EventManager
 {
   public:
     void handleEvent(const sf::Event& l_event);
+    void handleEvent(const core::gui::GUI_Event& l_event);
     void update(state::StateType l_state);
 
     auto addCallback(state::StateType l_state, const std::string& l_action,

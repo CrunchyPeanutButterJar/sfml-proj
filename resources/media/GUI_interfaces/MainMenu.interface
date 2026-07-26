@@ -1,0 +1,4 @@
+Interface MainMenu MainMenu.style 0 0 "Main menu"
+Element Label Title 100 0 MainMenuTitle.style "Main menu:"
+Element Label Play 0 32 MainMenuLabel.style "PLAY"
+Element Label Quit 0 64 MainMenuLabel.style "EXIT"

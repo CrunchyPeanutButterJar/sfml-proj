@@ -35,8 +35,12 @@ GUI_Manager::GUI_Manager(EventManager* l_evMgr, SharedContext* l_shared)
     m_eventMgr->addCallback(core::state::StateType(0), "Mouse_ButtonReleasedLeft",
                             [this](auto&& PH1)
                             { handleRelease(std::forward<decltype(PH1)>(PH1)); });
-    m_eventMgr->addCallback(core::state::StateType(0), "Key_AnyKeyPressed", [this](auto&& PH1)
-                            { handleTextEntered(std::forward<decltype(PH1)>(PH1)); });
+    m_eventMgr->addCallback(core::state::StateType(0), "Key_AnyKeyPressed",
+                            [this](auto&& PH1)
+                            {
+                                if (!PH1.m_realtimeContribution)
+                                    handleTextEntered(std::forward<decltype(PH1)>(PH1));
+                            });
 }
 
 GUI_Manager::~GUI_Manager()
@@ -70,7 +74,7 @@ auto GUI_Manager::removeInterface(state::StateType l_state, const std::string& l
     {
         return false;
     }
-    return s->second.erase(l_name) != 0u;
+    return s->second.erase(l_name) != 0U;
 }
 void GUI_Manager::setCurrentState(core::state::StateType l_state)
 {
@@ -276,7 +280,7 @@ auto GUI_Manager::loadInterface(core::state::StateType l_state, const std::strin
                                 const std::string& l_name) -> bool
 {
     const std::string FilePath =
-        utils::getResourcesDirectory() + "media/GUI_Interfaces/" + l_interface;
+        utils::getResourcesDirectory() + "media/GUI_interfaces/" + l_interface;
 
     auto file = utils::readFile(FilePath);
     if (!file)
@@ -342,6 +346,7 @@ auto GUI_Manager::loadInterface(core::state::StateType l_state, const std::strin
                 interface->addElement(e_type, name);
                 auto* element = interface->getElement(name);
                 element->readIn(tokens);
+                element->setPosition(position);
                 ASSERT_NON_FATAL(loadStyle(style, element),
                                  "Failed to load Style ({}) for Element ({})", style, name);
             }
@@ -369,7 +374,7 @@ static auto stateToGuiState(const std::string& l_state) -> GUI_ElementState
 
 auto GUI_Manager::loadStyle(const std::string& l_file, GUI_Element* l_element) -> bool
 {
-    const std::string FilePath = utils::getResourcesDirectory() + "media/GUI_Styles/" + l_file;
+    const std::string FilePath = utils::getResourcesDirectory() + "media/GUI_styles/" + l_file;
     auto              file     = utils::readFile(FilePath);
 
     if (!file.has_value())
@@ -441,10 +446,10 @@ auto GUI_Manager::loadStyle(const std::string& l_file, GUI_Element* l_element) -
             }
             else if (Key == "BgColor")
             {
-                int r;
-                int g;
-                int b;
-                int a;
+                int r                             = 0;
+                int g                             = 0;
+                int b                             = 0;
+                int a                             = 0;
                 std::tie(r, g, b, a)              = *consumeTokens<int, int, int, int>(tokens);
                 temporary_style.m_backgroundColor = sf::Color(r, g, b, a);
             }
@@ -454,19 +459,19 @@ auto GUI_Manager::loadStyle(const std::string& l_file, GUI_Element* l_element) -
             }
             else if (Key == "BgImageColor")
             {
-                int r;
-                int g;
-                int b;
-                int a;
+                int r                                  = 0;
+                int g                                  = 0;
+                int b                                  = 0;
+                int a                                  = 0;
                 std::tie(r, g, b, a)                   = *consumeTokens<int, int, int, int>(tokens);
                 temporary_style.m_backgroundImageColor = sf::Color(r, g, b, a);
             }
             else if (Key == "TextColor")
             {
-                int r;
-                int g;
-                int b;
-                int a;
+                int r                       = 0;
+                int g                       = 0;
+                int b                       = 0;
+                int a                       = 0;
                 std::tie(r, g, b, a)        = *consumeTokens<int, int, int, int>(tokens);
                 temporary_style.m_textColor = sf::Color(r, g, b, a);
             }
@@ -489,10 +494,10 @@ auto GUI_Manager::loadStyle(const std::string& l_file, GUI_Element* l_element) -
             }
             else if (Key == "ElementColor")
             {
-                int r;
-                int g;
-                int b;
-                int a;
+                int r                          = 0;
+                int g                          = 0;
+                int b                          = 0;
+                int a                          = 0;
                 std::tie(r, g, b, a)           = *consumeTokens<int, int, int, int>(tokens);
                 temporary_style.m_elementColor = sf::Color(r, g, b, a);
             }

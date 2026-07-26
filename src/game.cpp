@@ -1,6 +1,9 @@
+#include "core/gui/GUI_event.hpp"
+#include <SFML/Graphics/View.hpp>
 #include <game.hpp>
 
 #include <gamestate.hpp>
+#include <mainmenustate.hpp>
 #include <utils/assert.hpp>
 #include <utils/utilities.hpp>
 
@@ -60,18 +63,24 @@ Game::Game()
                                                   .m_guiManager     = m_guiManager,
                                                   .m_entityManager  = m_entityManager,
                                                   .m_systemManager  = m_systemManager})},
-      m_stateManager{core::state::StateManager::build<GameState>(m_context)},
+      m_stateManager{core::state::StateManager::build<MainMenuState, GameState>(m_context)},
       m_entityManager{m_systemManager, m_stateManager.getContext()->m_textureManager},
       m_systemManager{m_entityManager},
       m_guiManager(&m_window.getEventManager(), m_stateManager.getContext())
 {
-    m_stateManager.switchTo(StateType::Game);
+    m_stateManager.switchTo(StateType::MainMenu);
 }
 
 void Game::update()
 {
     m_window.update(m_stateManager.getCurrentState());
     m_stateManager.update(m_elapsed);
+    m_guiManager.update(m_elapsed.asSeconds());
+    core::gui::GUI_Event gui_event{};
+    while (m_guiManager.pollEvent(gui_event))
+    {
+        m_context.m_eventManager.handleEvent(gui_event);
+    }
 }
 
 void Game::lateUpdate()
@@ -99,5 +108,11 @@ void Game::render()
 {
     m_window.beginDraw();
     m_stateManager.draw();
+
+    auto current_view = m_window.getRenderWindow()->getView();
+    m_window.getRenderWindow()->setView(m_window.getRenderWindow()->getDefaultView());
+    m_guiManager.render(m_window.getRenderWindow());
+    m_window.getRenderWindow()->setView(current_view);
+
     m_window.endDraw();
 }

@@ -1,4 +1,5 @@
 #include <algorithm>
+#include <core/gui/GUI_manager.hpp>
 #include <core/state/statemanager.hpp>
 #include <ranges>
 
@@ -8,6 +9,8 @@ using namespace core::state;
 
 void StateManager::switchTo(StateType l_state)
 {
+    m_context.m_guiManager.setCurrentState(l_state);
+
     auto itr = std::find_if(m_states.begin(), m_states.end(),
                             [l_state](const auto& el) { return el.first == l_state; });
 

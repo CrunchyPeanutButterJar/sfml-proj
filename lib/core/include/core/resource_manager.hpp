@@ -11,23 +11,25 @@ namespace core
 template <typename Derived, typename T> class ResourceManager
 {
   public:
-    ResourceManager(const std::string& l_pathFileName)
+    ResourceManager(const std::string& l_fileName)
     {
-        if (auto file_content = utils::readFile(utils::getConfigDirectory() + l_pathFileName))
+        const std::string FilePath = utils::getConfigDirectory() + l_fileName;
+
+        if (auto file_content = utils::readFile(FilePath))
         {
             utils::Tokens tokens{std::move(*file_content)}; // Alias Path
 
             while (!tokens.empty())
             {
                 auto tuple = utils::consumeTokens<std::string, std::string>(tokens);
-                ASSERT(tuple.has_value(), "Error reading from ressource file {}", l_pathFileName);
+                ASSERT(tuple.has_value(), "Error reading from ressource file {}", FilePath);
 
                 const auto [alias, path] = *tuple;
 
                 if (m_paths.find(alias) != m_paths.end())
                 {
                     FAILURE_NON_FATAL("Duplicate alias {} found in file {}. Overriden value", alias,
-                                      l_pathFileName);
+                                      FilePath);
                 }
                 m_paths[alias] = path;
             }
@@ -35,7 +37,7 @@ template <typename Derived, typename T> class ResourceManager
             return;
         }
 
-        FAILURE_NON_FATAL("Could not read path file {}", l_pathFileName);
+        FAILURE_NON_FATAL("Could not read path file {}", FilePath);
     }
 
     auto acquire(const std::string& l_alias) -> std::shared_ptr<T>

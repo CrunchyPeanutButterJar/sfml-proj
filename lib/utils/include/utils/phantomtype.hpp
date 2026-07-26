@@ -26,6 +26,14 @@ template <typename UnderlyingType, typename PhantomTypeParam> class PhantomType
   private:
     UnderlyingType m_value;
 };
+
+template <typename UnderlyingType, typename PhantomTypeParam>
+auto operator==(const PhantomType<UnderlyingType, PhantomTypeParam>& lhs,
+                const PhantomType<UnderlyingType, PhantomTypeParam>& rhs) -> bool
+{
+    return lhs.get() == rhs.get();
+}
+
 } // namespace utils
 
 #endif

@@ -48,7 +48,13 @@ auto Tokens::currentMatch() -> bool
         return false;
     }
 
-    m_currentStr = Read(m_ss, {m_delimiter, '\n'}); // new line always a delimiter
+    std::string delimiters{m_delimiter, '\n'};
+    if (m_quoteChar.has_value())
+    {
+        delimiters.push_back(m_quoteChar.value());
+    }
+
+    m_currentStr = Read(m_ss, delimiters); // new line always a delimiter
     Ltrim(m_currentStr);
 
     if (m_quoteChar && !m_currentStr.empty() && m_currentStr[0] == m_quoteChar.value())

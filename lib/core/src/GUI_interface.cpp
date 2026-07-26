@@ -116,7 +116,7 @@ void GUI_Interface::readIn(utils::Tokens& l_tokens)
         l_tokens.advance();
     }
 
-    l_tokens.captureQuotedStrings('\'');
+    l_tokens.captureQuotedStrings('"');
     title = *consumeToken<std::string>(l_tokens);
     l_tokens.captureQuotedStrings({});
 
