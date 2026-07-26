@@ -8,6 +8,7 @@
 #include <gamestate.hpp>
 #include <utils/utilities.hpp>
 
+#include <core/bindings.hpp>
 #include <core/event_manager.hpp>
 #include <core/window.hpp>
 #include <ecs/entity/c_collidable.hpp>
@@ -34,6 +35,34 @@ static void moveEntity(ecs::messaging::MessageHandler& l_messageHandler, ecs::En
 
     l_messageHandler.dispatch(message);
 }
+
+template class core::RegisterBinding<BINDING("Game_ToggleSpriteSheetOverlay",
+                                             core::KeyPressed{sf::Keyboard::O}),
+                                     core::Customizable>;
+template class core::RegisterBinding<BINDING("Game_ToggleCollidableDebugOverlay",
+                                             core::KeyPressed{sf::Keyboard::P}),
+                                     core::Customizable>;
+
+template class core::RegisterBinding<BINDING("Game_MoveUp", core::KeyPressed{sf::Keyboard::Up}),
+                                     core::Customizable>;
+template class core::RegisterBinding<BINDING("Game_MoveDown", core::KeyPressed{sf::Keyboard::Down}),
+                                     core::Customizable>;
+template class core::RegisterBinding<BINDING("Game_MoveLeft", core::KeyPressed{sf::Keyboard::Left}),
+                                     core::Customizable>;
+template class core::RegisterBinding<
+    BINDING("Game_MoveRight", core::KeyPressed{sf::Keyboard::Right}), core::Customizable>;
+
+template class core::RegisterBinding<BINDING("Game_MoveUp", core::KeyPressed{sf::Keyboard::W}),
+                                     core::Customizable>;
+template class core::RegisterBinding<BINDING("Game_MoveDown", core::KeyPressed{sf::Keyboard::S}),
+                                     core::Customizable>;
+template class core::RegisterBinding<BINDING("Game_MoveLeft", core::KeyPressed{sf::Keyboard::A}),
+                                     core::Customizable>;
+template class core::RegisterBinding<BINDING("Game_MoveRight", core::KeyPressed{sf::Keyboard::D}),
+                                     core::Customizable>;
+
+template class core::RegisterBinding<BINDING("Game_Jump", core::KeyPressed{sf::Keyboard::Space}),
+                                     core::Customizable>;
 
 GameState::GameState(core::state::StateManager& l_stateManager)
     : BaseState(l_stateManager), m_gameMap{m_stateManager.getContext<ecs::SharedContext>(), *this}

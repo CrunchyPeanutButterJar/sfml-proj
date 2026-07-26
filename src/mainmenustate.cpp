@@ -1,11 +1,17 @@
 #include <functional>
 #include <mainmenustate.hpp>
 
+#include <core/bindings.hpp>
 #include <core/event_manager.hpp>
 #include <core/gui/GUI_manager.hpp>
 #include <core/shared_context.hpp>
 #include <core/state/statemanager.hpp>
 #include <core/window.hpp>
+
+template class core::RegisterBinding<
+    BINDING("MainMenu_Play", core::GuiEventClick{"MainMenu", "Play"}), core::NonCustomizable>;
+template class core::RegisterBinding<
+    BINDING("MainMenu_Quit", core::GuiEventClick{"MainMenu", "Quit"}), core::NonCustomizable>;
 
 MainMenuState::MainMenuState(core::state::StateManager& l_stateManager) : BaseState(l_stateManager)
 {

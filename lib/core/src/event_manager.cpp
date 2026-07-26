@@ -18,8 +18,8 @@
 #include <string>
 #include <tuple>
 #include <unordered_map>
-#include <utils/phantomtype.hpp>
-#include <variant>
+
+#include <core/bindings.hpp>
 
 #include <SFML/Window/Event.hpp>
 
@@ -28,79 +28,10 @@
 
 using namespace core;
 
-using KeyPressedEnumType         = int;
-using MouseButtonPressedEnumType = int;
-
-using KeyPressed  = utils::PhantomType<KeyPressedEnumType, struct KeyPressedTag>;
-using KeyReleased = utils::PhantomType<KeyPressedEnumType, struct KeyReleasedTag>;
-
-using MouseButtonPressed = utils::PhantomType<KeyPressedEnumType, struct MouseButtonPressedTag>;
-
-using MouseButtonReleased = utils::PhantomType<KeyPressedEnumType, struct MouseButtonReleasedTag>;
-
-struct Closed
-{
-};
-struct MouseMoved
-{
-};
-
-struct MouseWheelScrolled
-{
-};
-
-struct AnyKeyPressed
-{
-};
-
-struct AnyKeyReleased
-{
-};
-
-auto operator==(Closed /*unused*/, Closed /*unused*/) -> bool
-{
-    return true;
-}
-auto operator==(MouseMoved /*unused*/, MouseMoved /*unused*/) -> bool
-{
-    return true;
-}
-
-auto operator==(MouseWheelScrolled /*unused*/, MouseWheelScrolled /*unused*/) -> bool
-{
-    return true;
-}
-
-auto operator==(AnyKeyPressed /*unused*/, AnyKeyPressed /*unused*/) -> bool
-{
-    return true;
-}
-
-auto operator==(AnyKeyReleased /*unused*/, AnyKeyReleased /*unused*/) -> bool
-{
-    return true;
-}
-
-// GUI events
-
-using GuiEvent = std::pair<std::string, std::string>; // interface - element
-
-using GuiEventClick   = utils::PhantomType<GuiEvent, struct GuiEventClickParam>;
-using GuiEventRelease = utils::PhantomType<GuiEvent, struct GuiEventReleaseParam>;
-using GuiEventHover   = utils::PhantomType<GuiEvent, struct GuiEventHoverParam>;
-using GuiEventLeave   = utils::PhantomType<GuiEvent, struct GuiEventLeaveParam>;
-
-using SimplifiedEvent =
-    std::variant<KeyPressed, KeyReleased, AnyKeyPressed, AnyKeyReleased, MouseButtonPressed,
-                 MouseButtonReleased, MouseMoved, MouseWheelScrolled, Closed, GuiEventClick,
-                 GuiEventRelease, GuiEventHover, GuiEventLeave>;
-
 template <class... Ts> struct Overloaded : Ts...
 {
     using Ts::operator()...;
 };
-
-using SimplifiedEvents = std::vector<SimplifiedEvent>;
 
 using Bindings = std::vector<SimplifiedEvents>;
 
@@ -142,26 +73,30 @@ auto loadFromBindingsFile() -> std::optional<SerializableBindings>
     return result.value();
 }
 
+using Registry = std::vector<BindingsRegisterFn>;
+
+static Registry s_default_customizable_bindings_registry;
+static Registry s_non_customizable_bindings_registry;
+
+void core::registerDefaultCustomizableBinding(BindingsRegisterFn l_fn)
+{
+    s_default_customizable_bindings_registry.push_back(l_fn);
+}
+
+void core::registerNonCustomizableBinding(BindingsRegisterFn l_fn)
+{
+    s_non_customizable_bindings_registry.push_back(l_fn);
+}
+
 auto buildDefaultBindings() -> SerializableBindings
 {
     SerializableBindings bindings;
 
-    bindings["Game_MoveUp"].push_back(SimplifiedEvents{KeyPressed{sf::Keyboard::Up}});
-    bindings["Game_MoveDown"].push_back(SimplifiedEvents{KeyPressed{sf::Keyboard::Down}});
-    bindings["Game_MoveRight"].push_back(SimplifiedEvents{KeyPressed{sf::Keyboard::Right}});
-    bindings["Game_MoveLeft"].push_back(SimplifiedEvents{KeyPressed{sf::Keyboard::Left}});
-
-    bindings["Game_Jump"].push_back(SimplifiedEvents{KeyPressed{sf::Keyboard::Space}});
-
-    bindings["Game_MoveUp"].push_back(SimplifiedEvents{KeyPressed{sf::Keyboard::W}});
-    bindings["Game_MoveDown"].push_back(SimplifiedEvents{KeyPressed{sf::Keyboard::S}});
-    bindings["Game_MoveRight"].push_back(SimplifiedEvents{KeyPressed{sf::Keyboard::D}});
-    bindings["Game_MoveLeft"].push_back(SimplifiedEvents{KeyPressed{sf::Keyboard::A}});
-
-    bindings["Game_ToggleSpriteSheetOverlay"].push_back(
-        SimplifiedEvents{KeyPressed{sf::Keyboard::O}});
-    bindings["Game_ToggleCollidableDebugOverlay"].push_back(
-        SimplifiedEvents{KeyPressed{sf::Keyboard::P}});
+    for (auto fn : s_default_customizable_bindings_registry)
+    {
+        auto [action, events] = fn();
+        bindings[action].push_back(events);
+    }
 
     return bindings;
 }
@@ -188,8 +123,11 @@ auto buildNonCustomizableBindings() -> SerializableBindings
     bindings["Window_Close"].push_back(SimplifiedEvents{Closed{}});
     bindings["Window_ToggleFullscreen"].push_back(SimplifiedEvents{KeyPressed{sf::Keyboard::F5}});
 
-    bindings["MainMenu_Play"].push_back(SimplifiedEvents{GuiEventClick{"MainMenu", "Play"}});
-    bindings["MainMenu_Quit"].push_back(SimplifiedEvents{GuiEventClick{"MainMenu", "Quit"}});
+    for (auto fn : s_non_customizable_bindings_registry)
+    {
+        auto [action, events] = fn();
+        bindings[action].push_back(events);
+    }
 
     return bindings;
 }
