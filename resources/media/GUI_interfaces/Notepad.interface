@@ -1,0 +1,2 @@
+Interface Notepad Notepad.style 0 16 Movable Title "Console"
+Element TextField NotepadPrompt 0 112 NotepadPrompt.style ">"

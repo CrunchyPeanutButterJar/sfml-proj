@@ -35,12 +35,8 @@ GUI_Manager::GUI_Manager(EventManager* l_evMgr, SharedContext* l_shared)
     m_eventMgr->addCallback(core::state::StateType(0), "Mouse_ButtonReleasedLeft",
                             [this](auto&& PH1)
                             { handleRelease(std::forward<decltype(PH1)>(PH1)); });
-    m_eventMgr->addCallback(core::state::StateType(0), "Key_AnyKeyPressed",
-                            [this](auto&& PH1)
-                            {
-                                if (!PH1.m_realtimeContribution)
-                                    handleTextEntered(std::forward<decltype(PH1)>(PH1));
-                            });
+    m_eventMgr->addCallback(core::state::StateType(0), "Key_TextEntered", [this](auto&& PH1)
+                            { handleTextEntered(std::forward<decltype(PH1)>(PH1)); });
 }
 
 GUI_Manager::~GUI_Manager()

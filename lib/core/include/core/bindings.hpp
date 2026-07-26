@@ -29,11 +29,7 @@ struct MouseWheelScrolled
 {
 };
 
-struct AnyKeyPressed
-{
-};
-
-struct AnyKeyReleased
+struct TextEntered
 {
 };
 
@@ -51,12 +47,7 @@ inline auto operator==(MouseWheelScrolled /*unused*/, MouseWheelScrolled /*unuse
     return true;
 }
 
-inline auto operator==(AnyKeyPressed /*unused*/, AnyKeyPressed /*unused*/) -> bool
-{
-    return true;
-}
-
-inline auto operator==(AnyKeyReleased /*unused*/, AnyKeyReleased /*unused*/) -> bool
+inline auto operator==(TextEntered /*unused*/, TextEntered /*unused*/) -> bool
 {
     return true;
 }
@@ -70,10 +61,9 @@ using GuiEventRelease = utils::PhantomType<GuiEvent, struct GuiEventReleaseParam
 using GuiEventHover   = utils::PhantomType<GuiEvent, struct GuiEventHoverParam>;
 using GuiEventLeave   = utils::PhantomType<GuiEvent, struct GuiEventLeaveParam>;
 
-using SimplifiedEvent =
-    std::variant<KeyPressed, KeyReleased, AnyKeyPressed, AnyKeyReleased, MouseButtonPressed,
-                 MouseButtonReleased, MouseMoved, MouseWheelScrolled, Closed, GuiEventClick,
-                 GuiEventRelease, GuiEventHover, GuiEventLeave>;
+using SimplifiedEvent = std::variant<KeyPressed, KeyReleased, TextEntered, MouseButtonPressed,
+                                     MouseButtonReleased, MouseMoved, MouseWheelScrolled, Closed,
+                                     GuiEventClick, GuiEventRelease, GuiEventHover, GuiEventLeave>;
 
 using Action           = std::string;
 using SimplifiedEvents = std::vector<SimplifiedEvent>;

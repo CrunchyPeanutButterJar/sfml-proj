@@ -106,8 +106,7 @@ auto buildNonCustomizableBindings() -> SerializableBindings
     SerializableBindings bindings;
 
     bindings["Key_Escape"].push_back(SimplifiedEvents{KeyPressed{sf::Keyboard::Escape}});
-    bindings["Key_AnyKeyPressed"].push_back(SimplifiedEvents{AnyKeyPressed{}});
-    bindings["Key_AnyKeyReleased"].push_back(SimplifiedEvents{AnyKeyReleased{}});
+    bindings["Key_TextEntered"].push_back(SimplifiedEvents{TextEntered{}});
 
     bindings["Mouse_Moved"].push_back(SimplifiedEvents{MouseMoved{}});
     bindings["Mouse_ButtonPressedLeft"].push_back(
@@ -206,40 +205,19 @@ static auto simplifiedEventMatchesActualEvent(const SimplifiedEvent& l_simpleEve
                                               core::EventDetails&    l_details) -> bool
 {
     return std::visit(
-        Overloaded{[&](KeyPressed l_simpleEvent)
-                   {
-                       if (l_event.type == sf::Event::KeyPressed &&
-                           l_simpleEvent.get() == l_event.key.code)
-                       {
-                           l_details.m_enteredText = (char)((int)'a' + l_event.key.code);
-                           return true;
-                       }
-                       return false;
+        Overloaded{[&](KeyPressed l_simpleEvent) {
+                       return l_event.type == sf::Event::KeyPressed &&
+                              l_simpleEvent.get() == l_event.key.code;
                    },
-                   [&](KeyReleased l_simpleEvent)
-                   {
-                       if (l_event.type == sf::Event::KeyReleased &&
-                           l_simpleEvent.get() == l_event.key.code)
-                       {
-                           l_details.m_enteredText = (char)((int)'a' + l_event.key.code);
-                           return true;
-                       }
-                       return false;
+                   [&](KeyReleased l_simpleEvent) {
+                       return l_event.type == sf::Event::KeyReleased &&
+                              l_simpleEvent.get() == l_event.key.code;
                    },
-                   [&](AnyKeyPressed)
+                   [&](TextEntered)
                    {
-                       if (l_event.type == sf::Event::KeyPressed)
+                       if (l_event.type == sf::Event::TextEntered)
                        {
-                           l_details.m_enteredText = (char)((int)'a' + l_event.key.code);
-                           return true;
-                       }
-                       return false;
-                   },
-                   [&](AnyKeyReleased)
-                   {
-                       if (l_event.type == sf::Event::KeyReleased)
-                       {
-                           l_details.m_enteredText = (char)((int)'a' + l_event.key.code);
+                           l_details.m_enteredText = (char)l_event.text.unicode;
                            return true;
                        }
                        return false;
