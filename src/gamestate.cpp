@@ -1,4 +1,5 @@
 #include "core/directions.hpp"
+#include "core/gui/GUI_interface.hpp"
 #include "ecs/ecs_types.hpp"
 #include "ecs/messaging/message_handler.hpp"
 #include "ecs/shared_context.hpp"
@@ -74,6 +75,9 @@ template class core::RegisterBinding<BINDING("Game_MoveRight", core::KeyPressed{
 template class core::RegisterBinding<BINDING("Game_Jump", core::KeyPressed{sf::Keyboard::Space}),
                                      core::Customizable>;
 
+template class core::RegisterBinding<BINDING("Game_OpenGameMap", core::KeyPressed{sf::Keyboard::M}),
+                                     core::Customizable>;
+
 GameState::GameState(core::state::StateManager& l_stateManager)
     : BaseState(l_stateManager), m_gameMap{m_stateManager.getContext<ecs::SharedContext>(), *this}
 {
@@ -91,6 +95,11 @@ GameState::GameState(core::state::StateManager& l_stateManager)
     auto* console = gui_manager.getInterface(StateType::Game, "Console");
     console->setPosition({0, 16});
     console->setActive(false);
+
+    gui_manager.loadInterface(StateType::Game, "Map.interface", "Map");
+    auto* map = gui_manager.getInterface(StateType::Game, "Map");
+    map->setPosition({0, 16});
+    map->setActive(false);
 
     auto& event_manager   = context->m_eventManager;
     auto& system_manager  = context->m_systemManager;
@@ -137,6 +146,15 @@ GameState::GameState(core::state::StateManager& l_stateManager)
                                   if (!l_details.m_realtimeContribution)
                                   {
                                       console->setActive(!console->isActive());
+                                  }
+                              });
+
+    event_manager.addCallback(StateType::Game, "Game_OpenGameMap",
+                              [map](const core::EventDetails& l_details)
+                              {
+                                  if (!l_details.m_realtimeContribution)
+                                  {
+                                      map->setActive(!map->isActive());
                                   }
                               });
 }

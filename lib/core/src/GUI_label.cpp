@@ -41,5 +41,9 @@ void GUI_Label::draw(sf::RenderTarget* l_target)
     {
         l_target->draw(m_visual.m_glyph);
     }
+    if (!m_style[m_state].m_backgroundImage.empty())
+    {
+        l_target->draw(m_visual.m_backgroundImage);
+    }
     l_target->draw(m_visual.m_text);
 }
