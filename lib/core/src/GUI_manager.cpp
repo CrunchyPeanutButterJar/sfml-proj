@@ -116,7 +116,7 @@ void GUI_Manager::handleClick(const core::EventDetails& l_details)
         }
         if (!itr.second->isActive())
         {
-            return;
+            continue;
         }
         itr.second->onClick(sf::Vector2f(mouse_pos));
         itr.second->focus();
