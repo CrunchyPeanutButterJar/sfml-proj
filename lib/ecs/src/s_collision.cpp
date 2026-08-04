@@ -158,7 +158,14 @@ void SCollision::mapCollisions(EntityId l_entity, entity::CPosition* l_position,
             l_collidable->setPosition(l_position->getPosition());
             m_systemManager.addEvent(l_entity,
                                      (messaging::EventId)messaging::EntityEvent::Colliding_Y);
-            l_collidable->collideOnY(Collision.m_tile);
+            if (Collision.m_tileBounds.top > entity_aabb.top)
+            {
+                l_collidable->collideOnY(Collision.m_tile);
+            }
+            else
+            {
+                l_collidable->collideOnY(nullptr);
+            }
         }
     }
 
