@@ -97,6 +97,21 @@ void Tokens::skipLine()
     }
 }
 
+void Tokens::setDelimiter(char l_delimiter)
+{
+    m_delimiter = l_delimiter;
+}
+
+auto Tokens::getDelimiter() const -> char
+{
+    return m_delimiter;
+}
+
+auto Tokens::setDelimiterScoped(char l_delimiter) -> Tokens::ScopedReplacer
+{
+    return Tokens::ScopedReplacer{*this, l_delimiter};
+}
+
 auto Tokens::empty() -> bool
 {
     return !currentMatch();

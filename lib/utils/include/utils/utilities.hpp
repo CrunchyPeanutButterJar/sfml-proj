@@ -68,6 +68,29 @@ class Tokens
     auto empty() -> bool;
     void skipLine();
 
+    void setDelimiter(char l_delimiter);
+    auto getDelimiter() const -> char;
+
+  private:
+    class ScopedReplacer
+    {
+      public:
+        ScopedReplacer(Tokens& l_tokens, char l_delimiter)
+            : m_tokens{l_tokens}, m_oldDelimiter{m_tokens.getDelimiter()}
+        {
+            l_tokens.setDelimiter(l_delimiter);
+        }
+
+        ~ScopedReplacer() { m_tokens.setDelimiter(m_oldDelimiter); }
+
+      private:
+        Tokens& m_tokens;
+        char    m_oldDelimiter;
+    };
+
+  public:
+    auto setDelimiterScoped(char l_delimiter) -> ScopedReplacer;
+
     template <typename T> auto head() -> std::optional<T>
     {
         if (!currentMatch())
@@ -95,7 +118,7 @@ class Tokens
 
     std::string         m_currentStr;
     std::istringstream  m_ss;
-    const char          m_delimiter;
+    char                m_delimiter;
     const char          m_commentChar;
     std::optional<char> m_quoteChar;
 };

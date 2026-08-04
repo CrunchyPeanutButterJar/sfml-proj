@@ -119,6 +119,42 @@ TEST(Tokenizer, capture_strings_test)
     EXPECT_TRUE(tokens.empty());
 }
 
+TEST(Tokenizer, change_delimiter)
+{
+    std::ostringstream ss;
+    ss << "\n\n\n\n\n    Component 6 footstep:\"1,4\" joe\n\n\n\n\n  \n \n \n \n \n      ";
+
+    utils::Tokens tokens{std::istringstream{ss.str()}};
+
+    consumeTokens<std::string, int>(tokens);
+
+    {
+        auto scoped = tokens.setDelimiterScoped(':');
+        auto str    = *consumeToken<std::string>(tokens);
+        EXPECT_EQ(str, "footstep");
+    }
+
+    tokens.captureQuotedStrings('"');
+    auto value = *consumeToken<std::string>(tokens);
+    tokens.captureQuotedStrings({});
+
+    utils::Tokens    inner_tokens{std::istringstream{value}, ','};
+    std::vector<int> frames;
+    while (!inner_tokens.empty())
+    {
+        frames.push_back(*consumeToken<int>(inner_tokens));
+    }
+
+    ASSERT_EQ(frames.size(), 2);
+    EXPECT_EQ(frames[0], 1);
+    EXPECT_EQ(frames[1], 4);
+
+    auto joe = *consumeToken<std::string>(tokens);
+    EXPECT_EQ(joe, "joe");
+
+    EXPECT_TRUE(tokens.empty());
+}
+
 TEST(number_theory, euclid_division_pgcd_ppcm)
 {
     using namespace ::testing;
