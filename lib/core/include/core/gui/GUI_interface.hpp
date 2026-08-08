@@ -1,7 +1,7 @@
 #ifndef CORE_GUI_GUI_INTERFACE_HPP
 #define CORE_GUI_GUI_INTERFACE_HPP
 
-#include "utils/utilities.hpp"
+#include <utils/utilities.fwd.hpp>
 #include <core/gui/GUI_element.hpp>
 #include <unordered_map>
 

@@ -8,7 +8,7 @@
 #include <core/gui/GUI_style.hpp>
 #include <string>
 #include <unordered_map>
-#include <utils/utilities.hpp>
+#include <utils/utilities.fwd.hpp>
 
 #include <memory>
 

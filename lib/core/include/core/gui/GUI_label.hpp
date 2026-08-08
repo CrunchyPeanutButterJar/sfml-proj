@@ -2,7 +2,7 @@
 #define CORE_GUI_GUI_LABEL_HPP
 
 #include <core/gui/GUI_element.hpp>
-#include <utils/utilities.hpp>
+#include <utils/utilities.fwd.hpp>
 
 namespace core::gui
 {
