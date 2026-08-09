@@ -155,6 +155,22 @@ TEST(Tokenizer, change_delimiter)
     EXPECT_TRUE(tokens.empty());
 }
 
+TEST(Tokenizer, capture_lines)
+{
+    std::ostringstream ss;
+    ss << "\n\n       \n\n\n    joee this is   aa  test        \n\n\n\n   last line 1 2 3      \n  "
+          "  \n";
+
+    utils::Tokens tokens{std::istringstream{ss.str()}, '\n'};
+    auto          first_line = *consumeToken<std::string>(tokens);
+    EXPECT_EQ(first_line, "joee this is   aa  test");
+
+    auto second_line = *consumeToken<std::string>(tokens);
+    EXPECT_EQ(second_line, "last line 1 2 3");
+
+    EXPECT_TRUE(tokens.empty());
+}
+
 TEST(number_theory, euclid_division_pgcd_ppcm)
 {
     using namespace ::testing;
