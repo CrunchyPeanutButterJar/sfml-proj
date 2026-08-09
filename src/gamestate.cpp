@@ -49,6 +49,9 @@ template class core::RegisterBinding<BINDING("Game_ToggleCollidableDebugOverlay"
                                      core::NonCustomizable>;
 
 template class core::RegisterBinding<
+    BINDING("Game_GoToMainMenu", core::KeyPressed{sf::Keyboard::Escape}), core::NonCustomizable>;
+
+template class core::RegisterBinding<
     BINDING("Game_OpenConsole", core::KeyPressed{sf::Keyboard::Tilde}), core::Customizable>;
 
 template class core::RegisterBinding<BINDING("Game_ToggleDebugOverlay",
@@ -157,6 +160,17 @@ GameState::GameState(core::state::StateManager& l_stateManager)
                                   if (!l_details.m_realtimeContribution)
                                   {
                                       map->setActive(!map->isActive());
+                                  }
+                              });
+
+    auto* state_manager = &m_stateManager;
+
+    event_manager.addCallback(StateType::Game, "Game_GoToMainMenu",
+                              [state_manager](const core::EventDetails& l_details)
+                              {
+                                  if (!l_details.m_realtimeContribution)
+                                  {
+                                      state_manager->switchTo(StateType::MainMenu);
                                   }
                               });
 
