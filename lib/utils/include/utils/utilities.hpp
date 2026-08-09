@@ -8,12 +8,17 @@
 #include <utils/assert.hpp>
 #include <utils/utilities.fwd.hpp>
 
-namespace utils
-{
 #ifdef _WIN32
 #include <Shlwapi.h>
 #include <windows.h>
-inline std::string GetWorkingDirectory()
+#elif __linux__
+#include <unistd.h>
+#endif
+
+namespace utils
+{
+#ifdef _WIN32
+inline auto getWorkingDirectory() -> std::string
 {
     HMODULE hModule = GetModuleHandle(nullptr);
     if (hModule)
@@ -27,7 +32,6 @@ inline std::string GetWorkingDirectory()
     return "";
 }
 #elif __linux__
-#include <unistd.h>
 inline auto getWorkingDirectory() -> std::string
 {
     char cwd[1024];
