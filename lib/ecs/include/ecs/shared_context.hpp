@@ -1,7 +1,8 @@
 #ifndef ECS_SHARED_CONTEXT_HPP
 #define ECS_SHARED_CONTEXT_HPP
 
-#include "core/gui/GUI_manager.hpp"
+#include <core/audio/audio_manager.fwd.hpp>
+#include <core/audio/sound_manager.fwd.hpp>
 #include <core/shared_context.hpp>
 #include <ecs/entity/entity_manager.fwd.hpp>
 #include <ecs/system/system_manager.fwd.hpp>
@@ -29,6 +30,8 @@ struct SharedContextBuilder
     core::graphics::TextureManager& m_textureManager;
     core::FontManager&              m_fontManager;
     core::gui::GUI_Manager&         m_guiManager;
+    core::audio::AudioManager&      m_audioManager;
+    core::audio::SoundManager&      m_soundManager;
     entity::EntityManager&          m_entityManager;
     system::SystemManager&          m_systemManager;
 
@@ -38,7 +41,9 @@ struct SharedContextBuilder
                                                  .m_eventManager   = l_builder.m_eventManager,
                                                  .m_textureManager = l_builder.m_textureManager,
                                                  .m_fontManager    = l_builder.m_fontManager,
-                                                 .m_guiManager     = l_builder.m_guiManager},
+                                                 .m_guiManager     = l_builder.m_guiManager,
+                                                 .m_audioManager   = l_builder.m_audioManager,
+                                                 .m_soundManager   = l_builder.m_soundManager},
                              l_builder.m_entityManager, l_builder.m_systemManager);
     }
 };

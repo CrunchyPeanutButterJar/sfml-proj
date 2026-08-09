@@ -3,6 +3,7 @@
 #include <ecs/system/s_movement.hpp>
 #include <ecs/system/s_renderer.hpp>
 #include <ecs/system/s_sheet_animation.hpp>
+#include <ecs/system/s_sound.hpp>
 #include <ecs/system/s_state.hpp>
 #include <ecs/system/system_manager.hpp>
 #include <memory>
@@ -20,6 +21,7 @@ SystemManager::SystemManager(EntityManager& l_entityManager) : m_entityManager{l
     m_systems[System::SheetAnimation] = std::make_unique<SSheetAnimation>(*this);
     m_systems[System::State]          = std::make_unique<SState>(*this);
     m_systems[System::Collision]      = std::make_unique<SCollision>(*this);
+    m_systems[System::Sound]          = std::make_unique<SSound>(*this);
 }
 
 auto SystemManager::getEntityManager() -> EntityManager&

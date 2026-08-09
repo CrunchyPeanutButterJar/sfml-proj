@@ -1,10 +1,12 @@
 #include "ecs/ecs_types.hpp"
 #include "ecs/entity/c_state.fwd.hpp"
 #include "ecs/messaging/entity_message.hpp"
+#include "ecs/messaging/message.hpp"
 #include "utils/bitmask.hpp"
 #include <ecs/entity/c_spritesheet.hpp>
 #include <ecs/entity/c_state.hpp>
 #include <ecs/entity/entity_manager.hpp>
+#include <ecs/messaging/message_handler.hpp>
 #include <ecs/system/s_sheet_animation.hpp>
 #include <ecs/system/system_manager.hpp>
 #include <utils/utilities.hpp>
@@ -29,6 +31,19 @@ void SSheetAnimation::update(float l_dt)
     {
         auto* sheet = entities.getComponent<entity::CSpriteSheet>(entity, Component::SpriteSheet);
         sheet->getSpriteSheet()->update(l_dt);
+
+        auto* anim = sheet->getSpriteSheet()->getCurrentAnimation();
+
+        if (anim->hasMoved())
+        {
+            using namespace messaging;
+
+            auto    frame = anim->getFrame();
+            Message msg{.m_type     = (MessageType)EntityMessage::Frame_Change,
+                        .m_receiver = (int)entity,
+                        .m_int      = (int)frame};
+            m_systemManager.getMessageHandler().dispatch(msg);
+        }
 
         // TODO: handle dispatching of death and attack messages
     }

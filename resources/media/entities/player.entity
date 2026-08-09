@@ -1,8 +1,10 @@
 Name player
-Attributes 63
+Attributes 255
 Component 0 0 0
 Component 1 samuraiSprite.sheet
 Component 2 0
 Component 3 400. 2000. 50000. 0
 Component 4
 Component 5 45 78 0. 0. 2
+Component 6 footstep:"0,3,7"
+Component 7

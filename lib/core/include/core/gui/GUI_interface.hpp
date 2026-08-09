@@ -1,9 +1,9 @@
 #ifndef CORE_GUI_GUI_INTERFACE_HPP
 #define CORE_GUI_GUI_INTERFACE_HPP
 
-#include <utils/utilities.fwd.hpp>
 #include <core/gui/GUI_element.hpp>
 #include <unordered_map>
+#include <utils/utilities.fwd.hpp>
 
 #include <SFML/Graphics/RenderTexture.hpp>
 #include <SFML/Graphics/RenderWindow.hpp>

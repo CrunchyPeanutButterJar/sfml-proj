@@ -5,6 +5,8 @@
 #include "ecs/shared_context.hpp"
 #include <SFML/System/Time.hpp>
 #include <SFML/Window/WindowBase.hpp>
+#include <core/audio/sound_manager.hpp>
+#include <core/gui/GUI_manager.hpp>
 #include <core/state/statemanager.hpp>
 #include <gamestate.hpp>
 #include <utils/utilities.hpp>
@@ -157,6 +159,9 @@ GameState::GameState(core::state::StateManager& l_stateManager)
                                       map->setActive(!map->isActive());
                                   }
                               });
+
+    auto& sound_manager = m_stateManager.getContext()->m_soundManager;
+    sound_manager.playMusic("media/audio/game_theme.mp3", 50.F, true);
 }
 
 GameState::~GameState() = default;

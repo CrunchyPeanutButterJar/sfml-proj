@@ -66,6 +66,7 @@ auto BaseAnimation::nextFrame() -> bool
             return false;
         }
         m_frameCurrent++;
+        m_hasMoved = true;
     }
     else
     {
@@ -75,6 +76,7 @@ auto BaseAnimation::nextFrame() -> bool
         }
 
         m_frameCurrent--;
+        m_hasMoved = true;
     }
 
     return true;
@@ -89,4 +91,11 @@ auto BaseAnimation::isInAction() const -> bool
 
     return (((int)m_frameCurrent >= m_frameActionStart) &&
             ((int)m_frameCurrent <= m_frameActionEnd));
+}
+
+auto BaseAnimation::hasMoved() const -> bool
+{
+    bool result = m_hasMoved;
+    m_hasMoved  = false;
+    return result;
 }

@@ -1,6 +1,7 @@
 #include <functional>
 #include <mainmenustate.hpp>
 
+#include <core/audio/sound_manager.hpp>
 #include <core/bindings.hpp>
 #include <core/event_manager.hpp>
 #include <core/gui/GUI_manager.hpp>
@@ -28,6 +29,9 @@ MainMenuState::MainMenuState(core::state::StateManager& l_stateManager) : BaseSt
                               { state_manager->switchTo(StateType::Game); });
     event_manager.addCallback(StateType::MainMenu, "MainMenu_Quit", [state_manager](const auto&)
                               { state_manager->getContext()->m_window.setAsDone(); });
+
+    auto& sound_manager = m_stateManager.getContext()->m_soundManager;
+    sound_manager.playMusic("media/audio/mainmenu_theme.mp3", 50.F, true);
 }
 
 MainMenuState::~MainMenuState()

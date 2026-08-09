@@ -10,6 +10,8 @@
 #include <core/window.hpp>
 #include <core/gui/GUI_manager.hpp>
 #include <core/font_manager.hpp>
+#include <core/audio/audio_manager.hpp>
+#include <core/audio/sound_manager.hpp>
 
 class Game
 {
@@ -40,6 +42,9 @@ private:
     core::graphics::TextureManager m_textureManager;
     core::FontManager m_fontManager;
     core::gui::GUI_Manager m_guiManager;
+    core::audio::AudioManager m_audioManager;
+    core::audio::SoundManager m_soundManager;
+
 };
 
 #endif

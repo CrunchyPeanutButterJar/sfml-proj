@@ -4,6 +4,8 @@
 #include <ecs/entity/c_controller.hpp>
 #include <ecs/entity/c_movable.hpp>
 #include <ecs/entity/c_position.hpp>
+#include <ecs/entity/c_sound_emitter.hpp>
+#include <ecs/entity/c_sound_listener.hpp>
 #include <ecs/entity/c_spritesheet.hpp>
 #include <ecs/entity/c_state.hpp>
 #include <ecs/entity/entity_manager.hpp>
@@ -26,6 +28,8 @@ EntityManager::EntityManager(SystemManager&                  l_sysManager,
     addComponentType<CMovable>(Component::Movable);
     addComponentType<CController>(Component::Controller);
     addComponentType<CCollidable>(Component::Collidable);
+    addComponentType<CSoundEmitter>(Component::SoundEmitter);
+    addComponentType<CSoundListener>(Component::SoundListener);
 }
 
 auto EntityManager::addEntity(utils::Bitmask l_mask) -> int

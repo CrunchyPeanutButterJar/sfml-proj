@@ -18,7 +18,9 @@ enum class Component
     State,
     Movable,
     Controller,
-    Collidable
+    Collidable,
+    SoundEmitter,
+    SoundListener
 };
 
 enum class System
@@ -28,7 +30,8 @@ enum class System
     Collision,
     Control,
     State,
-    SheetAnimation
+    SheetAnimation,
+    Sound
 };
 } // namespace ecs
 

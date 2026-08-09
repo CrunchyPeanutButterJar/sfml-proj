@@ -1,4 +1,5 @@
 #include <algorithm>
+#include <core/audio/sound_manager.hpp>
 #include <core/gui/GUI_manager.hpp>
 #include <core/state/statemanager.hpp>
 #include <ranges>
@@ -10,6 +11,7 @@ using namespace core::state;
 void StateManager::switchTo(StateType l_state)
 {
     m_context.m_guiManager.setCurrentState(l_state);
+    m_context.m_soundManager.changeState(l_state);
 
     auto itr = std::find_if(m_states.begin(), m_states.end(),
                             [l_state](const auto& el) { return el.first == l_state; });
@@ -81,6 +83,7 @@ void StateManager::processRequests()
                                 [to_remove](const auto& el) { return el.first == to_remove; });
         if (itr != m_states.end())
         {
+            m_context.m_soundManager.removeState(itr->first);
             m_states.erase(itr);
         }
     }

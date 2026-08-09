@@ -32,6 +32,7 @@ class BaseAnimation
     auto nextFrame() -> bool;
 
     [[nodiscard]] auto isInAction() const -> bool;
+    [[nodiscard]] auto hasMoved() const -> bool;
 
   protected:
     virtual void frameStep()  = 0;
@@ -50,6 +51,7 @@ class BaseAnimation
     std::string                  m_name;
     core::graphics::SpriteSheet* m_spriteSheet{};
     sf::Texture*                 m_texture{};
+    mutable bool                 m_hasMoved{false};
 };
 } // namespace core::animation
 

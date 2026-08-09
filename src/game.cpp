@@ -1,7 +1,9 @@
 #include "core/gui/GUI_event.hpp"
+#include "ecs/ecs_types.hpp"
 #include <SFML/Graphics/View.hpp>
 #include <game.hpp>
 
+#include <ecs/system/s_sound.hpp>
 #include <gamestate.hpp>
 #include <mainmenustate.hpp>
 #include <utils/assert.hpp>
@@ -61,14 +63,20 @@ Game::Game()
                                                   .m_textureManager = m_textureManager,
                                                   .m_fontManager    = m_fontManager,
                                                   .m_guiManager     = m_guiManager,
+                                                  .m_audioManager   = m_audioManager,
+                                                  .m_soundManager   = m_soundManager,
                                                   .m_entityManager  = m_entityManager,
                                                   .m_systemManager  = m_systemManager})},
       m_stateManager{core::state::StateManager::build<MainMenuState, GameState>(m_context)},
       m_entityManager{m_systemManager, m_stateManager.getContext()->m_textureManager},
       m_systemManager{m_entityManager},
-      m_guiManager(&m_window.getEventManager(), m_stateManager.getContext())
+      m_guiManager(&m_window.getEventManager(), m_stateManager.getContext()),
+      m_soundManager{m_audioManager}
 {
     m_stateManager.switchTo(StateType::MainMenu);
+
+    m_systemManager.getSystem<ecs::system::SSound>(ecs::System::Sound)
+        ->setUp(&m_audioManager, &m_soundManager);
 }
 
 void Game::update()
@@ -76,6 +84,7 @@ void Game::update()
     m_window.update(m_stateManager.getCurrentState());
     m_stateManager.update(m_elapsed);
     m_guiManager.update(m_elapsed.asSeconds());
+    m_soundManager.update(m_elapsed.asSeconds());
     core::gui::GUI_Event gui_event{};
     while (m_guiManager.pollEvent(gui_event))
     {
