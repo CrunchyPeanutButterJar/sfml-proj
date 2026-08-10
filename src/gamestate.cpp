@@ -142,7 +142,8 @@ GameState::GameState(core::state::StateManager& l_stateManager)
         StateType::Game, "Game_ToggleCollidableDebugOverlay", [](const auto&)
         { ecs::entity::CCollidable::debug_overlay = !ecs::entity::CCollidable::debug_overlay; });
 
-    event_manager.addCallback(StateType::Game, "Game_ToggleDebugOverlay", [cur_interface](const auto&)
+    event_manager.addCallback(StateType::Game, "Game_ToggleDebugOverlay",
+                              [cur_interface](const auto&)
                               { cur_interface->setActive(!cur_interface->isActive()); });
 
     event_manager.addCallback(StateType::Game, "Game_OpenConsole",

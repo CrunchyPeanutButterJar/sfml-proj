@@ -4,6 +4,7 @@
 #include "ecs/messaging/entity_message.hpp"
 #include "ecs/messaging/message.hpp"
 #include "utils/bitmask.hpp"
+#include <array>
 #include <ecs/entity/c_state.hpp>
 #include <ecs/entity/entity_manager.hpp>
 #include <ecs/messaging/event_queue.hpp>
@@ -11,7 +12,6 @@
 #include <ecs/system/system_manager.hpp>
 #include <unordered_map>
 #include <utils/utilities.hpp>
-#include <array>
 
 namespace ecs::system
 {

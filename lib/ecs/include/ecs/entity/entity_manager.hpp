@@ -6,11 +6,11 @@
 #include <ecs/entity/entity_manager.fwd.hpp>
 #include <ecs/system/system_manager.fwd.hpp>
 #include <functional>
+#include <string>
 #include <unordered_map>
 #include <utility>
 #include <utils/bitmask.hpp>
 #include <vector>
-#include <string>
 
 namespace ecs::entity
 {
