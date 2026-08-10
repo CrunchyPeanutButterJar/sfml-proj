@@ -4,6 +4,7 @@
 #include <optional>
 #include <sstream>
 #include <string>
+#include <algorithm> 
 #include <tuple>
 #include <utils/assert.hpp>
 #include <utils/utilities.fwd.hpp>
@@ -26,7 +27,8 @@ inline auto getWorkingDirectory() -> std::string
         char path[256];
         GetModuleFileName(hModule, path, sizeof(path));
         PathRemoveFileSpec(path);
-        strcat_s(path, "\\");     // new
+        std::replace(path, path + sizeof(path), '\\', '/');
+        strcat_s(path, "/");     // new
         return std::string(path); // new
     }
     return "";
@@ -165,7 +167,22 @@ template <typename... T> auto consumeTokens(Tokens& l_tokens) -> std::optional<s
     };
 
     static constexpr auto ToTuple = [](Tokens& l_tokens, bool& l_error) -> std::tuple<T...>
-    { return std::make_tuple(ToType(ConsumeToken(l_tokens, l_error), l_error, (T*)nullptr)...); };
+    { 
+        std::tuple<T...> result;
+
+        constexpr auto assign = [](auto self, Tokens& l_tokens, bool& l_error, auto& first, auto&... rest)
+        {
+            first = ToType(ConsumeToken(l_tokens, l_error), l_error, &first);
+            if constexpr(sizeof...(rest) > 0) self(self, l_tokens, l_error, rest...); 
+        };
+
+        std::apply([&](auto&... args)
+        {
+            assign(assign, l_tokens, l_error, args...); 
+        }, result);
+
+        return result;
+    };
 
     auto tuple = ToTuple(l_tokens, error);
     if (!error)

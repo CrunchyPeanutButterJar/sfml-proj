@@ -9,9 +9,12 @@ endif()
 
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
+if(WIN32)
+add_compile_definitions(NOMINMAX)
+endif()
+
 add_compile_options(
     -std=c++23
-    -stdlib=libc++
     -Wall
     -Werror
     -Wextra
@@ -23,14 +26,25 @@ add_compile_options(
     $<$<CONFIG:Release>:-O3>
 )
 
+if(UNIX)
+add_compile_options(
+    -stdlib=libc++
+)
+endif()
+
 add_link_options(
-  -lc++
-  -stdlib=libc++
-  -lc++abi
   $<$<CONFIG:Debug>:-g>
   $<$<CONFIG:Debug>:-fsanitize=address>
   $<$<CONFIG:Debug>:-fno-omit-frame-pointer>
 )
+
+if(UNIX)
+add_link_options(
+  -lc++
+  -stdlib=libc++
+  -lc++abi
+)
+endif()
 
 add_subdirectory(lib/utils)
 add_subdirectory(lib/core)

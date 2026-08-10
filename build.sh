@@ -59,18 +59,45 @@ if $DO_CLEAN; then
     exit 0
 fi
 
+detect_os() {
+  case "$(uname -s)" in
+    Linux*) echo "Linux" ;;
+    *) echo "Windows" ;;
+  esac
+}
+
 echo "⚙️ Build en mode $BUILD_TYPE"
 
 echo "Creation clang_profile"
 
 PROFILE_NAME="clang_profile"
-PROFILE_PATH=$(conan profile path "$PROFILE_NAME" 2>/dev/null)
 
-conan profile detect --name=$(PROFILE_NAME) --force
+set +e
+conan profile detect --name=$PROFILE_NAME 2>/dev/null
+set -e
+
+detect_conan_path() {
+  os=$(detect_os)
+  if [ "$os" = "Linux" ]; then
+    conan profile path "$PROFILE_NAME" 2>/dev/null
+  elif [ "$os" = "Windows" ]; then
+    cygpath.exe $(conan profile path "$PROFILE_NAME" 2>/dev/null)
+  fi
+}
+
+PROFILE_PATH=$(detect_conan_path)
+
+define_clang_version() {
+  os=$(detect_os)
+  version="18"
+  if [ "$os" = "Windows" ]; then
+    version="19"
+  fi
+  sed -i "s/compiler.version=.*/compiler.version=$version/" "$PROFILE_PATH"
+}
 
 sed -i 's/compiler=.*/compiler=clang/' "$PROFILE_PATH"
-sed -i 's/compiler.version=.*/compiler.version=18/' "$PROFILE_PATH"
-sed -i 's/compiler.libcxx=.*/compiler.libcxx=libc++/' "$PROFILE_PATH"
+define_clang_version
 sed -i 's/compiler.cppstd=.*/compiler.cppstd=23/' "$PROFILE_PATH"
 
 if [[ "$CONAN_STEP" == "true" || ! -d $BUILD_DIR ]]; then
@@ -88,6 +115,7 @@ cmake .. \
     -DCMAKE_CXX_COMPILER=clang++\
     -DCMAKE_EXPORT_COMPILE_COMMANDS=ON\
     -DCMAKE_TOOLCHAIN_FILE=conan_toolchain.cmake \
+    --preset conan-release\
     -DCMAKE_BUILD_TYPE=$BUILD_TYPE
 
 cmake --build .

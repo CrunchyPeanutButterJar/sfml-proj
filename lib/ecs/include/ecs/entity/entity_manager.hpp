@@ -10,6 +10,7 @@
 #include <utility>
 #include <utils/bitmask.hpp>
 #include <vector>
+#include <string>
 
 namespace ecs::entity
 {

@@ -18,8 +18,8 @@ MainMenuState::MainMenuState(core::state::StateManager& l_stateManager) : BaseSt
 {
     auto& gui_manager = m_stateManager.getContext()->m_guiManager;
     gui_manager.loadInterface(StateType::MainMenu, "MainMenu.interface", "MainMenu");
-    auto* interface = gui_manager.getInterface(StateType::MainMenu, "MainMenu");
-    interface->setPosition({0, 0});
+    auto* cur_interface = gui_manager.getInterface(StateType::MainMenu, "MainMenu");
+    cur_interface->setPosition({0, 0});
     // auto* play = interface->getElement("Play");
     // play->setText("Play");
     auto& event_manager = m_stateManager.getContext()->m_eventManager;

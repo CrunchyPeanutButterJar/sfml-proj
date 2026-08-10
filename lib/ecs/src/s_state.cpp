@@ -11,6 +11,7 @@
 #include <ecs/system/system_manager.hpp>
 #include <unordered_map>
 #include <utils/utilities.hpp>
+#include <array>
 
 namespace ecs::system
 {

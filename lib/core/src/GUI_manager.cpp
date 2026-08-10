@@ -305,15 +305,15 @@ auto GUI_Manager::loadInterface(core::state::StateType l_state, const std::strin
                 return false;
             }
 
-            auto* interface = getInterface(l_state, l_name);
-            interface->readIn(tokens);
+            auto* cur_interface = getInterface(l_state, l_name);
+            cur_interface->readIn(tokens);
 
-            if (!loadStyle(style_file_name, interface))
+            if (!loadStyle(style_file_name, cur_interface))
             {
                 FAILURE_NON_FATAL("Failed to load style file {} for interface {}", style_file_name,
                                   l_name);
             }
-            interface->setContentSize(interface->getSize());
+            cur_interface->setContentSize(cur_interface->getSize());
         }
         else if (key == "Element")
         {
@@ -337,10 +337,10 @@ auto GUI_Manager::loadInterface(core::state::StateType l_state, const std::strin
                 continue;
             }
 
-            if (auto* interface = getInterface(l_state, l_name))
+            if (auto* cur_interface = getInterface(l_state, l_name))
             {
-                interface->addElement(e_type, name);
-                auto* element = interface->getElement(name);
+                cur_interface->addElement(e_type, name);
+                auto* element = cur_interface->getElement(name);
                 element->readIn(tokens);
                 element->setPosition(position);
                 ASSERT_NON_FATAL(loadStyle(style, element),
