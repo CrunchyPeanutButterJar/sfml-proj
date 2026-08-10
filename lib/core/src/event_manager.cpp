@@ -282,8 +282,8 @@ static auto simplifiedEventMatchesActualEvents(const SimplifiedEvent& l_simpleEv
 static auto matchesInterfaceAndElement(const GuiEvent&             l_expectedEvent,
                                        const core::gui::GUI_Event& l_actualEvent)
 {
-    const auto& [interface, element] = l_expectedEvent;
-    return l_actualEvent.m_interface == interface && l_actualEvent.m_element == element;
+    const auto& [cur_interface, element] = l_expectedEvent;
+    return l_actualEvent.m_interface == cur_interface && l_actualEvent.m_element == element;
 }
 
 static auto simplifiedEventMatchesActualGuiEvent(const SimplifiedEvent&      l_simpleEvent,

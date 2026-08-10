@@ -92,9 +92,9 @@ GameState::GameState(core::state::StateManager& l_stateManager)
 
     auto& gui_manager = m_stateManager.getContext()->m_guiManager;
     gui_manager.loadInterface(StateType::Game, "DebugOverlay.interface", "DebugOverlay");
-    auto* interface = gui_manager.getInterface(StateType::Game, "DebugOverlay");
-    interface->setPosition({0, 16});
-    interface->setActive(false);
+    auto* cur_interface = gui_manager.getInterface(StateType::Game, "DebugOverlay");
+    cur_interface->setPosition({0, 16});
+    cur_interface->setActive(false);
 
     gui_manager.loadInterface(StateType::Game, "Notepad.interface", "Console");
     auto* console = gui_manager.getInterface(StateType::Game, "Console");
@@ -142,8 +142,8 @@ GameState::GameState(core::state::StateManager& l_stateManager)
         StateType::Game, "Game_ToggleCollidableDebugOverlay", [](const auto&)
         { ecs::entity::CCollidable::debug_overlay = !ecs::entity::CCollidable::debug_overlay; });
 
-    event_manager.addCallback(StateType::Game, "Game_ToggleDebugOverlay", [interface](const auto&)
-                              { interface->setActive(!interface->isActive()); });
+    event_manager.addCallback(StateType::Game, "Game_ToggleDebugOverlay", [cur_interface](const auto&)
+                              { cur_interface->setActive(!cur_interface->isActive()); });
 
     event_manager.addCallback(StateType::Game, "Game_OpenConsole",
                               [console](const auto& l_details)
