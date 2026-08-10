@@ -115,7 +115,7 @@ cmake .. \
     -DCMAKE_CXX_COMPILER=clang++\
     -DCMAKE_EXPORT_COMPILE_COMMANDS=ON\
     -DCMAKE_TOOLCHAIN_FILE=conan_toolchain.cmake \
-    --preset conan-release\
+    $(if [ "$BUILD_TYPE" = "Release" ]; then echo "--preset conan-release"; else echo ""; fi )\
     -DCMAKE_BUILD_TYPE=$BUILD_TYPE
 
 cmake --build .
