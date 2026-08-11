@@ -56,8 +56,10 @@ static auto loadResolutionFromConfigFile() -> sf::Vector2u
     }
 }
 
+static const sf::Vector2u INGAME_RESOLUTION = {320, 320};
+
 Game::Game()
-    : m_window{"MyGame", loadResolutionFromConfigFile()},
+    : m_window{"MyGame", INGAME_RESOLUTION, loadResolutionFromConfigFile()},
       m_context{ecs::SharedContextBuilder::build({.m_window         = m_window,
                                                   .m_eventManager   = m_window.getEventManager(),
                                                   .m_textureManager = m_textureManager,

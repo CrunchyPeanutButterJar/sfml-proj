@@ -4,6 +4,7 @@
 #include <SFML/Graphics.hpp>
 
 #include <SFML/Graphics/Rect.hpp>
+#include <SFML/System/Vector2.hpp>
 #include <core/event_manager.hpp>
 
 namespace core
@@ -12,7 +13,8 @@ class Window
 {
   public:
     Window();
-    Window(const std::string& l_title, const sf::Vector2u& l_size);
+    Window(const std::string& l_title, const sf::Vector2u& l_actualSize,
+           const sf::Vector2u& l_scaledSize);
     ~Window();
     void beginDraw(); // Clear the window.
     void endDraw();   // Display the changes.

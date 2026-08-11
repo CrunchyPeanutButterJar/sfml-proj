@@ -7,9 +7,11 @@ Window::Window()
     setup("Window", sf::Vector2u(640, 480));
 }
 
-Window::Window(const std::string& l_title, const sf::Vector2u& l_size)
+Window::Window(const std::string& l_title, const sf::Vector2u& l_actualSize,
+               const sf::Vector2u& l_scaledSize)
 {
-    setup(l_title, l_size);
+    setup(l_title, l_actualSize);
+    getRenderWindow()->setSize(l_scaledSize);
 }
 
 Window::~Window()
