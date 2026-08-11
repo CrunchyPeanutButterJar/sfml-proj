@@ -121,6 +121,7 @@ auto buildNonCustomizableBindings() -> SerializableBindings
 
     bindings["Window_Close"].push_back(SimplifiedEvents{Closed{}});
     bindings["Window_ToggleFullscreen"].push_back(SimplifiedEvents{KeyPressed{sf::Keyboard::F5}});
+    bindings["Window_Resized"].push_back(SimplifiedEvents{WindowResized{}});
 
     for (auto fn : s_non_customizable_bindings_registry)
     {
@@ -265,6 +266,15 @@ static auto simplifiedEventMatchesActualEvent(const SimplifiedEvent& l_simpleEve
                        return false;
                    },
                    [&l_event](Closed) { return l_event.type == sf::Event::Closed; },
+                   [&](WindowResized)
+                   {
+                       if (l_event.type == sf::Event::Resized)
+                       {
+                           l_details.m_newWindowSize = {l_event.size.width, l_event.size.height};
+                           return true;
+                       }
+                       return false;
+                   },
                    [](auto&&) { return false; }},
 
         l_simpleEvent);

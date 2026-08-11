@@ -24,6 +24,7 @@ struct EventDetails
     std::optional<float>        m_scrollWheelDelta;
     std::optional<int>          m_mouseButton;
     std::optional<char>         m_enteredText;
+    std::optional<sf::Vector2u> m_newWindowSize;
     bool                        m_realtimeContribution{false};
 };
 

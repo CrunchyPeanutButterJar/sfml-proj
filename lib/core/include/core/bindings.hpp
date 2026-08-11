@@ -33,6 +33,10 @@ struct TextEntered
 {
 };
 
+struct WindowResized
+{
+};
+
 inline auto operator==(Closed /*unused*/, Closed /*unused*/) -> bool
 {
     return true;
@@ -52,6 +56,11 @@ inline auto operator==(TextEntered /*unused*/, TextEntered /*unused*/) -> bool
     return true;
 }
 
+inline auto operator==(WindowResized /*unused*/, WindowResized /*unused*/) -> bool
+{
+    return true;
+}
+
 // GUI events
 
 using GuiEvent = std::pair<std::string, std::string>; // interface - element
@@ -61,9 +70,10 @@ using GuiEventRelease = utils::PhantomType<GuiEvent, struct GuiEventReleaseParam
 using GuiEventHover   = utils::PhantomType<GuiEvent, struct GuiEventHoverParam>;
 using GuiEventLeave   = utils::PhantomType<GuiEvent, struct GuiEventLeaveParam>;
 
-using SimplifiedEvent = std::variant<KeyPressed, KeyReleased, TextEntered, MouseButtonPressed,
-                                     MouseButtonReleased, MouseMoved, MouseWheelScrolled, Closed,
-                                     GuiEventClick, GuiEventRelease, GuiEventHover, GuiEventLeave>;
+using SimplifiedEvent =
+    std::variant<KeyPressed, KeyReleased, TextEntered, MouseButtonPressed, MouseButtonReleased,
+                 MouseMoved, MouseWheelScrolled, Closed, WindowResized, GuiEventClick,
+                 GuiEventRelease, GuiEventHover, GuiEventLeave>;
 
 using Action           = std::string;
 using SimplifiedEvents = std::vector<SimplifiedEvent>;
