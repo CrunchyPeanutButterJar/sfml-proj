@@ -77,7 +77,7 @@ auto GUI_Interface::getManager() const -> GUI_Manager*
     return m_guiManager;
 }
 
-static auto getOriginalPoint(sf::Vector2f l_point, GUI_Manager* l_guiManager) -> sf::Vector2f
+auto core::gui::getOriginalPoint(sf::Vector2f l_point, GUI_Manager* l_guiManager) -> sf::Vector2f
 {
     auto [original_width, original_height] = l_guiManager->getContext()->m_window.getWindowSize();
     auto [width, height] = l_guiManager->getContext()->m_window.getRenderWindow()->getSize();

@@ -47,7 +47,9 @@ void GUI_Scrollbar::readIn(utils::Tokens& l_tokens)
 }
 void GUI_Scrollbar::onClick(const sf::Vector2f& l_mousePos)
 {
-    if (!m_slider.getGlobalBounds().contains(l_mousePos - m_owner->getPosition()))
+    auto* gui_manager = &m_owner->getManager()->getContext()->m_guiManager;
+    if (!m_slider.getGlobalBounds().contains(getOriginalPoint(l_mousePos, gui_manager) -
+                                             m_owner->getPosition()))
     {
         return;
     }
@@ -116,8 +118,11 @@ void GUI_Scrollbar::update(float /*l_dT*/)
     {
         return;
     }
-    sf::Vector2f difference = mouse_pos - m_moveMouseLast;
-    m_moveMouseLast         = mouse_pos;
+    auto* gui_manager = &context->m_guiManager;
+
+    sf::Vector2f difference =
+        getOriginalPoint(mouse_pos, gui_manager) - getOriginalPoint(m_moveMouseLast, gui_manager);
+    m_moveMouseLast = mouse_pos;
 
     bool horizontal = m_sliderType == SliderType::Horizontal;
     m_slider.move((horizontal ? difference.x : 0), (horizontal ? 0 : difference.y));
