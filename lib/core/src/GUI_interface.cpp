@@ -77,13 +77,29 @@ auto GUI_Interface::getManager() const -> GUI_Manager*
     return m_guiManager;
 }
 
+static auto getOriginalPoint(sf::Vector2f l_point, GUI_Manager* l_guiManager) -> sf::Vector2f
+{
+    auto [original_width, original_height] = l_guiManager->getContext()->m_window.getWindowSize();
+    auto [width, height] = l_guiManager->getContext()->m_window.getRenderWindow()->getSize();
+
+    float width_scalar  = static_cast<float>(width) / original_width;
+    float height_scalar = static_cast<float>(height) / original_height;
+
+    l_point.x /= width_scalar;
+    l_point.y /= height_scalar;
+
+    return l_point;
+}
+
 auto GUI_Interface::isInside(const sf::Vector2f& l_point) const -> bool
 {
-    if (GUI_Element::isInside(l_point))
+    const auto OriginalMousePos = getOriginalPoint(l_point, m_guiManager);
+
+    if (GUI_Element::isInside(OriginalMousePos))
     {
         return true;
     }
-    return m_titleBar.getGlobalBounds().contains(l_point);
+    return m_titleBar.getGlobalBounds().contains(OriginalMousePos);
 }
 
 void GUI_Interface::focus()
@@ -126,7 +142,9 @@ void GUI_Interface::readIn(utils::Tokens& l_tokens)
 void GUI_Interface::onClick(const sf::Vector2f& l_mousePos)
 {
     defocusTextfields();
-    if (m_titleBar.getGlobalBounds().contains(l_mousePos) && m_movable && m_showTitleBar)
+    const auto OriginalMousePos = getOriginalPoint(l_mousePos, m_guiManager);
+
+    if (m_titleBar.getGlobalBounds().contains(OriginalMousePos) && m_movable && m_showTitleBar)
     {
         m_beingMoved = true;
     }
@@ -139,9 +157,10 @@ void GUI_Interface::onClick(const sf::Vector2f& l_mousePos)
         event.m_clickCoords.m_x = l_mousePos.x;
         event.m_clickCoords.m_y = l_mousePos.y;
         m_guiManager->addEvent(event);
+
         for (auto& itr : m_elements)
         {
-            if (!itr.second->isInside(l_mousePos))
+            if (!itr.second->isInside(OriginalMousePos))
             {
                 continue;
             }
@@ -242,7 +261,9 @@ void GUI_Interface::update(float l_dT)
 
     if (m_beingMoved && m_moveMouseLast != MousePos)
     {
-        sf::Vector2f difference   = MousePos - m_moveMouseLast;
+        const auto   OriginalMousePos = getOriginalPoint(MousePos, m_guiManager);
+        sf::Vector2f difference =
+            OriginalMousePos - getOriginalPoint(m_moveMouseLast, m_guiManager);
         m_moveMouseLast           = MousePos;
         sf::Vector2f new_position = m_position + difference;
         setPosition(new_position);
@@ -275,8 +296,11 @@ void GUI_Interface::update(float l_dT)
         event.m_element         = itr.second->m_name.c_str();
         event.m_clickCoords.m_x = MousePos.x;
         event.m_clickCoords.m_y = MousePos.y;
-        if (isInside(MousePos) && itr.second->isInside(MousePos) &&
-            !m_titleBar.getGlobalBounds().contains(MousePos))
+
+        const auto OriginalMousePos = getOriginalPoint(MousePos, m_guiManager);
+
+        if (isInside(MousePos) && itr.second->isInside(OriginalMousePos) &&
+            !m_titleBar.getGlobalBounds().contains(OriginalMousePos))
         {
             if (itr.second->getState() != GUI_ElementState::Neutral)
             {

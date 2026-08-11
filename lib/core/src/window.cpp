@@ -128,6 +128,10 @@ auto Window::isFullscreen() const -> bool
 
 auto Window::getWindowSize() -> sf::Vector2u
 {
+    if (m_isFullscreen)
+    {
+        return getRenderWindow()->getSize();
+    }
     return m_windowSize;
 }
 
