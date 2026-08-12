@@ -79,16 +79,7 @@ auto GUI_Interface::getManager() const -> GUI_Manager*
 
 auto core::gui::getOriginalPoint(sf::Vector2f l_point, GUI_Manager* l_guiManager) -> sf::Vector2f
 {
-    auto [original_width, original_height] = l_guiManager->getContext()->m_window.getWindowSize();
-    auto [width, height] = l_guiManager->getContext()->m_window.getRenderWindow()->getSize();
-
-    float width_scalar  = static_cast<float>(width) / original_width;
-    float height_scalar = static_cast<float>(height) / original_height;
-
-    l_point.x /= width_scalar;
-    l_point.y /= height_scalar;
-
-    return l_point;
+    return core::getOriginalPoint(l_point, l_guiManager->getContext()->m_window);
 }
 
 auto GUI_Interface::isInside(const sf::Vector2f& l_point) const -> bool

@@ -1,0 +1,13 @@
+Size 128 128
+Scale 1.0 1.0
+
+AnimationsStart
+#type Name StartFrame EndFrame Row FrameTime FrameActionStart FrameActionEnd TextureName
+Animation Dead 0 2 0 0.2 -1 -1 FighterSpriteSheet
+Animation Attack 0 3 1 0.2 -1 -1 FighterSpriteSheet
+Animation Idle 0 5 2 0.2 -1 -1 FighterSpriteSheet
+Animation Run 0 7 3 0.2 -1 -1 FighterSpriteSheet
+Animation Jump 0 4 4 0.2 -1 -1 FighterSpriteSheet
+Animation Fall 5 6 4 0.2 -1 -1 FighterSpriteSheet
+Animation Land 7 9 4 0.14 -1 -1 FighterSpriteSheet
+AnimationsEnd

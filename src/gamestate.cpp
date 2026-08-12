@@ -17,6 +17,7 @@
 #include <ecs/entity/c_collidable.hpp>
 #include <ecs/entity/c_position.hpp>
 #include <ecs/entity/c_spritesheet.hpp>
+#include <ecs/entity/entity_manager.hpp>
 #include <ecs/messaging/entity_message.hpp>
 #include <ecs/messaging/message.hpp>
 #include <ecs/system/s_collision.hpp>
@@ -163,6 +164,21 @@ GameState::GameState(core::state::StateManager& l_stateManager)
                                       map->setActive(!map->isActive());
                                   }
                               });
+
+    auto* entity_manager = &m_stateManager.getContext<ecs::SharedContext>()->m_entityManager;
+    auto* window         = &m_stateManager.getContext()->m_window;
+
+    event_manager.addCallback(
+        StateType::Game, "Mouse_ButtonReleasedRight",
+        [entity_manager, window](const core::EventDetails& l_details)
+        {
+            auto original_point =
+                core::getOriginalPoint(sf::Vector2f{*l_details.m_newMousePos}, *window);
+            auto entity_id = entity_manager->addEntity("fighter.entity");
+            entity_manager
+                ->getComponent<ecs::entity::CPosition>(entity_id, ecs::Component::Position)
+                ->setPosition(original_point);
+        });
 
     auto* state_manager = &m_stateManager;
 

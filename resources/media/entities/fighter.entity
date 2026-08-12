@@ -1,0 +1,8 @@
+Name player
+Attributes 111
+Component 0 0 0
+Component 1 fighterSprite.sheet
+Component 2 5
+Component 3 200. 1000. 20000. 0
+Component 5 45 78 0. 0. 2
+Component 6 footstep:"2,6"

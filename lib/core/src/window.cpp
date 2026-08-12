@@ -141,3 +141,17 @@ void Window::draw(sf::Drawable& l_drawable)
 {
     m_window.draw(l_drawable);
 }
+
+auto core::getOriginalPoint(sf::Vector2f l_point, Window& l_window) -> sf::Vector2f
+{
+    auto [original_width, original_height] = l_window.getWindowSize();
+    auto [width, height]                   = l_window.getRenderWindow()->getSize();
+
+    float width_scalar  = static_cast<float>(width) / original_width;
+    float height_scalar = static_cast<float>(height) / original_height;
+
+    l_point.x /= width_scalar;
+    l_point.y /= height_scalar;
+
+    return l_point;
+}

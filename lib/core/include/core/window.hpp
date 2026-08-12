@@ -43,6 +43,9 @@ class Window
     bool               m_isFullscreen{};
     bool               m_isFocused{};
 };
+
+auto getOriginalPoint(sf::Vector2f l_point, Window& l_window) -> sf::Vector2f;
+
 } // namespace core
 
 #endif
