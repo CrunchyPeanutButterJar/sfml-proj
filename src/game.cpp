@@ -4,7 +4,6 @@
 #include <game.hpp>
 
 #include <ecs/system/s_sound.hpp>
-#include <gamestate.hpp>
 #include <mainmenustate.hpp>
 #include <utils/assert.hpp>
 #include <utils/utilities.hpp>
@@ -69,7 +68,7 @@ Game::Game()
                                                   .m_soundManager   = m_soundManager,
                                                   .m_entityManager  = m_entityManager,
                                                   .m_systemManager  = m_systemManager})},
-      m_stateManager{core::state::StateManager::build<MainMenuState, GameState>(m_context)},
+      m_stateManager{core::state::StateManager::build<MainMenuState>(m_context)},
       m_entityManager{m_systemManager, m_stateManager.getContext()->m_textureManager},
       m_systemManager{m_entityManager},
       m_guiManager(&m_window.getEventManager(), m_stateManager.getContext()),

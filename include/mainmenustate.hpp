@@ -4,6 +4,7 @@
 #include <statetype.hpp>
 
 #include <core/state/basestate.hpp>
+#include <core/graphics/gif.hpp>
 
 class MainMenuState : public core::state::BaseState
 {
@@ -11,8 +12,8 @@ class MainMenuState : public core::state::BaseState
     MainMenuState(core::state::StateManager& l_stateManager);
     ~MainMenuState() override;
 
-    void update(const sf::Time& /*l_elapsed*/) override {};
-    void draw() override {};
+    void update(const sf::Time& l_elapsed) override;
+    void draw() override;
 
     void activate() override{};
     void deactivate() override{};
@@ -20,6 +21,9 @@ class MainMenuState : public core::state::BaseState
     void onCreate() override{};
 
     static constexpr StateType TYPE = StateType::MainMenu;
+  
+  private:
+    core::graphics::Gif m_gif;
 };
 
 #endif
