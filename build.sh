@@ -118,7 +118,7 @@ cmake .. \
     $(if [ "$BUILD_TYPE" = "Release" ]; then echo "--preset conan-release"; else echo ""; fi )\
     -DCMAKE_BUILD_TYPE=$BUILD_TYPE
 
-cmake --build .
+cmake --build . --parallel $(nproc)
 
 ctest
 

@@ -46,9 +46,21 @@ add_link_options(
 )
 endif()
 
+function(enable_project_pch target)
+    target_precompile_headers(${target} PRIVATE
+        <vector>
+        <string>
+        <memory>
+    )
+endfunction()
+
 add_subdirectory(lib/utils)
 add_subdirectory(lib/core)
 add_subdirectory(lib/ecs)
+
+enable_project_pch(utils)
+enable_project_pch(core)
+enable_project_pch(ecs)
 
 set(MAIN_FILE "${CMAKE_CURRENT_SOURCE_DIR}/src/main.cpp")
 file(GLOB SOURCES src/*.cpp)
@@ -56,10 +68,15 @@ file(GLOB SOURCES src/*.cpp)
 list(REMOVE_ITEM SOURCES "${MAIN_FILE}")
 
 add_library(app STATIC ${SOURCES})
+
+enable_project_pch(app)
+
 target_include_directories(app PUBLIC ${CMAKE_SOURCE_DIR}/include)
 target_link_libraries(app PUBLIC ecs)
 
 add_executable(sfml-app ${MAIN_FILE}) 
+
+enable_project_pch(sfml-app)
 
 target_link_libraries(sfml-app PRIVATE app) 
 
