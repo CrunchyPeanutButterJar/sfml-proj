@@ -21,10 +21,17 @@ template <typename Derived, typename T> class ResourceManager
 
             while (!tokens.empty())
             {
-                auto tuple = utils::consumeTokens<std::string, std::string>(tokens);
-                ASSERT(tuple.has_value(), "Error reading from ressource file {}", FilePath);
+                auto opt_alias = utils::consumeToken<std::string>(tokens);
 
-                const auto [alias, path] = *tuple;
+                tokens.captureQuotedStrings('"');
+                auto opt_path = consumeToken<std::string>(tokens);
+                tokens.captureQuotedStrings({});
+
+                ASSERT(opt_alias.has_value() && opt_path.has_value(),
+                       "Error reading from ressource file {}", FilePath);
+
+                const auto& alias = opt_alias.value();
+                const auto& path  = opt_path.value();
 
                 if (m_paths.find(alias) != m_paths.end())
                 {

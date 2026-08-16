@@ -1,31 +1,55 @@
 TilesSet tiles.cfg
-Background Mountains
-Gravity 512
+Gravity 1024
 #rows x columns
-Size    20  20
+Size    160  40
 TilesStart
-1    19    0   
-1    19    1   
-1    19    2   
-1    19    3   
-1    19    4   
-1    19    5   
-1    19    7   
-1    19    6   
-1    19    8   
-1    19    9   
-1    19    10  
-1    19    11  
-1    19    12  
-1    19    13  
-1    19    14  
-1    19    15  
-1    19    16  
-1    19    17  
-1    19    18  
-1    19    19  
+12    0    0   
+13    0    1   
+13    0    2   
+13    0    3   
+13    0    4   
+13    0    5   
+13    0    7   
+13    0    6   
+13    0    8   
+13    0    9   
+13    0    10  
+13    0    11  
+13    0    12  
+13    0    13  
+13    0    14  
+13    0    15  
+13    0    16  
+13    0    17  
+13    0    18  
+13    0    19  
+12    0    20   
+13    0    21   
+13    0    22   
+13    0    23   
+13    0    24   
+13    0    25   
+13    0    27   
+13    0    26   
+13    0    28   
+13    0    29   
+13    0    30  
+13    0    31  
+13    0    32  
+13    0    33  
+13    0    34  
+13    0    35  
+13    0    36  
+13    0    37  
+13    0    38  
+14    0    39 
 TilesEnd
 
+ProceeduralGenerationConfigStart
+#Gifs gifs[2..n] transitionGif
+Gifs "space1 space2 space3 space4 space5 space6 space7 space8 space9 transition"
+ProceeduralGenerationConfigEnd
+
 EntitiesStart
-player.entity 160. 160.
+player.entity 300. 340.
 EntitiesEnd

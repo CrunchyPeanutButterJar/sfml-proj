@@ -1,0 +1,14 @@
+Size 24 24
+Scale 2.0 2.0
+
+AnimationsStart
+#type Name StartFrame EndFrame Row FrameTime FrameActionStart FrameActionEnd TextureName
+Animation Idle 0 3 0 0.2 -1 -1 BlueDino
+Animation Run 4 9 0 0.2 -1 -1 BlueDino
+Animation Attack 10 12 0 0.2 11 12 BlueDino
+Animation Hurt 13 14 0 0.2 -1 -1 BlueDino
+Animation Dead 14 15 9 0.2 -1 -1 BlueDino
+Animation Jump 4 6 0 0.05 -1 -1 BlueDino
+Animation Fall 16 16 0 0.2 -1 -1 BlueDino
+Animation Land 17 17 0 0.2 -1 -1 BlueDino
+AnimationsEnd

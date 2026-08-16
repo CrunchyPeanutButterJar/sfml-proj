@@ -1,10 +1,12 @@
 #include <SFML/Graphics/Rect.hpp>
 #include <SFML/System/Vector2.hpp>
+#include <core/graphics/gif.hpp>
 #include <core/window.hpp>
 #include <ecs/entity/c_position.hpp>
 #include <ecs/entity/entity_manager.hpp>
 #include <ecs/map.hpp>
 #include <optional>
+#include <sstream>
 #include <utils/assert.hpp>
 #include <utils/utilities.hpp>
 
@@ -39,6 +41,12 @@ auto Map::convertCoordinates(size_t iRow, size_t iCol) const -> std::optional<Ti
     return (iRow * nCols) + iCol;
 }
 
+static auto getUpscaleFactors(const sf::Vector2f& l_originalSize,
+                              const sf::Vector2f& l_targetSize) -> sf::Vector2f
+{
+    return {l_targetSize.x / l_originalSize.x, l_targetSize.y / l_originalSize.y};
+}
+
 void Map::loadMap(const std::string& l_path)
 {
     auto map_file = utils::readFile(l_path);
@@ -62,9 +70,9 @@ void Map::loadMap(const std::string& l_path)
             if (m_backgroundTexture != nullptr)
             {
                 m_background.setTexture(*m_backgroundTexture);
-                const auto TextureSize = m_backgroundTexture->getSize();
-                const auto ViewSize    = m_currentState.getView().getSize();
-                m_background.setScale({ViewSize.x / TextureSize.x, ViewSize.y / TextureSize.y});
+                m_background.setScale(
+                    getUpscaleFactors(sf::Vector2f(m_backgroundTexture->getSize()),
+                                      m_currentState.getView().getSize()));
             }
         }
         else if (key == "Gravity")
@@ -123,6 +131,36 @@ void Map::loadMap(const std::string& l_path)
             }
             tokens.advance();
         }
+        else if (key == "ProceeduralGenerationConfigStart")
+        {
+            while (tokens.head<std::string>().value() != "ProceeduralGenerationConfigEnd")
+            {
+                key = *consumeToken<std::string>(tokens);
+                if (key == "Gifs")
+                {
+                    tokens.captureQuotedStrings('"');
+                    auto str = *consumeToken<std::string>(tokens);
+                    tokens.captureQuotedStrings({});
+                    utils::Tokens gifs{std::istringstream{std::move(str)}};
+                    while (!gifs.empty())
+                    {
+                        const auto          GifConfigFileName = *consumeToken<std::string>(gifs);
+                        core::graphics::Gif temp{m_context->m_textureManager};
+                        const std::string   Path = "media/gifs/" + GifConfigFileName + ".gifconf";
+                        ASSERT(temp.loadGif(Path), "Failure loading gif file");
+                        auto [width_scalar, height_scalar] = getUpscaleFactors(
+                            sf::Vector2f(temp.getImageSize()), m_currentState.getView().getSize());
+                        temp.scale(width_scalar, height_scalar);
+                        m_gifs.emplace_back(std::move(temp));
+                    }
+
+                    m_currentGif    = &m_gifs.front();
+                    m_transitionGif = &m_gifs.back();
+                    m_activeGif     = m_currentGif;
+                }
+            }
+            tokens.advance(); // consume closing tag
+        }
     }
 }
 
@@ -180,32 +218,55 @@ void Map::loadTileset(const std::string& l_path)
            "Missing data in tilesheet config file {}", l_path);
 }
 
-void Map::update(float /*unused*/)
+void Map::update(float l_dt)
 {
     sf::FloatRect view_space = m_context->m_window.getViewSpace();
     m_background.setPosition(view_space.left, view_space.top);
+    if (m_activeGif != nullptr)
+    {
+        m_activeGif->update(l_dt);
+        if (m_activeGif == m_transitionGif && m_activeGif->isDone())
+        {
+            size_t id   = m_currentGif - &m_gifs.front();
+            id          = (id + 1) % (m_gifs.size() - 1); /*ignore transition gif*/
+            m_activeGif = &m_gifs[id];
+        }
+    }
 }
 
 void Map::draw()
 {
     auto* window = m_context->m_window.getRenderWindow();
     window->draw(m_background);
+    if (m_activeGif != nullptr)
+    {
+        m_activeGif->draw(window);
+    }
     const sf::FloatRect ViewSpace = m_context->m_window.getViewSpace();
 
     float x = ViewSpace.left;
     float y = ViewSpace.top;
 
-    const auto [nRow, nCols] = m_mapSize;
-    const size_t TileSize    = m_tileSheetConfig.m_tileSize;
+    const size_t TileSize = m_tileSheetConfig.m_tileSize;
 
-    TileId i_row_begin = std::floor(y / TileSize);
-    TileId i_col_begin = std::ceil(x / TileSize);
+    int i_row_end = (ViewSpace.top + ViewSpace.height) / m_tileSheetConfig.m_tileSize;
+    int i_col_end = (ViewSpace.left + ViewSpace.width) / m_tileSheetConfig.m_tileSize;
 
-    for (TileId i_row = i_row_begin; i_row < nRow; i_row++)
+    int i_row_begin = std::floor(y / TileSize);
+    int i_col_begin = std::ceil(x / TileSize);
+
+    for (int i_row = i_row_begin; i_row <= i_row_end; i_row++)
     {
-        for (TileId i_col = i_col_begin; i_col < nCols; i_col++)
+        for (int i_col = i_col_begin; i_col <= i_col_end; i_col++)
         {
-            auto tile_index = convertCoordinates(i_row, i_col);
+            auto vec = convertCoordinates(i_row, i_col);
+            if (!vec.has_value())
+            {
+                continue;
+            }
+
+            auto [i_row_converted, i_col_converted] = vec.value();
+            auto tile_index = convertCoordinates(i_row_converted, i_col_converted);
             if (!tile_index.has_value())
             {
                 continue;
@@ -232,6 +293,36 @@ auto Map::getTile(size_t iRow, size_t iCol) -> const core::graphics::Tile*
         {
             return &itr->second;
         }
+    }
+
+    return nullptr;
+}
+
+auto Map::convertCoordinates(int iRow, int iCol) const -> std::optional<sf::Vector2<size_t>>
+{
+    const auto [_, Height] = m_context->m_window.getWindowSize();
+    const auto TileSize    = m_tileSheetConfig.m_tileSize;
+
+    const int NumberOfRowsInScreen = Height / TileSize;
+    ASSERT_DEBUG_BUILD(Height % TileSize == 0, "");
+
+    int i_row_converted = -iRow + NumberOfRowsInScreen - 1;
+    int i_col_converted = iCol;
+
+    if (i_row_converted < 0 || i_col_converted < 0)
+    {
+        return {};
+    }
+
+    return sf::Vector2<size_t>{(size_t)i_row_converted, (size_t)i_col_converted};
+}
+
+auto Map::getTile(int iRow, int iCol) -> const core::graphics::Tile*
+{
+    if (auto vec = convertCoordinates(iRow, iCol))
+    {
+        auto [iRowConverted, iColConverted] = vec.value();
+        return getTile(iRowConverted, iColConverted);
     }
 
     return nullptr;

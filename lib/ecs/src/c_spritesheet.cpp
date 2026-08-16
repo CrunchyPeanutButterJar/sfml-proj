@@ -25,8 +25,10 @@ void CSpriteSheet::create(core::graphics::TextureManager& l_textureManager,
     }
 
     m_spriteSheet.emplace(core::graphics::SpriteSheet{l_textureManager});
-    m_spriteSheet->loadSheet(utils::getResourcesDirectory() + "media/spritesheets/" +
-                             (l_sheetName ? *l_sheetName : m_sheetName));
+    ASSERT_NON_FATAL(m_spriteSheet->loadSheet(utils::getResourcesDirectory() +
+                                              "media/spritesheets/" +
+                                              (l_sheetName ? *l_sheetName : m_sheetName)),
+                     "Could not load spritesheet");
 }
 
 auto CSpriteSheet::getSpriteSheet() -> core::graphics::SpriteSheet*

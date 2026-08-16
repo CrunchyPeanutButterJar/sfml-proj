@@ -7,9 +7,10 @@ DO_CLEAN=false
 CONAN_STEP=false
 DO_CLANG_TIDY=false
 DO_CLANG_FORMAT=false
+DO_UPDATE_RESOURCES=false
 
 # 🔍 Analyse des options
-while getopts ":dcxfrt" opt; do
+while getopts ":dcxfrtp" opt; do
   case $opt in
     d)
       BUILD_TYPE="Debug"
@@ -35,13 +36,25 @@ while getopts ":dcxfrt" opt; do
       echo "Lancement de clang-format"
       DO_CLANG_FORMAT=true
       ;;
+    p)
+      echo "Mettre a jour des fichiers conf et resources"
+      DO_UPDATE_RESOURCES=true
+      ;;
     \?)
       echo "❌ Option invalide: -$OPTARG"
-      echo "Usage: $0 [-d] [-c] [-x](pour forcer l'étape Conan) [-r](pour lancer le binaire) [-t] (pour lancer le linter) [-f] (pour lancer clang-format)"
+      echo "Usage: $0 [-d] [-c] [-x](pour forcer l'étape Conan) [-r](pour lancer le binaire) [-t] (pour lancer le linter) [-f] (pour lancer clang-format) [-p] (pour mettre a jour les fichiers resources et config)"
       exit 1
       ;;
   esac
 done
+
+if $DO_UPDATE_RESOURCES; then
+  rm -rf ./build/config/*
+  rm -rf ./build/resources/*
+  cp -r ./config/* ./build/config/
+  cp -r ./resources/* ./build/resources/
+  exit 0
+fi
 
 
 if $DO_CLANG_FORMAT; then

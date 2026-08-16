@@ -27,8 +27,8 @@ MainMenuState::MainMenuState(core::state::StateManager& l_stateManager)
     auto& event_manager = m_stateManager.getContext()->m_eventManager;
     auto* state_manager = &m_stateManager;
 
-    // event_manager.addCallback(StateType::MainMenu, "MainMenu_Play", [state_manager](const auto&)
-    //                           { state_manager->switchTo(StateType::Game); });
+    event_manager.addCallback(StateType::MainMenu, "MainMenu_Play", [state_manager](const auto&)
+                              { state_manager->switchTo(StateType::Game); });
     event_manager.addCallback(StateType::MainMenu, "MainMenu_Quit", [state_manager](const auto&)
                               { state_manager->getContext()->m_window.setAsDone(); });
 

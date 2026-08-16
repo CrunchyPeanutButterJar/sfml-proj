@@ -122,6 +122,10 @@ void SSound::notify(const messaging::Message& l_message)
         {
             sound = EntitySound::Footstep;
         }
+        else if (state == EntityState::Jumping)
+        {
+            sound = EntitySound::Jump;
+        }
         else if (state == EntityState::Attacking)
         {
             sound = EntitySound::Attack;

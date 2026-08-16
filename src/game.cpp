@@ -4,6 +4,7 @@
 #include <game.hpp>
 
 #include <ecs/system/s_sound.hpp>
+#include <gamestate.hpp>
 #include <mainmenustate.hpp>
 #include <utils/assert.hpp>
 #include <utils/utilities.hpp>
@@ -55,7 +56,7 @@ static auto loadResolutionFromConfigFile() -> sf::Vector2u
     }
 }
 
-static const sf::Vector2u INGAME_RESOLUTION = {320, 320};
+static const sf::Vector2u INGAME_RESOLUTION = {640, 640};
 
 Game::Game()
     : m_window{"MyGame", INGAME_RESOLUTION, loadResolutionFromConfigFile()},
@@ -68,16 +69,16 @@ Game::Game()
                                                   .m_soundManager   = m_soundManager,
                                                   .m_entityManager  = m_entityManager,
                                                   .m_systemManager  = m_systemManager})},
-      m_stateManager{core::state::StateManager::build<MainMenuState>(m_context)},
+      m_stateManager{core::state::StateManager::build<MainMenuState, GameState>(m_context)},
       m_entityManager{m_systemManager, m_stateManager.getContext()->m_textureManager},
       m_systemManager{m_entityManager},
       m_guiManager(&m_window.getEventManager(), m_stateManager.getContext()),
       m_soundManager{m_audioManager}
 {
-    m_stateManager.switchTo(StateType::MainMenu);
-
     m_systemManager.getSystem<ecs::system::SSound>(ecs::System::Sound)
         ->setUp(&m_audioManager, &m_soundManager);
+
+    m_stateManager.switchTo(StateType::MainMenu);
 }
 
 void Game::update()

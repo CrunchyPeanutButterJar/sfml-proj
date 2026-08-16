@@ -12,6 +12,7 @@ using SoundID = core::audio::SoundID;
 enum class EntitySound : std::uint8_t
 {
     Footstep,
+    Jump,
     Attack,
     Hurt,
     Death,

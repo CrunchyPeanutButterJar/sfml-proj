@@ -5,6 +5,13 @@
 
 #include <fmt/format.h>
 
+#if defined(_MSC_VER)
+#define DEBUG_BREAK() __debugbreak()
+#elif defined(__clang__) || defined(__GNUC__)
+#include <csignal>
+#define DEBUG_BREAK() raise(SIGTRAP)
+#endif
+
 namespace utils::internal
 {
 inline void vlog(FILE* f, const char* file, const char* function, int line, fmt::string_view fmt,
@@ -42,6 +49,7 @@ inline void ensureImpl(bool condition, const char* file, const char* function, i
         assertionFailedLog(file, function, line, fmt, args...);
         if constexpr (critical)
         {
+            DEBUG_BREAK();
             exit(EXIT_FAILURE);
         }
     }

@@ -5,6 +5,7 @@
 
 enum StateType : std::uint8_t
 {
-    MainMenu=1
+    MainMenu=1,
+    Game
 };
 #endif

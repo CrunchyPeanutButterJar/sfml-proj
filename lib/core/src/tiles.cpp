@@ -12,8 +12,8 @@ TileInfo::TileInfo(const TileSheetConfig& l_config, utils::Tokens& l_tokens)
 {
     const size_t NRows = m_config.m_height / m_config.m_tileSize;
     const size_t NCols = m_config.m_width / m_config.m_tileSize;
-    const size_t IRow  = m_id < NCols ? 0 : m_id % NCols;
-    const size_t ICol  = m_id - IRow * NCols;
+    const size_t IRow  = m_id / NCols;
+    const size_t ICol  = m_id % NCols;
 
     const int X = ICol * m_config.m_tileSize;
     const int Y = IRow * m_config.m_tileSize;
