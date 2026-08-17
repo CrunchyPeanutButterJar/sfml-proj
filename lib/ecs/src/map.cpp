@@ -2,6 +2,8 @@
 #include <SFML/System/Vector2.hpp>
 #include <core/graphics/gif.hpp>
 #include <core/window.hpp>
+#include <cstdlib>
+#include <ctime>
 #include <ecs/entity/c_position.hpp>
 #include <ecs/entity/entity_manager.hpp>
 #include <ecs/map.hpp>
@@ -12,6 +14,11 @@
 
 using namespace core::graphics;
 using namespace ecs;
+
+static constexpr TileId LEFT   = 12;
+static constexpr TileId MIDDLE = 13;
+static constexpr TileId RIGHT  = 14;
+static constexpr TileId ALONE  = 15;
 
 Map::Map(SharedContext* l_context, core::state::BaseState& l_currentState)
     : m_context(l_context), m_currentState(l_currentState)
@@ -158,10 +165,27 @@ void Map::loadMap(const std::string& l_path)
                     m_transitionGif = &m_gifs.back();
                     m_activeGif     = m_currentGif;
                 }
+                else if (key == "MinTilesLength")
+                {
+                    m_minTilesLength = *consumeToken<size_t>(tokens);
+                }
+                else if (key == "MaxTilesLength")
+                {
+                    m_maxTilesLength = *consumeToken<size_t>(tokens);
+                }
+                else if (key == "MinTilesPercentageOnScreen")
+                {
+                    m_minTilesPercentageOnScreen = *consumeToken<float>(tokens);
+                }
+                else if (key == "Seed")
+                {
+                    m_seed = *consumeToken<size_t>(tokens);
+                }
             }
             tokens.advance(); // consume closing tag
         }
     }
+    proceeduralTilesGeneration(1, 199);
 }
 
 void Map::loadTileset(const std::string& l_path)
@@ -220,10 +244,11 @@ void Map::loadTileset(const std::string& l_path)
 
 void Map::update(float l_dt)
 {
-    sf::FloatRect view_space = m_context->m_window.getViewSpace();
+    sf::FloatRect view_space = core::getViewSpace(m_currentState.getView());
     m_background.setPosition(view_space.left, view_space.top);
     if (m_activeGif != nullptr)
     {
+        m_activeGif->setPosition(view_space.getPosition());
         m_activeGif->update(l_dt);
         if (m_activeGif == m_transitionGif && m_activeGif->isDone())
         {
@@ -347,4 +372,107 @@ auto Map::getMapSize() const -> const sf::Vector2u&
 auto Map::getGravity() const -> float
 {
     return m_gravity;
+}
+
+void Map::proceeduralTilesGeneration(size_t l_startRow, size_t l_endRow)
+{
+    if (!m_seeded)
+    {
+        if (m_seed == 0)
+        {
+            srand(static_cast<unsigned int>(time(nullptr)));
+        }
+        else
+        {
+            srand(m_seed);
+        }
+
+        m_seeded = true;
+    }
+
+    const auto [_, Height]    = m_context->m_window.getWindowSize();
+    const auto TileSize       = m_tileSheetConfig.m_tileSize;
+    const auto [NRows, NCols] = getMapSize();
+
+    const size_t NumberOfRowsInScreen = Height / TileSize;
+    ASSERT_DEBUG_BUILD(Height % TileSize == 0, "");
+
+    const size_t NumberOfScreens = NRows / NumberOfRowsInScreen;
+    ASSERT_DEBUG_BUILD(NRows % NumberOfRowsInScreen == 0, "");
+
+    size_t i_screen_begin     = l_startRow / NumberOfRowsInScreen;
+    size_t i_screen_end       = std::min(l_endRow / NumberOfRowsInScreen, NumberOfScreens - 1);
+    size_t i_screen_row_start = l_startRow;
+    size_t i_screen_row_end   = i_screen_begin == i_screen_end
+                                    ? l_endRow
+                                    : ((i_screen_begin + 1) * NumberOfRowsInScreen) - 1;
+
+    for (size_t i_screen = i_screen_begin; i_screen <= i_screen_end; ++i_screen)
+    {
+        long long number_of_tiles_to_fill =
+            (i_screen_row_end - i_screen_row_start + 1) * NCols * m_minTilesPercentageOnScreen;
+        while (number_of_tiles_to_fill > 0)
+        {
+            size_t i_row =
+                i_screen_row_start + (rand() % (i_screen_row_end - i_screen_row_start + 1));
+            size_t i_col  = rand() % NCols;
+            size_t length = m_minTilesLength + (rand() % (m_maxTilesLength - m_minTilesLength + 1));
+            number_of_tiles_to_fill -= generateTiles(i_row, i_col, length);
+        }
+        i_screen_row_start = (i_screen + 1) * NumberOfRowsInScreen;
+        i_screen_row_end =
+            (i_screen + 1 == i_screen_end ? l_endRow : ((i_screen + 2) * NumberOfRowsInScreen) - 1);
+    }
+}
+
+auto Map::generateTiles(size_t l_row, size_t l_col, size_t l_length) -> size_t
+{
+    const size_t NCol = m_mapSize.y;
+
+    if (l_length == 1)
+    {
+        const bool CanHaveTileToItsLeft  = l_col != 0;
+        const bool CanHaveTileToItsRight = l_col != NCol - 1;
+        if ((CanHaveTileToItsLeft && getTile(l_row, l_col - 1) != nullptr) ||
+            (CanHaveTileToItsRight && getTile(l_row, l_col + 1) != nullptr))
+        {
+            return 0;
+        }
+
+        auto [_, added] = m_tileMap.insert_or_assign(*convertCoordinates(l_row, l_col),
+                                                     Tile{&m_tileSet.find(ALONE)->second});
+        return added ? 1 : 0;
+    }
+
+    size_t num_added_tiles = 0;
+
+    for (size_t i = l_col; i < std::min(l_col + l_length, NCol); i++)
+    {
+        TileId tile_info_id = 0;
+
+        if (i == l_col)
+        {
+            tile_info_id = LEFT;
+        }
+        else if (i == l_col + l_length - 1)
+        {
+            tile_info_id = RIGHT;
+        }
+        else
+        {
+            tile_info_id = MIDDLE;
+        }
+
+        if (i != l_col || i != l_col + l_length - 1)
+        {
+            auto [_, added] = m_tileMap.insert_or_assign(
+                *convertCoordinates(l_row, i), Tile{&m_tileSet.find(tile_info_id)->second});
+            if (added)
+            {
+                num_added_tiles++;
+            }
+        }
+    }
+
+    return num_added_tiles;
 }

@@ -45,6 +45,7 @@ class Window
 };
 
 auto getOriginalPoint(sf::Vector2f l_point, Window& l_window) -> sf::Vector2f;
+auto getViewSpace(const sf::View& l_view) -> sf::FloatRect;
 
 } // namespace core
 

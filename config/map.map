@@ -1,7 +1,7 @@
 TilesSet tiles.cfg
 Gravity 1024
 #rows x columns
-Size    160  40
+Size    200  40
 TilesStart
 12    0    0   
 13    0    1   
@@ -23,7 +23,7 @@ TilesStart
 13    0    17  
 13    0    18  
 13    0    19  
-12    0    20   
+13    0    20   
 13    0    21   
 13    0    22   
 13    0    23   
@@ -48,6 +48,10 @@ TilesEnd
 ProceeduralGenerationConfigStart
 #Gifs gifs[2..n] transitionGif
 Gifs "space1 space2 space3 space4 space5 space6 space7 space8 space9 transition"
+MinTilesLength 1
+MaxTilesLength 5
+MinTilesPercentageOnScreen .04
+Seed 0
 ProceeduralGenerationConfigEnd
 
 EntitiesStart

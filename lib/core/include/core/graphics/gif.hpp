@@ -32,6 +32,7 @@ class Gif
     void update(float l_dt);
     void draw(sf::RenderWindow* l_window);
     void scale(float l_scaleWidth, float l_scaleHeight);
+    void setPosition(const sf::Vector2f& l_newPos);
 
     [[nodiscard]] auto isDone() const -> bool;
     [[nodiscard]] auto getImageSize() const -> const sf::Vector2u&;

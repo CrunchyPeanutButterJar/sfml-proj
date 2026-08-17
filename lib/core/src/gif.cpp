@@ -121,6 +121,12 @@ void Gif::scale(float l_scaleWidth, float l_scaleHeight)
     m_image.setScale({l_scaleWidth, l_scaleHeight});
 }
 
+void Gif::setPosition(const sf::Vector2f& l_newPos)
+{
+    const auto [X, Y] = l_newPos;
+    m_image.setPosition(X, Y);
+}
+
 void Gif::update(float l_dt)
 {
     if (!m_playing)

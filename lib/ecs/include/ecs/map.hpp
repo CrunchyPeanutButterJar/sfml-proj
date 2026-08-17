@@ -37,6 +37,9 @@ class Map
     auto convertCoordinates(core::graphics::TileId l_id) -> sf::Vector2u;
     auto convertCoordinates(int iRow, int iCol) const -> std::optional<sf::Vector2<size_t>>;
 
+    void proceeduralTilesGeneration(size_t l_startRow, size_t l_endRow);
+    auto generateTiles(size_t l_row, size_t l_col, size_t l_length) -> size_t;
+
     SharedContext*                   m_context;
     core::state::BaseState&          m_currentState;
     TileSheet                        m_tileSet;
@@ -51,6 +54,12 @@ class Map
     core::graphics::Gif*             m_currentGif{};
     core::graphics::Gif*             m_transitionGif{};
     core::graphics::Gif*             m_activeGif{};
+    // Proceedural generation info
+    size_t m_maxTilesLength{};
+    size_t m_minTilesLength{};
+    float  m_minTilesPercentageOnScreen{};
+    size_t m_seed{};
+    bool   m_seeded{false};
 };
 } // namespace ecs
 

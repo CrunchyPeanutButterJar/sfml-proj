@@ -5,6 +5,6 @@ Component 1 dinoSprite.sheet
 Component 2 5
 Component 3 800. 2000. 50000. 0
 Component 4
-Component 5 36 36 0. -6. 2
+Component 5 18 18 0. -6. 2
 Component 6 footstep:"6,8" jump:"5"
 Component 7

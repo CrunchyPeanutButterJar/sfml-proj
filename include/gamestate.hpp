@@ -21,7 +21,12 @@ class GameState : public core::state::BaseState
     void onCreate() override {};
 
     static constexpr StateType TYPE = StateType::Game;
+
   private:
+    void updateCamera(const sf::Time& l_elapsed);
+    auto playerHasLost() -> bool;
+
+  
     ecs::Map m_map;
 };
 

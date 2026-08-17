@@ -1,10 +1,15 @@
 #include "core/directions.hpp"
+#include <SFML/Graphics/View.hpp>
 #include <core/audio/sound_manager.hpp>
 #include <core/bindings.hpp>
 #include <core/event_manager.hpp>
 #include <core/state/basestate.hpp>
 #include <core/state/statemanager.hpp>
+#include <core/window.hpp>
 #include <ecs/ecs_types.hpp>
+#include <ecs/entity/c_collidable.hpp>
+#include <ecs/entity/c_position.hpp>
+#include <ecs/entity/entity_manager.hpp>
 #include <ecs/messaging/message_handler.hpp>
 #include <ecs/shared_context.hpp>
 #include <ecs/system/s_collision.hpp>
@@ -18,6 +23,10 @@ template class core::RegisterBinding<
 template class core::RegisterBinding<BINDING("Game_MoveLeft", core::KeyPressed{sf::Keyboard::Left}),
                                      core::Customizable>;
 
+template class core::RegisterBinding<BINDING("Game_MoveRight", core::KeyPressed{sf::Keyboard::D}),
+                                     core::Customizable>;
+template class core::RegisterBinding<BINDING("Game_MoveLeft", core::KeyPressed{sf::Keyboard::A}),
+                                     core::Customizable>;
 template class core::RegisterBinding<BINDING("Game_Jump", core::KeyPressed{sf::Keyboard::Space}),
                                      core::Customizable>;
 
@@ -86,12 +95,36 @@ GameState::~GameState()
     event_manager.removeCallback(StateType::Game, "Game_Jump");
 }
 
+auto GameState::playerHasLost() -> bool
+{
+    auto* context = m_stateManager.getContext<ecs::SharedContext>();
+
+    auto&       entity_manager = context->m_entityManager;
+    const auto& player_aabb =
+        entity_manager
+            .getComponent<ecs::entity::CCollidable>(m_map.getPlayerId(), ecs::Component::Collidable)
+            ->getCollidable();
+    return !core::getViewSpace(m_view).intersects(player_aabb);
+}
+
 void GameState::update(const sf::Time& l_elapsed)
 {
     auto* context = m_stateManager.getContext<ecs::SharedContext>();
 
+    updateCamera(l_elapsed);
     m_map.update(l_elapsed.asSeconds());
     context->m_systemManager.update(l_elapsed.asSeconds());
+
+    if (playerHasLost())
+    {
+        auto& sound_manager = context->m_soundManager;
+
+        context->m_entityManager.removeEntity(m_map.getPlayerId());
+        m_stateManager.remove(GameState::TYPE);
+        m_stateManager.switchTo(StateType::MainMenu);
+        ASSERT_NON_FATAL(sound_manager.play("lose", {0, 0, 0}, false, true).has_value(),
+                         "Failed to play lose sound");
+    }
 }
 
 void GameState::draw()
@@ -100,4 +133,19 @@ void GameState::draw()
 
     m_map.draw();
     context->m_systemManager.draw(context->m_window);
+}
+
+void GameState::updateCamera(const sf::Time& /*l_elapsed*/)
+{
+    const auto OldViewCenter = m_view.getCenter();
+
+    auto* context    = m_stateManager.getContext<ecs::SharedContext>();
+    auto* player_pos = context->m_entityManager.getComponent<ecs::entity::CPosition>(
+        m_map.getPlayerId(), ecs::Component::Position);
+    const auto PlayerPos = player_pos->getPosition();
+
+    if (PlayerPos.y < OldViewCenter.y)
+    {
+        m_view.setCenter(OldViewCenter.x, PlayerPos.y);
+    }
 }

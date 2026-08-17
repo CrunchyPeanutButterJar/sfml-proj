@@ -1,8 +1,10 @@
 #include "ecs/messaging/entity_events.hpp"
 #include "ecs/messaging/event_queue.hpp"
 #include <SFML/Graphics/Rect.hpp>
+#include <ecs/ecs_types.hpp>
 #include <ecs/entity/c_collidable.hpp>
 #include <ecs/entity/c_position.hpp>
+#include <ecs/entity/c_state.hpp>
 #include <ecs/entity/entity_manager.hpp>
 #include <ecs/map.hpp>
 #include <ecs/system/s_collision.hpp>
@@ -44,7 +46,17 @@ void SCollision::update(float /*l_dt*/)
         collidable->setPosition(position->getPosition());
         collidable->resetCollisionFlags();
         checkOutOfBounds(position, collidable);
-        mapCollisions(entity, position, collidable);
+        if (auto* state = entities.getComponent<ecs::entity::CState>(entity, ecs::Component::State);
+            state != nullptr && state->getState() != entity::EntityState::Jumping)
+        {
+            mapCollisions(entity, position, collidable);
+        }
+
+        if (collidable->getGroundTile() == nullptr)
+        {
+            m_systemManager.addEvent(entity,
+                                     (messaging::EventId)messaging::EntityEvent::Not_Grounded);
+        }
     }
 }
 
@@ -80,7 +92,7 @@ void SCollision::mapCollisions(EntityId l_entity, entity::CPosition* l_position,
                                entity::CCollidable* l_collidable)
 {
     const auto& tile_sheet_config = m_map->getTileSheetConfig();
-    const auto  TileSize          = tile_sheet_config.m_tileSize;
+    const int   TileSize          = tile_sheet_config.m_tileSize;
 
     Collisions collisions;
 
@@ -168,12 +180,6 @@ void SCollision::mapCollisions(EntityId l_entity, entity::CPosition* l_position,
             }
         }
     }
-
-    if (l_collidable->getGroundTile() == nullptr)
-    {
-        m_systemManager.addEvent(l_entity,
-                                 (messaging::EventId)messaging::EntityEvent::Not_Grounded);
-    }
 }
 
 void SCollision::checkOutOfBounds(entity::CPosition* position, entity::CCollidable* collidable)
@@ -195,19 +201,6 @@ void SCollision::checkOutOfBounds(entity::CPosition* position, entity::CCollidab
     else if (x > NbOfColumns * TileSize)
     {
         x = static_cast<float>(NbOfColumns * TileSize);
-        position->setPosition({x, y});
-        collidable->setPosition(position->getPosition());
-    }
-
-    if (y < 0)
-    {
-        y = 0.;
-        position->setPosition({x, y});
-        collidable->setPosition(position->getPosition());
-    }
-    else if (y > NbOfRows * TileSize)
-    {
-        y = static_cast<float>(NbOfRows * TileSize);
         position->setPosition({x, y});
         collidable->setPosition(position->getPosition());
     }

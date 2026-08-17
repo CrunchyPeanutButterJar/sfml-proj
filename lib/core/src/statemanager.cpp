@@ -87,6 +87,7 @@ void StateManager::processRequests()
             m_states.erase(itr);
         }
     }
+    m_toBeRemoved.clear();
 }
 
 auto StateManager::getContext() -> SharedContext*

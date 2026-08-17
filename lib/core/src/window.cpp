@@ -62,11 +62,7 @@ auto Window::getEventManager() -> core::EventManager&
 
 auto Window::getViewSpace() const -> sf::FloatRect
 {
-    const sf::Vector2f ViewCenter = m_window.getView().getCenter();
-    const sf::Vector2f ViewSize   = m_window.getView().getSize();
-    const sf::Vector2f ViewSizeHalf{ViewSize.x / 2, ViewSize.y / 2};
-
-    return {ViewCenter - ViewSizeHalf, ViewSize};
+    return ::core::getViewSpace(m_window.getView());
 }
 
 auto Window::getMousePosition() const -> sf::Vector2f
@@ -154,4 +150,13 @@ auto core::getOriginalPoint(sf::Vector2f l_point, Window& l_window) -> sf::Vecto
     l_point.y /= height_scalar;
 
     return l_point;
+}
+
+auto core::getViewSpace(const sf::View& l_view) -> sf::FloatRect
+{
+    const sf::Vector2f ViewCenter = l_view.getCenter();
+    const sf::Vector2f ViewSize   = l_view.getSize();
+    const sf::Vector2f ViewSizeHalf{ViewSize.x / 2, ViewSize.y / 2};
+
+    return {ViewCenter - ViewSizeHalf, ViewSize};
 }
