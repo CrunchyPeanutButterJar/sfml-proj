@@ -26,6 +26,8 @@ SMovement::SMovement(SystemManager& l_system_manager) : SBase{System::Movement, 
     req.turnOnBit((utils::Bitmask::Position)Component::Position);
     req.turnOnBit((utils::Bitmask::Position)Component::Movable);
     m_requiredComponents.emplace_back(req);
+
+    m_systemManager.getMessageHandler().subscribe(messaging::EntityMessage::Shift_Position, this);
 }
 
 void SMovement::update(float l_dt)
@@ -118,7 +120,29 @@ void SMovement::setDirection(EntityId l_entity, core::Direction l_dir)
     m_systemManager.getMessageHandler().dispatch(msg);
 }
 
-void SMovement::notify(const messaging::Message& /*l_message*/) {}
+void SMovement::notify(const messaging::Message& l_message)
+{
+    switch ((messaging::EntityMessage)l_message.m_type)
+    {
+    case messaging::EntityMessage::Shift_Position:
+    {
+        for (auto entity : m_entities)
+        {
+            auto* pos = m_systemManager.getEntityManager().getComponent<ecs::entity::CPosition>(
+                entity, Component::Position);
+            auto new_pos = pos->getPosition();
+            new_pos.x += l_message.m_2f.x;
+            new_pos.y += l_message.m_2f.y;
+
+            pos->setPosition(new_pos);
+        }
+        break;
+    }
+
+    default:
+        break;
+    }
+}
 
 void SMovement::handleEvent(EntityId l_entity, messaging::EntityEvent l_event)
 {

@@ -13,7 +13,8 @@ enum class EntityMessage
     Switch_State,
     Attack_Action,
     Dead,
-    Frame_Change
+    Frame_Change,
+    Shift_Position
 };
 } // namespace ecs::messaging
 

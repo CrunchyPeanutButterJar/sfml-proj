@@ -7,6 +7,10 @@
 #include <ecs/entity/c_position.hpp>
 #include <ecs/entity/entity_manager.hpp>
 #include <ecs/map.hpp>
+#include <ecs/messaging/entity_message.hpp>
+#include <ecs/messaging/message.hpp>
+#include <ecs/messaging/message_handler.hpp>
+#include <ecs/system/system_manager.hpp>
 #include <optional>
 #include <sstream>
 #include <utils/assert.hpp>
@@ -38,7 +42,7 @@ auto Map::convertCoordinates(TileId l_id) -> sf::Vector2u
 
 auto Map::convertCoordinates(size_t iRow, size_t iCol) const -> std::optional<TileId>
 {
-    ASSERT(m_mapSize.x != 0 && m_mapSize.y != 0, "Map dimensions invalid");
+    ASSERT_DEBUG_BUILD(m_mapSize.x != 0 && m_mapSize.y != 0, "Map dimensions invalid");
     const auto [nRows, nCols] = m_mapSize;
     if (iRow >= nRows || iCol >= nCols)
     {
@@ -185,7 +189,7 @@ void Map::loadMap(const std::string& l_path)
             tokens.advance(); // consume closing tag
         }
     }
-    proceeduralTilesGeneration(1, 199);
+    proceeduralTilesGeneration(1, m_mapSize.x - 1);
 }
 
 void Map::loadTileset(const std::string& l_path)
@@ -240,6 +244,74 @@ void Map::loadTileset(const std::string& l_path)
 
     ASSERT(filled_dimensions && filled_tile_size && filled_texture,
            "Missing data in tilesheet config file {}", l_path);
+}
+
+auto Map::proceeduralTilesReGeneration() -> float
+{
+    const auto [_, Height]    = m_context->m_window.getWindowSize();
+    const auto TileSize       = m_tileSheetConfig.m_tileSize;
+    const auto [NRows, NCols] = getMapSize();
+
+    const size_t NumberOfRowsInScreen = Height / TileSize;
+    ASSERT_DEBUG_BUILD(Height % TileSize == 0, "");
+
+    const size_t NumberOfScreens = NRows / NumberOfRowsInScreen;
+    ASSERT_DEBUG_BUILD(NRows % NumberOfRowsInScreen == 0, "");
+
+    size_t i_start_source_row = ((NumberOfScreens - 2) * NumberOfRowsInScreen);
+    size_t i_end_source_row   = NRows - 1;
+
+    for (size_t i_source_row = i_start_source_row; i_source_row <= i_end_source_row; i_source_row++)
+    {
+        size_t dest_i_row = i_source_row - i_start_source_row;
+        for (size_t i_col = 0; i_col < NCols; i_col++)
+        {
+            if (auto it = m_tileMap.find((i_source_row * NCols) + i_col); it != m_tileMap.end())
+            {
+                m_tileMap.insert_or_assign((dest_i_row * NCols) + i_col, it->second);
+            }
+            else
+            {
+                m_tileMap.erase((dest_i_row * NCols) + i_col);
+            }
+        }
+    }
+
+    size_t i_new_start_row = 0 + i_end_source_row - i_start_source_row + 1;
+
+    for (size_t i_row = i_new_start_row; i_row < NRows; i_row++)
+    {
+        for (size_t i_col = 0; i_col < NCols; i_col++)
+        {
+            m_tileMap.erase((i_row * NCols) + i_col);
+        }
+    }
+
+    proceeduralTilesGeneration(i_new_start_row, NRows - 1);
+
+    return ((float)Height * (NumberOfScreens - 2));
+}
+
+auto Map::requiresTilesMapRegeneration() -> float
+{
+    float offset_y = 0.;
+    if (requiresProceeduralTilesReGeneration())
+    {
+        using namespace ecs::messaging;
+
+        LOG("Proceedural tiles re-generation...");
+
+        offset_y = proceeduralTilesReGeneration();
+
+        auto& message_handler = m_context->m_systemManager.getMessageHandler();
+
+        Message msg{.m_type = (MessageType)EntityMessage::Shift_Position,
+                    .m_2f   = sf::Vector2f{0., offset_y}};
+
+        message_handler.dispatch(msg);
+    }
+
+    return offset_y;
 }
 
 void Map::update(float l_dt)
@@ -390,6 +462,8 @@ void Map::proceeduralTilesGeneration(size_t l_startRow, size_t l_endRow)
         m_seeded = true;
     }
 
+    LOG_DEBUG("Proceedural tiles generation from row = {} to row = {}", l_startRow, l_endRow);
+
     const auto [_, Height]    = m_context->m_window.getWindowSize();
     const auto TileSize       = m_tileSheetConfig.m_tileSize;
     const auto [NRows, NCols] = getMapSize();
@@ -475,4 +549,22 @@ auto Map::generateTiles(size_t l_row, size_t l_col, size_t l_length) -> size_t
     }
 
     return num_added_tiles;
+}
+
+auto Map::requiresProceeduralTilesReGeneration() -> bool
+{
+    const auto [_, Height]    = m_context->m_window.getWindowSize();
+    const auto TileSize       = m_tileSheetConfig.m_tileSize;
+    const auto [NRows, NCols] = getMapSize();
+
+    const size_t NumberOfRowsInScreen = Height / TileSize;
+    ASSERT_DEBUG_BUILD(Height % TileSize == 0, "");
+
+    const size_t NumberOfScreens = NRows / NumberOfRowsInScreen;
+    ASSERT_DEBUG_BUILD(NRows % NumberOfRowsInScreen == 0, "");
+
+    int   i_screen_index = -((int)NumberOfScreens - 2);
+    float threshold_top  = (float)i_screen_index * (float)Height;
+
+    return core::getViewSpace(m_currentState.getView()).top <= threshold_top;
 }

@@ -21,6 +21,7 @@ class Map
   public:
     Map(SharedContext* l_context, core::state::BaseState& l_currentState);
     void loadMap(const std::string& l_path);
+    auto requiresTilesMapRegeneration() -> float;
     void update(float l_dt);
     void draw();
     auto getPlayerId() -> ecs::EntityId;
@@ -39,6 +40,9 @@ class Map
 
     void proceeduralTilesGeneration(size_t l_startRow, size_t l_endRow);
     auto generateTiles(size_t l_row, size_t l_col, size_t l_length) -> size_t;
+
+    auto requiresProceeduralTilesReGeneration() -> bool;
+    auto proceeduralTilesReGeneration() -> float;
 
     SharedContext*                   m_context;
     core::state::BaseState&          m_currentState;

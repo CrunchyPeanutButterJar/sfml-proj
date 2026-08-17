@@ -112,6 +112,12 @@ void GameState::update(const sf::Time& l_elapsed)
     auto* context = m_stateManager.getContext<ecs::SharedContext>();
 
     updateCamera(l_elapsed);
+    if (auto offset_y = m_map.requiresTilesMapRegeneration(); offset_y > 0.)
+    {
+        auto new_center = m_view.getCenter();
+        new_center.y += offset_y;
+        m_view.setCenter(new_center);
+    }
     m_map.update(l_elapsed.asSeconds());
     context->m_systemManager.update(l_elapsed.asSeconds());
 

@@ -71,7 +71,13 @@ inline void ensureImpl(bool condition, const char* file, const char* function, i
 #ifdef DEBUG_BUILD
 #define ASSERT_DEBUG_BUILD(condition, ...) ASSERT(condition, ##__VA_ARGS__)
 #else
-#define ASSERT_DEBUG_BUILD(condition, ...) ((void)0) // No-op in release builds
+#define ASSERT_DEBUG_BUILD(condition, ...) ((void)0)
+#endif
+
+#ifdef DEBUG_BUILD
+#define LOG_DEBUG(...) LOG(##_VA_ARGS__)
+#else
+#define LOG_DEBUG(...) ((void)0)
 #endif
 
 #endif
