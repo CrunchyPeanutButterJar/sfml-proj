@@ -152,7 +152,7 @@ void Gif::draw(sf::RenderWindow* l_window)
 
 auto Gif::isDone() const -> bool
 {
-    return m_playing;
+    return !m_playing;
 }
 
 void Gif::reset()

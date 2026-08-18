@@ -314,6 +314,11 @@ auto Map::requiresTilesMapRegeneration() -> float
     return offset_y;
 }
 
+void Map::transitionToNextGif()
+{
+    m_activeGif = m_transitionGif;
+}
+
 void Map::update(float l_dt)
 {
     sf::FloatRect view_space = core::getViewSpace(m_currentState.getView());
@@ -324,9 +329,11 @@ void Map::update(float l_dt)
         m_activeGif->update(l_dt);
         if (m_activeGif == m_transitionGif && m_activeGif->isDone())
         {
-            size_t id   = m_currentGif - &m_gifs.front();
-            id          = (id + 1) % (m_gifs.size() - 1); /*ignore transition gif*/
-            m_activeGif = &m_gifs[id];
+            m_transitionGif->reset();
+            size_t id    = m_currentGif - &m_gifs.front();
+            id           = (id + 1) % (m_gifs.size() - 1); /*ignore transition gif*/
+            m_currentGif = &m_gifs[id];
+            m_activeGif  = m_currentGif;
         }
     }
 }

@@ -117,6 +117,8 @@ void GameState::update(const sf::Time& l_elapsed)
         auto new_center = m_view.getCenter();
         new_center.y += offset_y;
         m_view.setCenter(new_center);
+
+        m_map.transitionToNextGif();
     }
     m_map.update(l_elapsed.asSeconds());
     context->m_systemManager.update(l_elapsed.asSeconds());

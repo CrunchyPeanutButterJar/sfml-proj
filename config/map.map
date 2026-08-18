@@ -1,7 +1,7 @@
 TilesSet tiles.cfg
 Gravity 1024
 #rows x columns
-Size    200  40
+Size    600  40
 TilesStart
 12    0    0   
 13    0    1   

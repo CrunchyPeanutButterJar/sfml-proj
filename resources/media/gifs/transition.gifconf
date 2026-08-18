@@ -1,4 +1,3 @@
 Size 250 500
 Texture transition
-FrameTime 0.5
-Loop
+FrameTime 0.05
