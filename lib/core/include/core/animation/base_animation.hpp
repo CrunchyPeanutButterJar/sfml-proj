@@ -33,6 +33,7 @@ class BaseAnimation
 
     [[nodiscard]] auto isInAction() const -> bool;
     [[nodiscard]] auto hasMoved() const -> bool;
+    [[nodiscard]] auto isDone() const -> bool;
 
   protected:
     virtual void frameStep()  = 0;

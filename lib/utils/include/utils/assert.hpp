@@ -75,7 +75,7 @@ inline void ensureImpl(bool condition, const char* file, const char* function, i
 #endif
 
 #ifdef DEBUG_BUILD
-#define LOG_DEBUG(...) LOG(##_VA_ARGS__)
+#define LOG_DEBUG(...) LOG(__VA_ARGS__)
 #else
 #define LOG_DEBUG(...) ((void)0)
 #endif

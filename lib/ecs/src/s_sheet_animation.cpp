@@ -1,6 +1,8 @@
 #include "ecs/ecs_types.hpp"
 #include "ecs/entity/c_state.fwd.hpp"
+#include "ecs/messaging/entity_events.hpp"
 #include "ecs/messaging/entity_message.hpp"
+#include "ecs/messaging/event_queue.hpp"
 #include "ecs/messaging/message.hpp"
 #include "utils/bitmask.hpp"
 #include <ecs/entity/c_spritesheet.hpp>
@@ -43,6 +45,12 @@ void SSheetAnimation::update(float l_dt)
                         .m_receiver = (int)entity,
                         .m_int      = (int)frame};
             m_systemManager.getMessageHandler().dispatch(msg);
+        }
+
+        if (anim->isDone())
+        {
+            m_systemManager.addEvent(
+                entity, (ecs::messaging::EventId)ecs::messaging::EntityEvent::Animation_Done);
         }
 
         // TODO: handle dispatching of death and attack messages

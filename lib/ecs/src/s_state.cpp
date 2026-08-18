@@ -70,6 +70,16 @@ void SState::handleEvent(EntityId l_entity, messaging::EntityEvent l_event)
         changeState(l_entity, entity::EntityState::Landing, false);
         break;
     }
+    case messaging::EntityEvent::Animation_Done:
+    {
+        auto& entities = m_systemManager.getEntityManager();
+        auto* state    = entities.getComponent<entity::CState>(l_entity, Component::State);
+        if (state->getState() == entity::EntityState::Landing)
+        {
+            changeState(l_entity, entity::EntityState::Idle, true);
+        }
+        break;
+    }
     default:
         break;
     }

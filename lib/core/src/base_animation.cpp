@@ -99,3 +99,8 @@ auto BaseAnimation::hasMoved() const -> bool
     m_hasMoved  = false;
     return result;
 }
+
+auto BaseAnimation::isDone() const -> bool
+{
+    return !m_playing;
+}
