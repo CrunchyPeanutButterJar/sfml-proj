@@ -510,16 +510,19 @@ auto Map::generateTiles(size_t l_row, size_t l_col, size_t l_length) -> size_t
 {
     const size_t NCol = m_mapSize.y;
 
+    constexpr auto CanHaveTileToItsLeft = [](size_t l_col) { return l_col != 0; };
+
+    const auto CanHaveTileToItsRight = [NCol](size_t l_col) { return l_col != NCol - 1; };
+
+    if ((CanHaveTileToItsLeft(l_col) && getTile(l_row, l_col - 1) != nullptr) ||
+        (CanHaveTileToItsRight(l_col + l_length - 1) &&
+         (getTile(l_row, l_col + l_length) != nullptr)))
+    {
+        return 0;
+    }
+
     if (l_length == 1)
     {
-        const bool CanHaveTileToItsLeft  = l_col != 0;
-        const bool CanHaveTileToItsRight = l_col != NCol - 1;
-        if ((CanHaveTileToItsLeft && getTile(l_row, l_col - 1) != nullptr) ||
-            (CanHaveTileToItsRight && getTile(l_row, l_col + 1) != nullptr))
-        {
-            return 0;
-        }
-
         auto [_, added] = m_tileMap.insert_or_assign(*convertCoordinates(l_row, l_col),
                                                      Tile{&m_tileSet.find(ALONE)->second});
         return added ? 1 : 0;
