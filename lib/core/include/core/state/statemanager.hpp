@@ -10,6 +10,7 @@
 
 #include <functional>
 #include <memory>
+#include <type_traits>
 #include <unordered_map>
 #include <unordered_set>
 #include <utility>
@@ -24,6 +25,12 @@ using StateContainer = std::vector<std::pair<StateType, StatePtr>>;
 using StateFactory = std::unordered_map<StateType, std::function<StatePtr(StateManager*)>>;
 
 using StateTypeContainer = std::unordered_set<StateType>;
+
+template <typename T>
+concept IsStateAndHasStateValue = requires {
+    std::is_base_of_v<BaseState, T>;
+    { T::TYPE } -> std::convertible_to<StateType>;
+};
 
 class StateManager
 {
@@ -45,7 +52,8 @@ class StateManager
 
     template <typename T> auto getContext() -> T* { return static_cast<T*>(&m_context); }
 
-    template <typename... States> static auto build(SharedContext& l_sharedContext) -> StateManager
+    template <IsStateAndHasStateValue... States>
+    static auto build(SharedContext& l_sharedContext) -> StateManager
     {
         StateManager state_manager{l_sharedContext};
         (state_manager.registerState<States>(States::TYPE), ...);
