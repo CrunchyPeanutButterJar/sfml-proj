@@ -1,4 +1,0 @@
-Interface Map Map.style 0 0 Movable Title "Map"
-Element Label MapImage 0 0 MapImage.style " "
-Element Scrollbar ScrollbarVertical 0 0 Scrollbar.style
-Element Scrollbar ScrollbarHorizontal 0 0 Scrollbar.style Horizontal
