@@ -21,6 +21,7 @@ class GameState : public core::state::BaseState
     void onCreate() override {};
 
     void updateScore();
+    auto getScore()->unsigned int;
 
     static constexpr StateType TYPE = StateType::Game;
 
@@ -31,6 +32,7 @@ class GameState : public core::state::BaseState
   
     ecs::Map m_map;
     float m_offsetY{0.F};
+    bool m_playerHasJumped{};
 };
 
 #endif

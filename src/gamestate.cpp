@@ -88,8 +88,10 @@ GameState::GameState(core::state::StateManager& l_stateManager)
         StateType::Game, "Game_MoveLeft", [player_id, system_manager](const auto&)
         { moveEntity(system_manager->getMessageHandler(), player_id, core::Direction::Left); });
 
-    event_manager.addCallback(StateType::Game, "Game_Jump", [player_id, system_manager](const auto&)
-                              { jumpEntity(system_manager->getMessageHandler(), player_id); });
+    auto& player_has_jumped = m_playerHasJumped;
+    event_manager.addCallback(
+        StateType::Game, "Game_Jump", [player_id, system_manager, &player_has_jumped](const auto&)
+        { jumpEntity(system_manager->getMessageHandler(), player_id), player_has_jumped = true; });
 }
 
 GameState::~GameState()
@@ -180,17 +182,41 @@ void GameState::draw()
     context->m_systemManager.draw(context->m_window);
 }
 
-void GameState::updateCamera(const sf::Time& /*l_elapsed*/)
+auto GameState::getScore() -> unsigned int
 {
-    const auto OldViewCenter = m_view.getCenter();
+    auto* context = m_stateManager.getContext<ecs::SharedContext>();
+
+    auto&       gui_manager     = context->m_guiManager;
+    auto*       score_interface = gui_manager.getInterface(GameState::TYPE, SCORE_INTERFACE_NAME);
+    auto*       score_element   = score_interface->getElement("Score");
+    auto        score_text      = score_element->getText();
+    std::string score_label;
+    double      score = 0.F;
+    std::stringstream ss(score_text);
+    ss >> score_label >> score;
+
+    return (unsigned int)score;
+}
+
+void GameState::updateCamera(const sf::Time& l_elapsed)
+{
+    constexpr double MaxSpeed = 320.; /*half screen size*/
+
+    if (!m_playerHasJumped)
+    {
+        return;
+    }
+
+    const float DifficultyFactor = std::min((std::sqrt(getScore())) + 10., MaxSpeed);
+    const float CameraSpeed      = -1.F * DifficultyFactor;
+
+    const auto  OldViewCenter  = m_view.getCenter();
+    const float NewViewCenterY = OldViewCenter.y + (CameraSpeed * l_elapsed.asSeconds());
 
     auto* context    = m_stateManager.getContext<ecs::SharedContext>();
     auto* player_pos = context->m_entityManager.getComponent<ecs::entity::CPosition>(
         m_map.getPlayerId(), ecs::Component::Position);
     const auto PlayerPos = player_pos->getPosition();
 
-    if (PlayerPos.y < OldViewCenter.y)
-    {
-        m_view.setCenter(OldViewCenter.x, PlayerPos.y);
-    }
+    m_view.setCenter(OldViewCenter.x, std::min(PlayerPos.y, NewViewCenterY));
 }

@@ -51,9 +51,10 @@ Gifs "space1 space2 space3 space4 space5 space6 space7 space8 space9 transition"
 MinTilesLength 1
 MaxTilesLength 5
 MinTilesPercentageOnScreen .04
+#Seed 0 means time is used as seed instead
 Seed 0
 ProceeduralGenerationConfigEnd
 
 EntitiesStart
-player.entity 300. 340.
+player.entity 320 620.
 EntitiesEnd
