@@ -189,7 +189,7 @@ void Map::loadMap(const std::string& l_path)
             tokens.advance(); // consume closing tag
         }
     }
-    proceeduralTilesGeneration(1, m_mapSize.x - 1);
+    proceeduralTilesGeneration(8, m_mapSize.x - 1);
 }
 
 void Map::loadTileset(const std::string& l_path)
