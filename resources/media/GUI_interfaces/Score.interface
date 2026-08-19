@@ -1,2 +1,2 @@
 Interface Score Score.style 0 0 "Score Interface"
-Element Label Score 0 0 ScoreLabel.style "SCORE "
+Element Label Score 0 0 ScoreLabel.style "SCORE 0"

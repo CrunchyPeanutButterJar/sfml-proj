@@ -120,16 +120,18 @@ auto GameState::playerHasLost() -> bool
 
 void GameState::updateScore()
 {
+    if (!m_playerHasJumped)
+    {
+        return;
+    }
+
     auto* context = m_stateManager.getContext<ecs::SharedContext>();
 
     auto& entity_manager = context->m_entityManager;
     auto* player_pos     = entity_manager.getComponent<ecs::entity::CPosition>(
         m_map.getPlayerId(), ecs::Component::Position);
-    double potential_new_score = player_pos->getPosition().y;
-    if (potential_new_score < 0.F)
-    {
-        potential_new_score = -potential_new_score + (float)context->m_window.getWindowSize().y;
-    }
+    double potential_new_score =
+        -player_pos->getPosition().y + (float)context->m_window.getWindowSize().y;
 
     auto&       gui_manager     = context->m_guiManager;
     auto*       score_interface = gui_manager.getInterface(GameState::TYPE, SCORE_INTERFACE_NAME);
