@@ -3,9 +3,11 @@
 #include <core/audio/sound_manager.hpp>
 #include <core/bindings.hpp>
 #include <core/event_manager.hpp>
+#include <core/gui/GUI_manager.hpp>
 #include <core/state/basestate.hpp>
 #include <core/state/statemanager.hpp>
 #include <core/window.hpp>
+#include <cstdint>
 #include <ecs/ecs_types.hpp>
 #include <ecs/entity/c_collidable.hpp>
 #include <ecs/entity/c_position.hpp>
@@ -51,6 +53,8 @@ static void jumpEntity(ecs::messaging::MessageHandler& l_messageHandler, ecs::En
     l_messageHandler.dispatch(msg);
 }
 
+constexpr std::string SCORE_INTERFACE_NAME = "ScoreInterface";
+
 GameState::GameState(core::state::StateManager& l_stateManager)
     : core::state::BaseState{l_stateManager},
       m_map{m_stateManager.getContext<ecs::SharedContext>(), *this}
@@ -58,6 +62,9 @@ GameState::GameState(core::state::StateManager& l_stateManager)
     m_map.loadMap(utils::getConfigDirectory() + "map.map");
 
     auto* context = m_stateManager.getContext<ecs::SharedContext>();
+
+    auto& gui_manager = context->m_guiManager;
+    gui_manager.loadInterface(StateType::Game, "Score.interface", SCORE_INTERFACE_NAME);
 
     auto* system_manager = &context->m_systemManager;
 
@@ -93,6 +100,8 @@ GameState::~GameState()
     event_manager.removeCallback(StateType::Game, "Game_MoveLeft");
     event_manager.removeCallback(StateType::Game, "Game_MoveRight");
     event_manager.removeCallback(StateType::Game, "Game_Jump");
+
+    context->m_guiManager.removeInterface(GameState::TYPE, SCORE_INTERFACE_NAME);
 }
 
 auto GameState::playerHasLost() -> bool
@@ -107,6 +116,32 @@ auto GameState::playerHasLost() -> bool
     return !core::getViewSpace(m_view).intersects(player_aabb);
 }
 
+void GameState::updateScore()
+{
+    auto* context = m_stateManager.getContext<ecs::SharedContext>();
+
+    auto& entity_manager = context->m_entityManager;
+    auto* player_pos     = entity_manager.getComponent<ecs::entity::CPosition>(
+        m_map.getPlayerId(), ecs::Component::Position);
+    double potential_new_score = player_pos->getPosition().y;
+    if (potential_new_score < 0.F)
+    {
+        potential_new_score = -potential_new_score + (float)context->m_window.getWindowSize().y;
+    }
+
+    auto&       gui_manager     = context->m_guiManager;
+    auto*       score_interface = gui_manager.getInterface(GameState::TYPE, SCORE_INTERFACE_NAME);
+    auto*       score_element   = score_interface->getElement("Score");
+    auto        score_text      = score_element->getText();
+    std::string score_label;
+    double      new_score = 0.F;
+    std::stringstream ss(score_text);
+    ss >> score_label >> new_score;
+
+    new_score = std::max(potential_new_score + m_offsetY, new_score);
+    score_element->setText(score_label + " " + std::to_string((unsigned int)new_score));
+}
+
 void GameState::update(const sf::Time& l_elapsed)
 {
     auto* context = m_stateManager.getContext<ecs::SharedContext>();
@@ -119,9 +154,11 @@ void GameState::update(const sf::Time& l_elapsed)
         m_view.setCenter(new_center);
 
         m_map.transitionToNextGif();
+        m_offsetY += offset_y;
     }
     m_map.update(l_elapsed.asSeconds());
     context->m_systemManager.update(l_elapsed.asSeconds());
+    updateScore();
 
     if (playerHasLost())
     {

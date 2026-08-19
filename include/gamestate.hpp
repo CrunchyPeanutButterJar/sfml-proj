@@ -20,6 +20,8 @@ class GameState : public core::state::BaseState
 
     void onCreate() override {};
 
+    void updateScore();
+
     static constexpr StateType TYPE = StateType::Game;
 
   private:
@@ -28,6 +30,7 @@ class GameState : public core::state::BaseState
 
   
     ecs::Map m_map;
+    float m_offsetY{0.F};
 };
 
 #endif
