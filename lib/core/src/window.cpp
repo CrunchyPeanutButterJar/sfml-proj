@@ -1,3 +1,4 @@
+#include <SFML/Window/Window.hpp>
 #include <core/window.hpp>
 
 using namespace core;
@@ -36,6 +37,8 @@ void Window::setup(const std::string& l_title, const sf::Vector2u& l_size)
                                });
 
     create();
+
+    m_isFocused = m_window.hasFocus();
 }
 
 void Window::create()
