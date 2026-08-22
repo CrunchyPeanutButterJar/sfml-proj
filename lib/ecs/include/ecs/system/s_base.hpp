@@ -6,6 +6,7 @@
 #include <ecs/messaging/observer.hpp>
 #include <ecs/system/system_manager.fwd.hpp>
 #include <memory>
+#include <optional>
 #include <utils/bitmask.hpp>
 #include <vector>
 
@@ -16,6 +17,8 @@ using Requirements = std::vector<utils::Bitmask>;
 
 class SBase : public messaging::Observer
 {
+    friend class SystemManager;
+
   public:
     SBase(System l_id, SystemManager& l_sysManager);
     ~SBase() override = default;
@@ -36,6 +39,10 @@ class SBase : public messaging::Observer
     System         m_id;
     Requirements   m_requiredComponents;
     EntityList     m_entities;
+
+  private:
+    std::optional<float> m_frameTime;
+    float                m_elapsed{};
 };
 
 using SBasePtr = std::unique_ptr<SBase>;

@@ -15,6 +15,8 @@ using namespace ecs::entity;
 
 SystemManager::SystemManager(EntityManager& l_entityManager) : m_entityManager{l_entityManager}
 {
+    constexpr float PhysicsFrameTime = 1 / 60.F;
+
     m_systems[System::Renderer]       = std::make_unique<SRenderer>(*this);
     m_systems[System::Control]        = std::make_unique<SControl>(*this);
     m_systems[System::Movement]       = std::make_unique<SMovement>(*this);
@@ -22,6 +24,9 @@ SystemManager::SystemManager(EntityManager& l_entityManager) : m_entityManager{l
     m_systems[System::State]          = std::make_unique<SState>(*this);
     m_systems[System::Collision]      = std::make_unique<SCollision>(*this);
     m_systems[System::Sound]          = std::make_unique<SSound>(*this);
+
+    m_systems[System::Movement]->m_frameTime = PhysicsFrameTime;
+    m_systems[System::Control]->m_frameTime  = PhysicsFrameTime;
 }
 
 auto SystemManager::getEntityManager() -> EntityManager&
@@ -73,7 +78,13 @@ void SystemManager::update(float l_dt)
 {
     for (auto& s_itr : m_systems)
     {
-        s_itr.second->update(l_dt);
+        auto* system = s_itr.second.get();
+        system->m_elapsed += l_dt;
+        if (system->m_elapsed >= system->m_frameTime.value_or(l_dt))
+        {
+            system->update(system->m_elapsed);
+            system->m_elapsed = 0.F;
+        }
     }
     handleEvents();
 }
@@ -87,7 +98,7 @@ void SystemManager::handleEvents()
         {
             for (auto& s_itr : m_systems)
             {
-                if (s_itr.second->hasEntity(entity))
+                if (s_itr.second->hasEntity(entity) && s_itr.second->m_elapsed == 0.F)
                 {
                     s_itr.second->handleEvent(entity, (EntityEvent)*event);
                 }
