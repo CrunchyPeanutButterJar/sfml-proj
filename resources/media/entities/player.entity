@@ -1,5 +1,4 @@
 Name player
-Attributes 255
 Component 0 0 0
 Component 1 dinoSprite.sheet
 Component 2 5

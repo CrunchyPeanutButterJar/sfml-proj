@@ -70,6 +70,9 @@ class Tokens
 
     auto advance() -> std::optional<std::string>;
     auto empty() -> bool;
+    /**
+     *@warning to be used only if you know the line you're parsing is still not empty
+     */
     void skipLine();
 
   private:

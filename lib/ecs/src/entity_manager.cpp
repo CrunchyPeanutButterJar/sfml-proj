@@ -48,6 +48,36 @@ auto EntityManager::addEntity(utils::Bitmask l_mask) -> int
     return entity;
 }
 
+static constexpr std::string COMPONENT_STR = "Component";
+
+static auto deduceAttributes(const std::string& l_entityFilePath) -> std::optional<utils::Bitmask>
+{
+    utils::Bitmask result;
+
+    auto file_stream = utils::readFile(l_entityFilePath);
+
+    if (!file_stream)
+    {
+        FAILURE_NON_FATAL("Could not open entity file {}", l_entityFilePath);
+        return {};
+    }
+
+    utils::Tokens tokens{std::move(file_stream.value())};
+
+    while (!tokens.empty())
+    {
+        auto key = *consumeToken<std::string>(tokens);
+
+        if (key == COMPONENT_STR)
+        {
+            auto component_type = *consumeToken<unsigned int>(tokens);
+            result.turnOnBit(component_type);
+        }
+    }
+
+    return result;
+}
+
 auto EntityManager::addEntity(const std::string& l_entityFile) -> int
 {
     static const std::string EntityDir   = utils::getResourcesDirectory() + "media/entities/";
@@ -60,23 +90,18 @@ auto EntityManager::addEntity(const std::string& l_entityFile) -> int
     }
     utils::Tokens tokens{std::move(*file_stream)};
 
+    if (auto attributes = deduceAttributes(EntityDir + l_entityFile))
+    {
+        entity_id = addEntity(attributes.value());
+    }
+
     while (!tokens.empty())
     {
         auto key = *consumeToken<std::string>(tokens);
         if (key == "Name")
         {
         }
-        else if (key == "Attributes")
-        {
-            if (entity_id != -1)
-            {
-                FAILURE_NON_FATAL("Invalid entity file {} : duplicate `Attributes` field found",
-                                  l_entityFile);
-                return -1;
-            }
-            entity_id = addEntity(*consumeToken<utils::Bitset>(tokens));
-        }
-        else if (key == "Component")
+        else if (key == COMPONENT_STR)
         {
             if (entity_id == -1)
             {
