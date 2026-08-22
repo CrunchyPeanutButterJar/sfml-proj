@@ -76,8 +76,10 @@ class Tokens
     char                m_delimiter;
     std::optional<char> m_quoteChar;
 
-    template <typename T, T Tokens::*Member> class ScopedReplacer
+    template <auto Member> class ScopedReplacer
     {
+        using T = std::decay_t<decltype(std::declval<Tokens>().*Member)>;
+
       public:
         ScopedReplacer(Tokens& l_tokens, T l_newMemberValue)
             : m_tokens{l_tokens}, m_oldMemberValue{m_tokens.*Member}
@@ -93,9 +95,9 @@ class Tokens
     };
 
   public:
-    auto setDelimiterScoped(char l_delimiter) -> ScopedReplacer<char, &Tokens::m_delimiter>;
-    auto setQuotedCharScoped(std::optional<char> l_quoteChar)
-        -> ScopedReplacer<std::optional<char>, &Tokens::m_quoteChar>;
+    auto setDelimiterScoped(char l_delimiter) -> ScopedReplacer<&Tokens::m_delimiter>;
+    auto
+    setQuotedCharScoped(std::optional<char> l_quoteChar) -> ScopedReplacer<&Tokens::m_quoteChar>;
 
     template <typename T> auto head() -> std::optional<T>
     {

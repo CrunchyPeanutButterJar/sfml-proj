@@ -97,14 +97,13 @@ void Tokens::skipLine()
     }
 }
 
-auto Tokens::setDelimiterScoped(char l_delimiter)
-    -> Tokens::ScopedReplacer<char, &Tokens::m_delimiter>
+auto Tokens::setDelimiterScoped(char l_delimiter) -> Tokens::ScopedReplacer<&Tokens::m_delimiter>
 {
     return {*this, l_delimiter};
 }
 
 auto Tokens::setQuotedCharScoped(std::optional<char> l_quoteChar)
-    -> ScopedReplacer<std::optional<char>, &Tokens::m_quoteChar>
+    -> ScopedReplacer<&Tokens::m_quoteChar>
 {
     return {*this, l_quoteChar};
 }
