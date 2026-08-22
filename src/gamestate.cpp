@@ -1,4 +1,5 @@
 #include "core/directions.hpp"
+#include "utils/assert.hpp"
 #include <SFML/Graphics/View.hpp>
 #include <core/audio/sound_manager.hpp>
 #include <core/bindings.hpp>
@@ -171,8 +172,11 @@ void GameState::update(const sf::Time& l_elapsed)
         context->m_entityManager.removeEntity(m_map.getPlayerId());
         m_stateManager.remove(GameState::TYPE);
         m_stateManager.switchTo(StateType::MainMenu);
-        ASSERT_NON_FATAL(sound_manager.play("lose", {0, 0, 0}, false, true).has_value(),
-                         "Failed to play lose sound");
+        auto sound_id = sound_manager.play("lose", {0, 0, 0}, false, true);
+        ASSERT(sound_id.has_value(), "Failed to play 'lose' sound");
+        sound_manager.stop(sound_id.value());
+        sound_manager.play(sound_id.value());
+        // reset sound
     }
 }
 
