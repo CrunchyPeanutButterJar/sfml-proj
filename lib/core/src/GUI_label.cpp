@@ -11,9 +11,8 @@ GUI_Label::~GUI_Label() = default;
 
 void GUI_Label::readIn(utils::Tokens& l_tokens)
 {
-    l_tokens.captureQuotedStrings('"');
+    auto scope   = l_tokens.setDelimiterScoped('"');
     auto content = *consumeToken<std::string>(l_tokens);
-    l_tokens.captureQuotedStrings({});
     m_visual.m_text.setString(content);
 }
 

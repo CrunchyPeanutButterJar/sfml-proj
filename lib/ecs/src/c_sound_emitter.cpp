@@ -32,7 +32,7 @@ void CSoundEmitter::readInput(utils::Tokens& l_tokens)
 
         m_params[i_sound].m_sound = sound;
 
-        line.captureQuotedStrings('"');
+        auto          scope      = line.setDelimiterScoped('"');
         auto          frames_str = *consumeToken<std::string>(line);
         utils::Tokens frames{std::istringstream{std::move(frames_str)}, FrameDelimiter};
 
@@ -48,8 +48,6 @@ void CSoundEmitter::readInput(utils::Tokens& l_tokens)
             auto frame_id                         = *consumeToken<unsigned int>(frames);
             m_params[i_sound].m_frames[i_frame++] = frame_id;
         }
-
-        line.captureQuotedStrings({});
 
         i_sound++;
     }

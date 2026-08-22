@@ -123,9 +123,8 @@ void GUI_Interface::readIn(utils::Tokens& l_tokens)
         l_tokens.advance();
     }
 
-    l_tokens.captureQuotedStrings('"');
-    title = *consumeToken<std::string>(l_tokens);
-    l_tokens.captureQuotedStrings({});
+    auto scope = l_tokens.setDelimiterScoped('"');
+    title      = *consumeToken<std::string>(l_tokens);
 
     m_visual.m_text.setString(title);
 }

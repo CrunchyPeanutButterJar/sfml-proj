@@ -94,7 +94,8 @@ TEST(Tokenizer, capture_quoted_strings)
           "\n\n\n";
 
     utils::Tokens tokens{std::istringstream{ss.str()}};
-    tokens.captureQuotedStrings('"');
+
+    auto scope = tokens.setQuotedCharScoped('"');
 
     const auto QuotedString = *consumeToken<std::string>(tokens);
     EXPECT_EQ(QuotedString, "this is a   string \n \n i want to capture");
@@ -134,9 +135,12 @@ TEST(Tokenizer, change_delimiter)
         EXPECT_EQ(str, "footstep");
     }
 
-    tokens.captureQuotedStrings('"');
-    auto value = *consumeToken<std::string>(tokens);
-    tokens.captureQuotedStrings({});
+    std::string value;
+
+    {
+        auto scoped = tokens.setDelimiterScoped('"');
+        value       = *consumeToken<std::string>(tokens);
+    }
 
     utils::Tokens    inner_tokens{std::istringstream{value}, ','};
     std::vector<int> frames;

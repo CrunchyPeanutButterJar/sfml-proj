@@ -23,9 +23,12 @@ template <typename Derived, typename T> class ResourceManager
             {
                 auto opt_alias = utils::consumeToken<std::string>(tokens);
 
-                tokens.captureQuotedStrings('"');
-                auto opt_path = consumeToken<std::string>(tokens);
-                tokens.captureQuotedStrings({});
+                std::optional<std::string> opt_path;
+
+                {
+                    auto scope = tokens.setQuotedCharScoped('"');
+                    opt_path   = consumeToken<std::string>(tokens);
+                }
 
                 ASSERT(opt_alias.has_value() && opt_path.has_value(),
                        "Error reading from ressource file {}", FilePath);

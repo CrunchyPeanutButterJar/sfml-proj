@@ -149,9 +149,12 @@ void Map::loadMap(const std::string& l_path)
                 key = *consumeToken<std::string>(tokens);
                 if (key == "Gifs")
                 {
-                    tokens.captureQuotedStrings('"');
-                    auto str = *consumeToken<std::string>(tokens);
-                    tokens.captureQuotedStrings({});
+                    std::string str;
+                    {
+                        auto scope = tokens.setDelimiterScoped('"');
+                        str        = *consumeToken<std::string>(tokens);
+                    }
+
                     utils::Tokens gifs{std::istringstream{std::move(str)}};
                     while (!gifs.empty())
                     {

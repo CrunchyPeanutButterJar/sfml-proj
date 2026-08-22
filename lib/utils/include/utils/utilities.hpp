@@ -68,34 +68,34 @@ class Tokens
   public:
     Tokens(std::istringstream ss, char l_delimiter = ' ', char l_commentChar = '#');
 
-    void captureQuotedStrings(std::optional<char> l_quoteChar);
-
     auto advance() -> std::optional<std::string>;
     auto empty() -> bool;
     void skipLine();
 
-    void setDelimiter(char l_delimiter);
-    auto getDelimiter() const -> char;
-
   private:
-    class ScopedReplacer
+    char                m_delimiter;
+    std::optional<char> m_quoteChar;
+
+    template <typename T, T Tokens::*Member> class ScopedReplacer
     {
       public:
-        ScopedReplacer(Tokens& l_tokens, char l_delimiter)
-            : m_tokens{l_tokens}, m_oldDelimiter{m_tokens.getDelimiter()}
+        ScopedReplacer(Tokens& l_tokens, T l_newMemberValue)
+            : m_tokens{l_tokens}, m_oldMemberValue{m_tokens.*Member}
         {
-            l_tokens.setDelimiter(l_delimiter);
+            l_tokens.*Member = l_newMemberValue;
         }
 
-        ~ScopedReplacer() { m_tokens.setDelimiter(m_oldDelimiter); }
+        ~ScopedReplacer() { m_tokens.*Member = m_oldMemberValue; }
 
       private:
         Tokens& m_tokens;
-        char    m_oldDelimiter;
+        T       m_oldMemberValue;
     };
 
   public:
-    auto setDelimiterScoped(char l_delimiter) -> ScopedReplacer;
+    auto setDelimiterScoped(char l_delimiter) -> ScopedReplacer<char, &Tokens::m_delimiter>;
+    auto setQuotedCharScoped(std::optional<char> l_quoteChar)
+        -> ScopedReplacer<std::optional<char>, &Tokens::m_quoteChar>;
 
     template <typename T> auto head() -> std::optional<T>
     {
@@ -122,11 +122,9 @@ class Tokens
   private:
     auto currentMatch() -> bool;
 
-    std::string         m_currentStr;
-    std::istringstream  m_ss;
-    char                m_delimiter;
-    const char          m_commentChar;
-    std::optional<char> m_quoteChar;
+    std::string        m_currentStr;
+    std::istringstream m_ss;
+    const char         m_commentChar;
 };
 
 template <typename... T> auto consumeTokens(Tokens& l_tokens) -> std::optional<std::tuple<T...>>

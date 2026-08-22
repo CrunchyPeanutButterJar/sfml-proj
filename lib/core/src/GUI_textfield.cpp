@@ -11,9 +11,8 @@ GUI_Textfield::~GUI_Textfield() = default;
 
 void GUI_Textfield::readIn(utils::Tokens& l_tokens)
 {
-    l_tokens.captureQuotedStrings('"');
+    auto scope   = l_tokens.setDelimiterScoped('"');
     auto content = *consumeToken<std::string>(l_tokens);
-    l_tokens.captureQuotedStrings({});
     m_visual.m_text.setString(content);
 }
 void GUI_Textfield::onClick(const sf::Vector2f& /*l_mousePos*/)

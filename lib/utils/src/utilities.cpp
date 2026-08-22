@@ -7,7 +7,7 @@ namespace utils
 {
 
 Tokens::Tokens(std::istringstream ss, char l_delimiter, char l_commentChar)
-    : m_ss{std::move(ss)}, m_delimiter{l_delimiter}, m_commentChar{l_commentChar}
+    : m_delimiter{l_delimiter}, m_ss{std::move(ss)}, m_commentChar{l_commentChar}
 {
 }
 
@@ -97,19 +97,16 @@ void Tokens::skipLine()
     }
 }
 
-void Tokens::setDelimiter(char l_delimiter)
+auto Tokens::setDelimiterScoped(char l_delimiter)
+    -> Tokens::ScopedReplacer<char, &Tokens::m_delimiter>
 {
-    m_delimiter = l_delimiter;
+    return {*this, l_delimiter};
 }
 
-auto Tokens::getDelimiter() const -> char
+auto Tokens::setQuotedCharScoped(std::optional<char> l_quoteChar)
+    -> ScopedReplacer<std::optional<char>, &Tokens::m_quoteChar>
 {
-    return m_delimiter;
-}
-
-auto Tokens::setDelimiterScoped(char l_delimiter) -> Tokens::ScopedReplacer
-{
-    return Tokens::ScopedReplacer{*this, l_delimiter};
+    return {*this, l_quoteChar};
 }
 
 auto Tokens::empty() -> bool
@@ -127,11 +124,6 @@ auto Tokens::advance() -> std::optional<std::string>
     }
 
     return std::nullopt;
-}
-
-void Tokens::captureQuotedStrings(std::optional<char> l_quoteChar)
-{
-    m_quoteChar = l_quoteChar;
 }
 
 auto readFile(const std::string& l_filePath) -> std::optional<std::istringstream>
