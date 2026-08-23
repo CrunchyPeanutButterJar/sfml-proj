@@ -129,15 +129,23 @@ void SMovement::notify(const messaging::Message& l_message)
     {
     case messaging::EntityMessage::Shift_Position:
     {
+        auto& entities_manager = m_systemManager.getEntityManager();
+
         for (auto entity : m_entities)
         {
-            auto* pos = m_systemManager.getEntityManager().getComponent<ecs::entity::CPosition>(
-                entity, Component::Position);
+            auto* pos =
+                entities_manager.getComponent<ecs::entity::CPosition>(entity, Component::Position);
             auto new_pos = pos->getPosition();
             new_pos.x += l_message.m_2f.x;
             new_pos.y += l_message.m_2f.y;
 
             pos->setPosition(new_pos);
+
+            if (auto* collidable = entities_manager.getComponent<ecs::entity::CCollidable>(
+                    entity, Component::Collidable))
+            {
+                collidable->updatePosition(new_pos);
+            }
         }
         break;
     }
