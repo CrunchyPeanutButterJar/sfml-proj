@@ -6,6 +6,7 @@
 #include <ecs/entity/entity_manager.fwd.hpp>
 #include <ecs/map.fwd.hpp>
 #include <optional>
+#include <functional>
 #include <vector>
 
 class EnemyEntitiesManager
@@ -14,7 +15,9 @@ class EnemyEntitiesManager
     EnemyEntitiesManager(ecs::entity::EntityManager& l_entityManager, const ecs::Map& l_map);
     ~EnemyEntitiesManager();
 
-    void generateEnemies();
+    void generateEnemies(int l_startScreenIndex = -1);
+
+    void removeEntities(const std::function<bool(ecs::EntityId)>& l_losePredicate);
 
   private:
     auto addDemon(const sf::Vector2f& l_pos) -> std::optional<ecs::EntityId>;

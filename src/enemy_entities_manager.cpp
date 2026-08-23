@@ -1,5 +1,6 @@
 #include "ecs/ecs_types.hpp"
 #include <SFML/System/Vector2.hpp>
+#include <algorithm>
 #include <core/window.hpp>
 #include <ecs/entity/c_aicontroller.hpp>
 #include <ecs/entity/c_position.hpp>
@@ -56,13 +57,13 @@ static auto generateRandomPosition(int l_screen_index, unsigned int screen_width
     return {utils::getRandom(min_x, max_x), utils::getRandom(min_y, max_y)};
 }
 
-void EnemyEntitiesManager::generateEnemies()
+void EnemyEntitiesManager::generateEnemies(int l_startScreenIndex)
 {
     const auto NumberOfScreens = m_map.getNumberOfScreens();
     const auto [Width, Height] = m_map.getContext()->m_window.getWindowSize();
 
     const int i_ScreenEnd   = -((int)NumberOfScreens - 2);
-    const int i_ScreenStart = -1;
+    const int i_ScreenStart = l_startScreenIndex;
 
     for (int i_screen = i_ScreenStart; i_screen >= i_ScreenEnd; i_screen--)
     {
@@ -118,6 +119,25 @@ void EnemyEntitiesManager::generateEnemies()
                     ->setGoals({new_goal, pos});
             }
         }
+    }
+}
+
+void EnemyEntitiesManager::removeEntities(const std::function<bool(ecs::EntityId)>& l_losePredicate)
+{
+    std::vector<ecs::EntityId> removed;
+
+    for (auto entity : m_enemies)
+    {
+        if (l_losePredicate(entity))
+        {
+            m_entityManager.removeEntity(entity);
+            removed.push_back(entity);
+        }
+    }
+
+    for (auto entity : removed)
+    {
+        std::erase(m_enemies, entity);
     }
 }
 

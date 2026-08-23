@@ -24,6 +24,8 @@ SAIControl::SAIControl(SystemManager& l_systemManager)
     req.turnOnBit((utils::Bitmask::Position)Component::Controller);
 
     m_requiredComponents.emplace_back(req);
+
+    m_systemManager.getMessageHandler().subscribe(messaging::EntityMessage::Shift_Position, this);
 }
 
 void SAIControl::update(float /*l_dt*/)
@@ -71,5 +73,32 @@ void SAIControl::update(float /*l_dt*/)
 
 void SAIControl::handleEvent(EntityId /*l_entity*/, messaging::EntityEvent /*l_event*/) {}
 
-void SAIControl::notify(const messaging::Message& /*l_message*/) {}
+void SAIControl::notify(const messaging::Message& l_message)
+{
+    switch ((messaging::EntityMessage)l_message.m_type)
+    {
+    case messaging::EntityMessage::Shift_Position:
+    {
+        auto& entities_manager = m_systemManager.getEntityManager();
+
+        for (auto entity : m_entities)
+        {
+            auto* ai_controller = entities_manager.getComponent<ecs::entity::CAIController>(
+                entity, Component::AIController);
+            auto goals = ai_controller->getGoals();
+
+            for (auto& goal : goals)
+            {
+                goal += l_message.m_2f;
+            }
+
+            ai_controller->setGoals(goals);
+        }
+        break;
+    }
+
+    default:
+        break;
+    }
+}
 } // namespace ecs::system

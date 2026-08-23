@@ -19,7 +19,9 @@ class CAIController : public CBase
     void readInput(utils::Tokens& /*unused*/) override;
 
     [[nodiscard]] auto getActiveGoal() -> const sf::Vector2f&;
-    void               switchToNextGoal();
+    [[nodiscard]] auto getGoals() -> const Goals&;
+
+    void switchToNextGoal();
 
     void setGoals(const Goals& l_goals);
 

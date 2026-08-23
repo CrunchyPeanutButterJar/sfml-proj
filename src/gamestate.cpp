@@ -106,16 +106,24 @@ GameState::~GameState()
     context->m_guiManager.removeInterface(GameState::TYPE, SCORE_INTERFACE_NAME);
 }
 
+static auto cameraAteEntity(ecs::EntityId l_entity, const sf::View& l_view,
+                            ecs::entity::EntityManager& l_entityManager) -> bool
+{
+    const auto& entity_aabb =
+        l_entityManager
+            .getComponent<ecs::entity::CCollidable>(l_entity, ecs::Component::Collidable)
+            ->getCollidable();
+
+    const auto& view_space = core::getViewSpace(l_view);
+
+    return entity_aabb.top > (view_space.top + view_space.height);
+}
+
 auto GameState::playerHasLost() -> bool
 {
     auto* context = m_stateManager.getContext<ecs::SharedContext>();
 
-    auto&       entity_manager = context->m_entityManager;
-    const auto& player_aabb =
-        entity_manager
-            .getComponent<ecs::entity::CCollidable>(m_map.getPlayerId(), ecs::Component::Collidable)
-            ->getCollidable();
-    return !core::getViewSpace(m_view).intersects(player_aabb);
+    return cameraAteEntity(m_map.getPlayerId(), m_view, context->m_entityManager);
 }
 
 void GameState::updateScore()
@@ -159,10 +167,22 @@ void GameState::update(const sf::Time& l_elapsed)
 
         m_map.transitionToNextGif();
         m_offsetY += offset_y;
+
+        m_enemyEntitiesManager.generateEnemies(-1);
     }
     m_map.update(l_elapsed.asSeconds());
     context->m_systemManager.update(l_elapsed.asSeconds());
     updateScore();
+
+    auto* this_state = this;
+
+    m_enemyEntitiesManager.removeEntities(
+        [this_state](ecs::EntityId l_entity) -> bool
+        {
+            return cameraAteEntity(
+                l_entity, this_state->m_view,
+                this_state->m_stateManager.getContext<ecs::SharedContext>()->m_entityManager);
+        });
 
     if (playerHasLost())
     {

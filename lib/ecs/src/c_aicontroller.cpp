@@ -11,6 +11,11 @@ auto CAIController::getActiveGoal() -> const sf::Vector2f&
     return m_goTo.at(m_activeGoalIndex);
 }
 
+auto CAIController::getGoals() -> const Goals&
+{
+    return m_goTo;
+}
+
 void CAIController::switchToNextGoal()
 {
     m_activeGoalIndex = (m_activeGoalIndex + 1) % GOAL_COUNT;

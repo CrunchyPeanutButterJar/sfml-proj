@@ -1,6 +1,7 @@
 #ifndef GAMESTATE_HPP
 #define GAMESTATE_HPP
 
+#include "ecs/ecs_types.hpp"
 #include "ecs/map.hpp"
 #include <statetype.hpp>
 
