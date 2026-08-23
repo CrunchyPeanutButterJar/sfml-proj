@@ -1,4 +1,6 @@
 #include "core/directions.hpp"
+#include "ecs/ecs_types.hpp"
+#include "ecs/entity/c_movable.hpp"
 #include "ecs/entity/c_state.fwd.hpp"
 #include "ecs/messaging/entity_events.hpp"
 #include "ecs/messaging/entity_message.hpp"
@@ -39,7 +41,8 @@ void SState::update(float /*l_dt*/)
             CurrentState == entity::EntityState::Running ||
             CurrentState == entity::EntityState::Jumping ||
             CurrentState == entity::EntityState::Falling ||
-            CurrentState == entity::EntityState::Landing)
+            CurrentState == entity::EntityState::Landing ||
+            CurrentState == entity::EntityState::Flying)
         {
             m_systemManager.addEvent(entity, (messaging::EventId)messaging::EntityEvent::Is_Moving);
         }
@@ -107,22 +110,21 @@ void SState::notify(const messaging::Message& l_message)
             return;
         }
 
-        EntityEvent new_event{};
-        const auto  Direction = (core::Direction)l_message.m_int;
-
-        if (Direction == core::Direction::Right)
-        {
-            new_event = EntityEvent::Moving_Right;
-        }
-        else if (Direction == core::Direction::Left)
-        {
-            new_event = EntityEvent::Moving_Left;
-        }
+        auto new_event = (EntityEvent)((int)EntityEvent::Moving_Right + l_message.m_int);
 
         ASSERT(l_message.m_receiver >= 0, "ill formed message, receiver is not valid {}",
                l_message.m_receiver);
         m_systemManager.addEvent(l_message.m_receiver, (EventId)new_event);
-        changeState(l_message.m_receiver, entity::EntityState::Running, false);
+
+        auto* movable = m_systemManager.getEntityManager().getComponent<ecs::entity::CMovable>(
+            l_message.m_receiver, ecs::Component::Movable);
+        entity::EntityState new_state{entity::EntityState::Running};
+        if (!movable->isAffectedByGravity())
+        {
+            new_state = entity::EntityState::Flying;
+        }
+
+        changeState(l_message.m_receiver, new_state, false);
 
         break;
     }
@@ -154,6 +156,7 @@ static auto getTransitionsGraph()
     transitions[(size_t)entity::EntityState::Idle][(size_t)entity::EntityState::Running] = true;
     transitions[(size_t)entity::EntityState::Idle][(size_t)entity::EntityState::Walking] = true;
     transitions[(size_t)entity::EntityState::Idle][(size_t)entity::EntityState::Jumping] = true;
+    transitions[(size_t)entity::EntityState::Idle][(size_t)entity::EntityState::Flying]  = true;
 
     transitions[(size_t)entity::EntityState::Running][(size_t)entity::EntityState::Idle]    = true;
     transitions[(size_t)entity::EntityState::Running][(size_t)entity::EntityState::Walking] = true;
@@ -167,6 +170,8 @@ static auto getTransitionsGraph()
     transitions[(size_t)entity::EntityState::Landing][(size_t)entity::EntityState::Running] = true;
     transitions[(size_t)entity::EntityState::Landing][(size_t)entity::EntityState::Walking] = true;
     transitions[(size_t)entity::EntityState::Landing][(size_t)entity::EntityState::Jumping] = true;
+
+    transitions[(size_t)entity::EntityState::Flying][(size_t)entity::EntityState::Idle] = true;
 
     return transitions;
 }

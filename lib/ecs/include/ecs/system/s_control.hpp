@@ -2,6 +2,7 @@
 #define ECS_SYSTEM_S_CONTROL_HPP
 
 #include "core/directions.hpp"
+#include <ecs/messaging/message_handler.fwd.hpp>
 #include <ecs/system/s_base.hpp>
 
 namespace ecs::system
@@ -18,6 +19,10 @@ class SControl : public SBase
   private:
     void moveEntity(EntityId l_entity, core::Direction l_dir);
 };
+
+void moveEntity(ecs::messaging::MessageHandler& l_messageHandler, ecs::EntityId l_entity,
+                core::Direction l_dir);
+
 } // namespace ecs::system
 
 #endif

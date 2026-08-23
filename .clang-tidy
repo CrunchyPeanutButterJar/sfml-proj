@@ -67,6 +67,8 @@ CheckOptions:
     value:           'CamelCase'
   - key:             readability-identifier-naming.LocalConstantCase
     value:           'CamelCase'
+  - key:             readability-identifier-naming.LocalConstantIgnoredRegexp
+    value:           '^([a-z]+_)[A-Z][a-zA-Z0-9]*$'
 
   # Don’t enforce naming rules for enums
   - key:            readability-identifier-naming.EnumCase

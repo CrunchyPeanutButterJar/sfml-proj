@@ -1,3 +1,4 @@
+#include <ecs/system/s_aicontrol.hpp>
 #include <ecs/system/s_collision.hpp>
 #include <ecs/system/s_control.hpp>
 #include <ecs/system/s_movement.hpp>
@@ -24,10 +25,12 @@ SystemManager::SystemManager(EntityManager& l_entityManager) : m_entityManager{l
     m_systems[System::SheetAnimation] = std::make_unique<SSheetAnimation>(*this);
     m_systems[System::State]          = std::make_unique<SState>(*this);
     m_systems[System::Sound]          = std::make_unique<SSound>(*this);
+    m_systems[System::AIControl]      = std::make_unique<SAIControl>(*this);
 
-    m_systems[System::Control]->m_frameTime  = PhysicsFrameTime;
-    m_systems[System::Movement]->m_frameTime = PhysicsFrameTime;
+    m_systems[System::Control]->m_frameTime   = PhysicsFrameTime;
+    m_systems[System::Movement]->m_frameTime  = PhysicsFrameTime;
     m_systems[System::Collision]->m_frameTime = PhysicsFrameTime;
+    m_systems[System::AIControl]->m_frameTime = PhysicsFrameTime;
 }
 
 auto SystemManager::getEntityManager() -> EntityManager&
@@ -79,10 +82,10 @@ void SystemManager::update(float l_dt)
 {
     float frame_time = l_dt;
 
-    for(auto& s_itr : m_systems)
+    for (auto& s_itr : m_systems)
     {
         auto* system = s_itr.second.get();
-        frame_time = std::min(frame_time, system->m_frameTime.value_or(l_dt));
+        frame_time   = std::min(frame_time, system->m_frameTime.value_or(l_dt));
     }
 
     static constexpr auto UpdateIteration = [](SystemManager& l_systemManager, float l_frameTime)
@@ -102,16 +105,15 @@ void SystemManager::update(float l_dt)
 
     float remaining_time = l_dt;
 
-    for (;remaining_time >= frame_time; remaining_time -= frame_time)
+    for (; remaining_time >= frame_time; remaining_time -= frame_time)
     {
         UpdateIteration(*this, frame_time);
     }
 
-    if(remaining_time > 0.F)
+    if (remaining_time > 0.F)
     {
         UpdateIteration(*this, remaining_time);
     }
-
 }
 
 void SystemManager::handleEvents()

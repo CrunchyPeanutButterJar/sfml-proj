@@ -36,6 +36,11 @@ void CMovable::readInput(utils::Tokens& l_tokens)
     std::tie(m_maxVelocity, m_speed.x, m_speed.y, direction) =
         *consumeTokens<float, float, float, unsigned int>(l_tokens);
     m_direction = static_cast<core::Direction>(direction);
+
+    if (auto str = l_tokens.head<std::string>(); str.has_value() && str.value() == "Fly")
+    {
+        m_doesFly = true;
+    }
 }
 
 void CMovable::addVelocity(const sf::Vector2f& l_vec)
@@ -80,12 +85,18 @@ void CMovable::move(core::Direction l_dir)
     case core::Direction::Right:
         m_acceleration.x += m_speed.x;
         break;
+    case core::Direction::Up:
+        m_acceleration.y -= m_speed.y;
+        break;
+    case core::Direction::Down:
+        m_acceleration.y += m_speed.y;
+        break;
     }
 }
 
 void CMovable::jump()
 {
-    m_acceleration.y -= m_speed.y;
+    move(core::Direction::Up);
 }
 
 auto CMovable::getVelocity() const -> const sf::Vector2f&
@@ -101,6 +112,11 @@ auto CMovable::getAcceleration() const -> const sf::Vector2f&
 auto CMovable::getMaxVelocity() const -> float
 {
     return m_maxVelocity;
+}
+
+auto CMovable::isAffectedByGravity() const -> bool
+{
+    return !m_doesFly;
 }
 
 } // namespace ecs::entity

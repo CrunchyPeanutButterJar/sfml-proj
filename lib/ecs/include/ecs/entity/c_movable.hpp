@@ -29,6 +29,7 @@ class CMovable : public CBase
     [[nodiscard]] auto getVelocity() const -> const sf::Vector2f&;
     [[nodiscard]] auto getAcceleration() const -> const sf::Vector2f&;
     [[nodiscard]] auto getMaxVelocity() const -> float;
+    [[nodiscard]] auto isAffectedByGravity() const -> bool;
 
   private:
     sf::Vector2f    m_velocity;
@@ -36,6 +37,7 @@ class CMovable : public CBase
     sf::Vector2f    m_speed;
     sf::Vector2f    m_acceleration;
     core::Direction m_direction{};
+    bool            m_doesFly{};
 };
 } // namespace ecs::entity
 

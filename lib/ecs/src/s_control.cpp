@@ -5,6 +5,7 @@
 #include "ecs/messaging/event_queue.hpp"
 #include <ecs/entity/c_movable.hpp>
 #include <ecs/entity/entity_manager.hpp>
+#include <ecs/messaging/message_handler.hpp>
 #include <ecs/system/s_control.hpp>
 #include <ecs/system/system_manager.hpp>
 #include <utils/utilities.hpp>
@@ -70,6 +71,18 @@ void SControl::handleEvent(EntityId l_entity, messaging::EntityEvent l_event)
         break;
     }
 
+    case EntityEvent::Moving_Up:
+    {
+        moveEntity(l_entity, core::Direction::Up);
+        break;
+    }
+
+    case EntityEvent::Moving_down:
+    {
+        moveEntity(l_entity, core::Direction::Down);
+        break;
+    }
+
     case EntityEvent::Jump_Attempt:
     {
         auto& entities = m_systemManager.getEntityManager();
@@ -93,6 +106,18 @@ void SControl::moveEntity(EntityId l_entity, core::Direction l_dir)
     auto* mov = m_systemManager.getEntityManager().getComponent<entity::CMovable>(
         l_entity, Component::Movable);
     mov->move(l_dir);
+}
+
+void moveEntity(ecs::messaging::MessageHandler& l_messageHandler, ecs::EntityId l_entity,
+                core::Direction l_dir)
+{
+    using namespace ecs::messaging;
+
+    Message message{.m_type     = (MessageType)EntityMessage::Move,
+                    .m_receiver = (int)l_entity,
+                    .m_int      = (int)l_dir};
+
+    l_messageHandler.dispatch(message);
 }
 
 } // namespace ecs::system

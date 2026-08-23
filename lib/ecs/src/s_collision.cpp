@@ -1,3 +1,4 @@
+#include "ecs/entity/c_state.fwd.hpp"
 #include "ecs/messaging/entity_events.hpp"
 #include "ecs/messaging/event_queue.hpp"
 #include <SFML/Graphics/Rect.hpp>
@@ -47,7 +48,8 @@ void SCollision::update(float /*l_dt*/)
         collidable->resetCollisionFlags();
         checkOutOfBounds(position, collidable);
         if (auto* state = entities.getComponent<ecs::entity::CState>(entity, ecs::Component::State);
-            state != nullptr && state->getState() != entity::EntityState::Jumping)
+            state != nullptr && state->getState() != entity::EntityState::Jumping &&
+            state->getState() != entity::EntityState::Flying)
         {
             mapCollisions(entity, position, collidable);
         }

@@ -4,6 +4,7 @@
 #include <ecs/messaging/communicator.hpp>
 #include <ecs/messaging/entity_message.hpp>
 #include <ecs/messaging/message.hpp>
+#include <ecs/messaging/message_handler.fwd.hpp>
 #include <unordered_map>
 
 namespace ecs::messaging

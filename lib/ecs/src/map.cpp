@@ -132,7 +132,6 @@ void Map::loadMap(const std::string& l_path)
                 {
                     m_playerId = entity;
                 }
-
                 auto* position =
                     entities.getComponent<ecs::entity::CPosition>(entity, ecs::Component::Position);
                 if (position != nullptr)
@@ -247,6 +246,34 @@ void Map::loadTileset(const std::string& l_path)
 
     ASSERT(filled_dimensions && filled_tile_size && filled_texture,
            "Missing data in tilesheet config file {}", l_path);
+}
+
+auto Map::getContext() const -> SharedContext*
+{
+    return m_context;
+}
+
+auto Map::getNumberOfRowsInScreen() const -> size_t
+{
+    const auto [_, Height] = m_context->m_window.getWindowSize();
+    const auto TileSize    = m_tileSheetConfig.m_tileSize;
+
+    const size_t NumberOfRowsInScreen = Height / TileSize;
+    ASSERT_DEBUG_BUILD(Height % TileSize == 0, "");
+
+    return NumberOfRowsInScreen;
+}
+
+auto Map::getNumberOfScreens() const -> size_t
+{
+    const auto [NRows, _] = getMapSize();
+
+    const auto NumberOfRowsInScreen = getNumberOfRowsInScreen();
+
+    const size_t NumberOfScreens = NRows / NumberOfRowsInScreen;
+    ASSERT_DEBUG_BUILD(NRows % NumberOfRowsInScreen == 0, "");
+
+    return NumberOfScreens;
 }
 
 auto Map::proceeduralTilesReGeneration() -> float

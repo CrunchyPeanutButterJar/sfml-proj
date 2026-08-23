@@ -16,6 +16,7 @@
 #include <ecs/messaging/message_handler.hpp>
 #include <ecs/shared_context.hpp>
 #include <ecs/system/s_collision.hpp>
+#include <ecs/system/s_control.hpp>
 #include <ecs/system/s_movement.hpp>
 #include <ecs/system/system_manager.hpp>
 #include <gamestate.hpp>
@@ -33,18 +34,6 @@ template class core::RegisterBinding<BINDING("Game_MoveLeft", core::KeyPressed{s
 template class core::RegisterBinding<BINDING("Game_Jump", core::KeyPressed{sf::Keyboard::Space}),
                                      core::Customizable>;
 
-static void moveEntity(ecs::messaging::MessageHandler& l_messageHandler, ecs::EntityId l_entity,
-                       core::Direction l_dir)
-{
-    using namespace ecs::messaging;
-
-    Message message{.m_type     = (MessageType)EntityMessage::Move,
-                    .m_receiver = (int)l_entity,
-                    .m_int      = (int)l_dir};
-
-    l_messageHandler.dispatch(message);
-}
-
 static void jumpEntity(ecs::messaging::MessageHandler& l_messageHandler, ecs::EntityId l_entity)
 {
     ecs::messaging::Message msg{
@@ -58,9 +47,13 @@ constexpr std::string SCORE_INTERFACE_NAME = "ScoreInterface";
 
 GameState::GameState(core::state::StateManager& l_stateManager)
     : core::state::BaseState{l_stateManager},
-      m_map{m_stateManager.getContext<ecs::SharedContext>(), *this}
+      m_map{m_stateManager.getContext<ecs::SharedContext>(), *this},
+      m_enemyEntitiesManager{m_stateManager.getContext<ecs::SharedContext>()->m_entityManager,
+                             m_map}
 {
     m_map.loadMap(utils::getConfigDirectory() + "map.map");
+
+    m_enemyEntitiesManager.generateEnemies();
 
     auto* context = m_stateManager.getContext<ecs::SharedContext>();
 
@@ -81,13 +74,19 @@ GameState::GameState(core::state::StateManager& l_stateManager)
     ecs::EntityId player_id = m_map.getPlayerId();
 
     auto& event_manager = context->m_eventManager;
-    event_manager.addCallback(
-        StateType::Game, "Game_MoveRight", [player_id, system_manager](const auto&)
-        { moveEntity(system_manager->getMessageHandler(), player_id, core::Direction::Right); });
+    event_manager.addCallback(StateType::Game, "Game_MoveRight",
+                              [player_id, system_manager](const auto&)
+                              {
+                                  ecs::system::moveEntity(system_manager->getMessageHandler(),
+                                                          player_id, core::Direction::Right);
+                              });
 
-    event_manager.addCallback(
-        StateType::Game, "Game_MoveLeft", [player_id, system_manager](const auto&)
-        { moveEntity(system_manager->getMessageHandler(), player_id, core::Direction::Left); });
+    event_manager.addCallback(StateType::Game, "Game_MoveLeft",
+                              [player_id, system_manager](const auto&)
+                              {
+                                  ecs::system::moveEntity(system_manager->getMessageHandler(),
+                                                          player_id, core::Direction::Left);
+                              });
 
     auto& player_has_jumped = m_playerHasJumped;
     event_manager.addCallback(

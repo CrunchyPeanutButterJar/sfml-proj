@@ -6,7 +6,9 @@ namespace core
 enum class Direction
 {
     Right = 0,
-    Left
+    Left,
+    Up,
+    Down
 };
 } // namespace core
 

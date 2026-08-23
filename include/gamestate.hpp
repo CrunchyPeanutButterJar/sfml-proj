@@ -5,6 +5,7 @@
 #include <statetype.hpp>
 
 #include <core/state/basestate.hpp>
+#include <enemy_entities_manager.hpp>
 
 class GameState : public core::state::BaseState
 {
@@ -31,6 +32,7 @@ class GameState : public core::state::BaseState
 
   
     ecs::Map m_map;
+    EnemyEntitiesManager m_enemyEntitiesManager;
     float m_offsetY{0.F};
     bool m_playerHasJumped{};
 };

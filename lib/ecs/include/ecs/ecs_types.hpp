@@ -20,12 +20,14 @@ enum class Component
     Controller,
     Collidable,
     SoundEmitter,
-    SoundListener
+    SoundListener,
+    AIController
 };
 
 enum class System
 {
     Renderer = 0,
+    AIControl,
     Control,
     Movement,
     Collision,

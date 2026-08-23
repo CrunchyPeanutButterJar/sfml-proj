@@ -126,6 +126,11 @@ void SSheetAnimation::notify(const messaging::Message& l_message)
             changeAnimation(Entity, "Dead", true, false);
             break;
         }
+        case EntityState::Flying:
+        {
+            changeAnimation(Entity, "Fly", true, true);
+            break;
+        }
         case EntityState::Count:
         {
             break;

@@ -43,7 +43,17 @@ void SRenderer::notify(const Message& l_message)
         switch (m)
         {
         case EntityMessage::Direction_Changed:
-            setSheetDirection(l_message.m_receiver, (core::Direction)l_message.m_int);
+            switch ((core::Direction)l_message.m_int)
+            {
+            case core::Direction::Left:
+            case core::Direction::Right:
+            {
+                setSheetDirection(l_message.m_receiver, (core::Direction)l_message.m_int);
+                break;
+            }
+            default:
+                break;
+            }
             break;
         default:
         }

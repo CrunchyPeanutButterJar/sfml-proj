@@ -2,6 +2,7 @@
 #define ECS_ENTITY_ENTITY_MANAGER_HPP
 
 #include <core/graphics/texture_manager.fwd.hpp>
+#include <ecs/ecs_types.hpp>
 #include <ecs/entity/c_base.hpp>
 #include <ecs/entity/entity_manager.fwd.hpp>
 #include <ecs/system/system_manager.fwd.hpp>

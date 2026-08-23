@@ -29,7 +29,11 @@ class Map
     auto getTileSheetConfig() const -> const core::graphics::TileSheetConfig&;
     auto getMapSize() const -> const sf::Vector2u&;
     auto getGravity() const -> float;
+    auto getNumberOfRowsInScreen() const -> size_t;
+    auto getNumberOfScreens() const -> size_t;
     void transitionToNextGif();
+
+    auto getContext() const -> SharedContext*;
 
   private:
     auto getTile(size_t iRow, size_t iCol) -> const core::graphics::Tile*;

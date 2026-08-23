@@ -1,5 +1,6 @@
 #include <core/graphics/texture_manager.hpp>
 #include <ecs/ecs_types.hpp>
+#include <ecs/entity/c_aicontroller.hpp>
 #include <ecs/entity/c_collidable.hpp>
 #include <ecs/entity/c_controller.hpp>
 #include <ecs/entity/c_movable.hpp>
@@ -30,6 +31,7 @@ EntityManager::EntityManager(SystemManager&                  l_sysManager,
     addComponentType<CCollidable>(Component::Collidable);
     addComponentType<CSoundEmitter>(Component::SoundEmitter);
     addComponentType<CSoundListener>(Component::SoundListener);
+    addComponentType<CAIController>(Component::AIController);
 }
 
 auto EntityManager::addEntity(utils::Bitmask l_mask) -> int

@@ -103,6 +103,12 @@ void SSound::notify(const messaging::Message& l_message)
         case core::Direction::Right:
             sf::Listener::setDirection(1, 0, 0);
             break;
+        case core::Direction::Up:
+            sf::Listener::setDirection(0, 1, 0);
+            break;
+        case core::Direction::Down:
+            sf::Listener::setDirection(0, -1, 0);
+            break;
         }
         break;
     }

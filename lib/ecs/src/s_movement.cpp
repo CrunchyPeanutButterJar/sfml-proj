@@ -65,7 +65,10 @@ void SMovement::movementStep(float l_dt, entity::CMovable* l_movable,
 {
     static const sf::Vector2f DefaultFriction{5, 0.};
 
-    l_movable->accelerate({0.F, l_gravity});
+    if (l_movable->isAffectedByGravity())
+    {
+        l_movable->accelerate({0.F, l_gravity});
+    }
     l_movable->addVelocity(l_movable->getAcceleration() * l_dt);
     if (l_tile != nullptr)
     {

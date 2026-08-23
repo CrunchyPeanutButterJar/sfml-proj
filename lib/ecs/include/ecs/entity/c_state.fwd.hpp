@@ -16,6 +16,7 @@ enum class EntityState : std::uint8_t
     Landing,
     Hurt,
     Dying,
+    Flying,
     Count
 };
 
