@@ -19,14 +19,15 @@ SystemManager::SystemManager(EntityManager& l_entityManager) : m_entityManager{l
 
     m_systems[System::Renderer]       = std::make_unique<SRenderer>(*this);
     m_systems[System::Control]        = std::make_unique<SControl>(*this);
+    m_systems[System::Collision]      = std::make_unique<SCollision>(*this);
     m_systems[System::Movement]       = std::make_unique<SMovement>(*this);
     m_systems[System::SheetAnimation] = std::make_unique<SSheetAnimation>(*this);
     m_systems[System::State]          = std::make_unique<SState>(*this);
-    m_systems[System::Collision]      = std::make_unique<SCollision>(*this);
     m_systems[System::Sound]          = std::make_unique<SSound>(*this);
 
-    m_systems[System::Movement]->m_frameTime = PhysicsFrameTime;
     m_systems[System::Control]->m_frameTime  = PhysicsFrameTime;
+    m_systems[System::Movement]->m_frameTime = PhysicsFrameTime;
+    m_systems[System::Collision]->m_frameTime = PhysicsFrameTime;
 }
 
 auto SystemManager::getEntityManager() -> EntityManager&
@@ -76,17 +77,41 @@ void SystemManager::removeEntity(EntityId l_entity)
 
 void SystemManager::update(float l_dt)
 {
-    for (auto& s_itr : m_systems)
+    float frame_time = l_dt;
+
+    for(auto& s_itr : m_systems)
     {
         auto* system = s_itr.second.get();
-        system->m_elapsed += l_dt;
-        if (system->m_elapsed >= system->m_frameTime.value_or(l_dt))
-        {
-            system->update(system->m_elapsed);
-            system->m_elapsed = 0.F;
-        }
+        frame_time = std::min(frame_time, system->m_frameTime.value_or(l_dt));
     }
-    handleEvents();
+
+    static constexpr auto UpdateIteration = [](SystemManager& l_systemManager, float l_frameTime)
+    {
+        for (auto& s_itr : l_systemManager.m_systems)
+        {
+            auto* system = s_itr.second.get();
+            system->m_elapsed += l_frameTime;
+            if (system->m_elapsed >= system->m_frameTime.value_or(l_frameTime))
+            {
+                system->update(system->m_elapsed);
+                system->m_elapsed = 0.F;
+            }
+        }
+        l_systemManager.handleEvents();
+    };
+
+    float remaining_time = l_dt;
+
+    for (;remaining_time >= frame_time; remaining_time -= frame_time)
+    {
+        UpdateIteration(*this, frame_time);
+    }
+
+    if(remaining_time > 0.F)
+    {
+        UpdateIteration(*this, remaining_time);
+    }
+
 }
 
 void SystemManager::handleEvents()

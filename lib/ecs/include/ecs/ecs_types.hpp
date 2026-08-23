@@ -26,9 +26,9 @@ enum class Component
 enum class System
 {
     Renderer = 0,
+    Control,
     Movement,
     Collision,
-    Control,
     State,
     SheetAnimation,
     Sound
