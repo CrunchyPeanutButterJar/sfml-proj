@@ -14,6 +14,7 @@ enum class EntitySound : std::uint8_t
     Footstep,
     Jump,
     Attack,
+    WingsFlap,
     Hurt,
     Death,
     Last

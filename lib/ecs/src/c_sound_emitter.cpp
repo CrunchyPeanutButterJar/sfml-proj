@@ -30,6 +30,12 @@ void CSoundEmitter::readInput(utils::Tokens& l_tokens)
 
         std::string sound = *consumeToken<std::string>(line);
 
+        if(sound == "skip")
+        {
+            ++i_sound; // No Sound for index 'i_sound'
+            continue;
+        }
+
         m_params[i_sound].m_sound = sound;
 
         auto          scope      = line.setDelimiterScoped('"');

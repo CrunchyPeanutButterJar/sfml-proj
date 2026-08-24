@@ -5,4 +5,5 @@ Component 2 0
 Component 3 400. 1000. 1000. 0 Fly
 Component 4
 Component 5 20 24 0. -6. 2
+Component 6 skip: skip: skip: wings-flap:"1"
 Component 8

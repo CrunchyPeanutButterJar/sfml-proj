@@ -136,6 +136,10 @@ void SSound::notify(const messaging::Message& l_message)
         {
             sound = EntitySound::Attack;
         }
+        else if (state == EntityState::Flying)
+        {
+            sound = EntitySound::WingsFlap;
+        }
         else if (state == EntityState::Hurt)
         {
             sound = EntitySound::Hurt;
