@@ -2,6 +2,7 @@
 #define CORE_ANIMATION_BASE_ANIMATION_HPP
 
 #include <SFML/Graphics/Texture.hpp>
+#include <core/directions.hpp>
 #include <core/graphics/spritesheet.fwd.hpp>
 #include <utils/utilities.fwd.hpp>
 
@@ -52,6 +53,7 @@ class BaseAnimation
     std::string                  m_name;
     core::graphics::SpriteSheet* m_spriteSheet{};
     sf::Texture*                 m_texture{};
+    core::Direction              m_direction{core::Direction::Right};
     mutable bool                 m_hasMoved{false};
 };
 } // namespace core::animation

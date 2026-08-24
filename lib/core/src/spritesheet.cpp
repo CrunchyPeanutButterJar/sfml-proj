@@ -1,3 +1,4 @@
+#include "core/directions.hpp"
 #include <SFML/Graphics/Rect.hpp>
 #include <SFML/Graphics/RenderWindow.hpp>
 #include <core/animation/animation.hpp>
@@ -52,6 +53,16 @@ auto SpriteSheet::loadSheet(const std::string& l_filePath) -> bool
                     animation_ptr->m_spriteSheet = this;
                     animation_ptr->m_texture     = texture_ptr.get();
                     animation_ptr->m_name        = animationName;
+
+                    if (auto direction = tokens.head<std::string>();
+                        direction.has_value() &&
+                        (direction.value() == "Left" || direction.value() == "Right"))
+                    {
+                        tokens.advance();
+                        animation_ptr->m_direction = direction.value() == "Left"
+                                                         ? core::Direction::Left
+                                                         : core::Direction::Right;
+                    }
 
                     m_animations.emplace(std::make_pair(animationName, std::move(animation_ptr)));
                     setAnimation(animationName);

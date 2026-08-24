@@ -2,11 +2,11 @@ Size 81 71
 Scale 1 1
 
 AnimationsStart
-#type Name StartFrame EndFrame Row FrameTime FrameActionStart FrameActionEnd TextureName
+#type Name StartFrame EndFrame Row FrameTime FrameActionStart FrameActionEnd TextureName Direction
 
-Animation Idle   0 3 0 0.1 -1 -1 DemonSheet
-Animation Hurt   0 3 1 0.1 -1 -1 DemonSheet
-Animation Attack 0 7 2 0.1  3  6 DemonSheet
-Animation Dead   0 6 3 0.1 -1 -1 DemonSheet
-Animation Fly    0 3 4 0.1 -1 -1 DemonSheet
+Animation Idle   0 3 0 0.1 -1 -1 DemonSheet Left
+Animation Hurt   0 3 1 0.1 -1 -1 DemonSheet Left
+Animation Attack 0 7 2 0.1  3  6 DemonSheet Left
+Animation Dead   0 6 3 0.1 -1 -1 DemonSheet Left
+Animation Fly    0 3 4 0.1 -1 -1 DemonSheet Left
 AnimationsEnd

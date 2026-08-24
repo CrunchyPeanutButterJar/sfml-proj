@@ -13,10 +13,9 @@ void Animation::cropSprite()
 
     core::Direction current_direction = m_spriteSheet->getDirection();
 
-    sf::IntRect rect{width * (current_direction == core::Direction::Right ? (int)getFrame()
-                                                                          : (int)getFrame() + 1),
-                     height * (int)m_frameRow,
-                     current_direction == core::Direction::Right ? width : -width, height};
+    sf::IntRect rect{
+        width * (current_direction == m_direction ? (int)getFrame() : (int)getFrame() + 1),
+        height * (int)m_frameRow, current_direction == m_direction ? width : -width, height};
 
     m_spriteSheet->cropSprite(rect);
 }
