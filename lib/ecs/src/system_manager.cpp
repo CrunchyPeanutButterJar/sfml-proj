@@ -30,7 +30,7 @@ SystemManager::SystemManager(EntityManager& l_entityManager) : m_entityManager{l
     m_systems[System::Control]->m_frameTime   = PhysicsFrameTime;
     m_systems[System::Movement]->m_frameTime  = PhysicsFrameTime;
     m_systems[System::Collision]->m_frameTime = PhysicsFrameTime;
-    m_systems[System::AIControl]->m_frameTime = PhysicsFrameTime * 2.F;
+    m_systems[System::AIControl]->m_frameTime = PhysicsFrameTime;
 }
 
 auto SystemManager::getEntityManager() -> EntityManager&
