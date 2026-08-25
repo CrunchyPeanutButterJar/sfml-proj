@@ -365,7 +365,7 @@ auto SoundManager::createSound(SoundID& l_id, const std::string& l_audioName) ->
             l_id         = element->first.first;
             sound.second = m_audioManager.acquire(l_audioName);
             sound.first  = std::move(element->second.first);
-            sound.first->setBuffer(*element->second.second);
+            sound.first->setBuffer(*sound.second);
             m_recycled.erase(element);
         }
         else
