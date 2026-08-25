@@ -13,8 +13,8 @@ void CCollidable::readInput(utils::Tokens& l_tokens)
     unsigned int origin = 0;
     sf::Vector2f size;
 
-    std::tie(size.x, size.y, m_offset.x, m_offset.y, origin) =
-        *consumeTokens<float, float, float, float, unsigned int>(l_tokens);
+    std::tie(size.x, size.y, m_offset.x, m_offset.y, origin, m_entityTag) =
+        *consumeTokens<float, float, float, float, unsigned int, EntityTag>(l_tokens);
 
     setSize(size);
     m_origin = (Origin)origin;
@@ -34,6 +34,11 @@ void CCollidable::collideOnY(const core::graphics::Tile* l_tile)
 auto CCollidable::getGroundTile() const -> const core::graphics::Tile*
 {
     return m_groundTile;
+}
+
+auto CCollidable::getEntityTag() const -> EntityTag
+{
+    return m_entityTag;
 }
 
 void CCollidable::resetCollisionFlags()

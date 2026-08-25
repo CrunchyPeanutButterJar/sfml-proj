@@ -2,6 +2,7 @@
 #include "ecs/messaging/entity_events.hpp"
 #include "ecs/messaging/event_queue.hpp"
 #include <SFML/Graphics/Rect.hpp>
+#include <algorithm>
 #include <ecs/ecs_types.hpp>
 #include <ecs/entity/c_collidable.hpp>
 #include <ecs/entity/c_position.hpp>
@@ -16,6 +17,44 @@
 
 namespace ecs::system
 {
+
+namespace
+{
+using CollisionFnId = std::pair<entity::EntityTag, entity::EntityTag>;
+
+std::vector<std::pair<CollisionFnId, CollisionResolutionFun>> s_collision_resolutions;
+
+auto getCollisionFnId(entity::EntityTag l_entity1, entity::EntityTag l_entity2) -> CollisionFnId
+{
+    auto id = std::make_pair(l_entity1, l_entity2);
+    if (id.first > id.second)
+    {
+        std::swap(id.first, id.second);
+    }
+
+    return id;
+}
+
+auto seekCollisionFn(entity::EntityTag l_entity1, entity::EntityTag l_entity2)
+{
+    auto id = getCollisionFnId(l_entity1, l_entity2);
+    return std::ranges::find_if(s_collision_resolutions,
+                                [id](const auto& el) { return el.first == id; });
+}
+} // namespace
+
+void registerCollisionResolution(entity::EntityTag l_entity1, entity::EntityTag l_entity2,
+                                 CollisionResolutionFun fun)
+{
+    auto itr = seekCollisionFn(l_entity1, l_entity2);
+    if (itr != s_collision_resolutions.end())
+    {
+        FAILURE_NON_FATAL("Collision resolution is getting overriden");
+        s_collision_resolutions.erase(itr);
+    }
+
+    s_collision_resolutions.emplace_back(getCollisionFnId(l_entity1, l_entity2), fun);
+}
 
 SCollision::SCollision(SystemManager& l_systemManager) : SBase{System::Collision, l_systemManager}
 {
@@ -46,6 +85,50 @@ void SCollision::update(float /*l_dt*/)
             entities.getComponent<entity::CCollidable>(entity, Component::Collidable);
         collidable->setPosition(position->getPosition());
         collidable->resetCollisionFlags();
+    }
+
+    for (size_t i = 0; i < m_entities.size(); i++)
+    {
+        for (size_t j = i + 1; j < m_entities.size(); j++)
+        {
+            auto entity1 = m_entities[i];
+            auto entity2 = m_entities[j];
+
+            auto* collidable2 =
+                entities.getComponent<entity::CCollidable>(m_entities[j], Component::Collidable);
+            auto* collidable1 =
+                entities.getComponent<entity::CCollidable>(m_entities[i], Component::Collidable);
+
+            auto tag1 = collidable1->getEntityTag();
+            auto tag2 = collidable2->getEntityTag();
+
+            auto itr = seekCollisionFn(tag1, tag2);
+            if (itr == s_collision_resolutions.end())
+            {
+                continue;
+            }
+
+            auto fun = itr->second;
+
+            const auto& aabb1 = collidable1->getCollidable();
+            const auto& aabb2 = collidable2->getCollidable();
+
+            if (aabb1.intersects(aabb2))
+            {
+                if (tag1 > tag2)
+                {
+                    std::swap(entity1, entity2);
+                }
+                fun(entity1, entity2, m_map->getContext());
+            }
+        }
+    }
+
+    for (auto entity : m_entities)
+    {
+        auto* position = entities.getComponent<entity::CPosition>(entity, Component::Position);
+        auto* collidable =
+            entities.getComponent<entity::CCollidable>(entity, Component::Collidable);
         checkOutOfBounds(position, collidable);
         if (auto* state = entities.getComponent<ecs::entity::CState>(entity, ecs::Component::State);
             state != nullptr && state->getState() != entity::EntityState::Jumping &&

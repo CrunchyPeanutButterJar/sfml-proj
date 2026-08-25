@@ -1,11 +1,14 @@
 #ifndef ECS_SYSTEM_S_COLLISION_HPP
 #define ECS_SYSTEM_S_COLLISION_HPP
 
+#include "ecs/entity/c_collidable.hpp"
 #include "ecs/entity/c_position.hpp"
 #include "ecs/map.hpp"
+#include <ecs/ecs_types.hpp>
 #include <ecs/entity/c_collidable.fwd.hpp>
 #include <ecs/entity/c_position.fwd.hpp>
 #include <ecs/map.fwd.hpp>
+#include <ecs/shared_context.hpp>
 #include <ecs/system/s_base.hpp>
 
 namespace ecs::system
@@ -28,6 +31,10 @@ class SCollision : public SBase
 
     ecs::Map* m_map{nullptr};
 };
+
+using CollisionResolutionFun = void (*)(ecs::EntityId, ecs::EntityId, ecs::SharedContext*);
+void registerCollisionResolution(entity::EntityTag l_entity1, entity::EntityTag l_entity2,
+                                 CollisionResolutionFun fun);
 } // namespace ecs::system
 
 #endif

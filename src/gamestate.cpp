@@ -22,6 +22,13 @@
 #include <gamestate.hpp>
 #include <utils/utilities.hpp>
 
+static bool s_init = []() -> bool
+{
+    ecs::system::registerCollisionResolution(0, 1, [](auto, auto, auto*)
+                                             { LOG("Collided with player"); });
+    return true;
+}();
+
 template class core::RegisterBinding<
     BINDING("Game_MoveRight", core::KeyPressed{sf::Keyboard::Right}), core::Customizable>;
 template class core::RegisterBinding<BINDING("Game_MoveLeft", core::KeyPressed{sf::Keyboard::Left}),

@@ -19,6 +19,8 @@ enum class Origin : std::uint8_t
     Mid_Bottom
 };
 
+using EntityTag = unsigned int;
+
 class CCollidable : public CDrawable
 {
   public:
@@ -36,6 +38,8 @@ class CCollidable : public CDrawable
     [[nodiscard]] auto getCollidable() const -> const sf::FloatRect&;
     [[nodiscard]] auto getGroundTile() const -> const core::graphics::Tile*;
 
+    [[nodiscard]] auto getEntityTag() const -> EntityTag;
+
     void updatePosition(const sf::Vector2f& l_vec) override;
     auto getSize() -> const sf::Vector2u& override;
     void draw(sf::RenderWindow* l_window) override;
@@ -47,6 +51,7 @@ class CCollidable : public CDrawable
     sf::Vector2u  m_size;
     sf::Vector2f  m_offset;
     Origin        m_origin{Origin::Mid_Bottom};
+    EntityTag     m_entityTag{};
 
     const core::graphics::Tile* m_groundTile{nullptr};
 
