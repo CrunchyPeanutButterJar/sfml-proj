@@ -1,8 +1,10 @@
 #ifndef UTILS_ASSERT_HPP
 #define UTILS_ASSERT_HPP
 
+#include <chrono>
 #include <cstdlib>
 
+#include <fmt/chrono.h>
 #include <fmt/format.h>
 
 #if defined(_MSC_VER)
@@ -17,7 +19,8 @@ namespace utils::internal
 inline void vlog(FILE* f, const char* file, const char* function, int line, fmt::string_view fmt,
                  fmt::format_args args)
 {
-    fmt::print(f, "[INFO] {}:{} #{} {}\n", file, line, function, fmt::vformat(fmt, args));
+    fmt::print(f, "[INFO] [{:%H:%M:%S}] {}:{} #{} {}\n", std::chrono::system_clock::now(), file,
+               line, function, fmt::vformat(fmt, args));
 }
 
 template <typename... T>
@@ -30,7 +33,8 @@ void log(FILE* f, const char* file, const char* function, int line, fmt::format_
 inline void assertionFailedVlog(const char* file, const char* function, int line,
                                 fmt::string_view fmt, fmt::format_args args)
 {
-    fmt::print(stderr, "[ERROR]: {}:{} #{} {}\n", file, line, function, fmt::vformat(fmt, args));
+    fmt::print(stderr, "[ERROR] [{:%H:%M:%S}] {}:{} #{} {}\n", std::chrono::system_clock::now(),
+               file, line, function, fmt::vformat(fmt, args));
 }
 
 template <typename... T>

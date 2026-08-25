@@ -30,7 +30,7 @@ void CSoundEmitter::readInput(utils::Tokens& l_tokens)
 
         std::string sound = *consumeToken<std::string>(line);
 
-        if(sound == "skip")
+        if (sound == "skip")
         {
             ++i_sound; // No Sound for index 'i_sound'
             continue;
