@@ -33,6 +33,7 @@ class SBase : public messaging::Observer
 
     virtual void update(float l_dt)                                             = 0;
     virtual void handleEvent(EntityId l_entity, messaging::EntityEvent l_event) = 0;
+    virtual void lateUpdate() {};
 
   protected:
     SystemManager& m_systemManager;

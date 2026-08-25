@@ -23,6 +23,7 @@ class SCollision : public SBase
     void update(float l_dt) override;
     void handleEvent(EntityId l_entity, messaging::EntityEvent l_event) override;
     void notify(const messaging::Message& l_message) override;
+    void lateUpdate() override;
 
   private:
     void checkOutOfBounds(entity::CPosition* position, entity::CCollidable* collidable);
@@ -30,6 +31,8 @@ class SCollision : public SBase
                        entity::CCollidable* l_collidable);
 
     ecs::Map* m_map{nullptr};
+    std::vector<std::tuple<EntityId, EntityId, entity::EntityTag, entity::EntityTag>>
+        m_entityCollisions;
 };
 
 using CollisionResolutionFun = void (*)(ecs::EntityId, ecs::EntityId, ecs::SharedContext*);

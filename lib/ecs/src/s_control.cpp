@@ -1,5 +1,6 @@
 #include "core/directions.hpp"
 #include "ecs/entity/c_collidable.hpp"
+#include <ecs/entity/c_state.fwd.hpp>
 #include "ecs/messaging/entity_events.hpp"
 #include "ecs/messaging/entity_message.hpp"
 #include "ecs/messaging/event_queue.hpp"
@@ -116,6 +117,17 @@ void moveEntity(ecs::messaging::MessageHandler& l_messageHandler, ecs::EntityId 
     Message message{.m_type     = (MessageType)EntityMessage::Move,
                     .m_receiver = (int)l_entity,
                     .m_int      = (int)l_dir};
+
+    l_messageHandler.dispatch(message);
+}
+
+void entityAttack(ecs::messaging::MessageHandler& l_messageHandler, ecs::EntityId l_entity)
+{
+    using namespace ecs::messaging;
+
+    Message message{.m_type     = (MessageType)EntityMessage::Switch_State,
+                    .m_receiver = (int)l_entity,
+                    .m_int      = (int)entity::EntityState::Attacking};
 
     l_messageHandler.dispatch(message);
 }

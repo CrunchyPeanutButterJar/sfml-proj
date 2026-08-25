@@ -77,7 +77,8 @@ void SState::handleEvent(EntityId l_entity, messaging::EntityEvent l_event)
     {
         auto& entities = m_systemManager.getEntityManager();
         auto* state    = entities.getComponent<entity::CState>(l_entity, Component::State);
-        if (state->getState() == entity::EntityState::Landing)
+        if (state->getState() == entity::EntityState::Landing ||
+            state->getState() == entity::EntityState::Attacking)
         {
             changeState(l_entity, entity::EntityState::Idle, true);
         }
@@ -153,19 +154,26 @@ static auto getTransitionsGraph()
         transitions[i][(size_t)entity::EntityState::Dying] = true;
     }
 
-    transitions[(size_t)entity::EntityState::Idle][(size_t)entity::EntityState::Running] = true;
-    transitions[(size_t)entity::EntityState::Idle][(size_t)entity::EntityState::Walking] = true;
-    transitions[(size_t)entity::EntityState::Idle][(size_t)entity::EntityState::Jumping] = true;
-    transitions[(size_t)entity::EntityState::Idle][(size_t)entity::EntityState::Flying]  = true;
+    transitions[(size_t)entity::EntityState::Idle][(size_t)entity::EntityState::Running]   = true;
+    transitions[(size_t)entity::EntityState::Idle][(size_t)entity::EntityState::Walking]   = true;
+    transitions[(size_t)entity::EntityState::Idle][(size_t)entity::EntityState::Jumping]   = true;
+    transitions[(size_t)entity::EntityState::Idle][(size_t)entity::EntityState::Flying]    = true;
+    transitions[(size_t)entity::EntityState::Idle][(size_t)entity::EntityState::Attacking] = true;
 
     transitions[(size_t)entity::EntityState::Running][(size_t)entity::EntityState::Idle]    = true;
     transitions[(size_t)entity::EntityState::Running][(size_t)entity::EntityState::Walking] = true;
     transitions[(size_t)entity::EntityState::Running][(size_t)entity::EntityState::Jumping] = true;
     transitions[(size_t)entity::EntityState::Running][(size_t)entity::EntityState::Falling] = true;
+    transitions[(size_t)entity::EntityState::Running][(size_t)entity::EntityState::Attacking] =
+        true;
 
     transitions[(size_t)entity::EntityState::Jumping][(size_t)entity::EntityState::Falling] = true;
+    transitions[(size_t)entity::EntityState::Jumping][(size_t)entity::EntityState::Attacking] =
+        true;
 
     transitions[(size_t)entity::EntityState::Falling][(size_t)entity::EntityState::Landing] = true;
+    transitions[(size_t)entity::EntityState::Falling][(size_t)entity::EntityState::Attacking] =
+        true;
 
     transitions[(size_t)entity::EntityState::Landing][(size_t)entity::EntityState::Running] = true;
     transitions[(size_t)entity::EntityState::Landing][(size_t)entity::EntityState::Walking] = true;

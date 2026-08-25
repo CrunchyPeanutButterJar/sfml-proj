@@ -5,6 +5,7 @@
 #include <algorithm>
 #include <ecs/ecs_types.hpp>
 #include <ecs/entity/c_collidable.hpp>
+#include <ecs/entity/c_movable.hpp>
 #include <ecs/entity/c_position.hpp>
 #include <ecs/entity/c_state.hpp>
 #include <ecs/entity/entity_manager.hpp>
@@ -69,6 +70,13 @@ void SCollision::setMap(ecs::Map* l_map)
     m_map = l_map;
 }
 
+static auto isMovingUp(ecs::EntityId l_entity, ecs::system::SystemManager& l_systemManager) -> bool
+{
+    auto* movable = l_systemManager.getEntityManager().getComponent<ecs::entity::CMovable>(
+        l_entity, ecs::Component::Movable);
+    return movable != nullptr && movable->getVelocity().y < 0;
+}
+
 void SCollision::update(float /*l_dt*/)
 {
     if (m_map == nullptr)
@@ -108,8 +116,6 @@ void SCollision::update(float /*l_dt*/)
                 continue;
             }
 
-            auto fun = itr->second;
-
             const auto& aabb1 = collidable1->getCollidable();
             const auto& aabb2 = collidable2->getCollidable();
 
@@ -118,8 +124,9 @@ void SCollision::update(float /*l_dt*/)
                 if (tag1 > tag2)
                 {
                     std::swap(entity1, entity2);
+                    std::swap(tag1, tag2);
                 }
-                fun(entity1, entity2, m_map->getContext());
+                m_entityCollisions.emplace_back(entity1, entity2, tag1, tag2);
             }
         }
     }
@@ -131,8 +138,8 @@ void SCollision::update(float /*l_dt*/)
             entities.getComponent<entity::CCollidable>(entity, Component::Collidable);
         checkOutOfBounds(position, collidable);
         if (auto* state = entities.getComponent<ecs::entity::CState>(entity, ecs::Component::State);
-            state != nullptr && state->getState() != entity::EntityState::Jumping &&
-            state->getState() != entity::EntityState::Flying)
+            state != nullptr && state->getState() != entity::EntityState::Flying &&
+            !isMovingUp(entity, m_systemManager))
         {
             mapCollisions(entity, position, collidable);
         }
@@ -148,6 +155,16 @@ void SCollision::update(float /*l_dt*/)
 void SCollision::handleEvent(EntityId /*l_entity*/, messaging::EntityEvent /*l_event*/) {}
 
 void SCollision::notify(const messaging::Message& /*l_message*/) {}
+
+void SCollision::lateUpdate()
+{
+    for (auto [entity1, entity2, tag1, tag2] : m_entityCollisions)
+    {
+        seekCollisionFn(tag1, tag2)->second(entity1, entity2, m_map->getContext());
+    }
+
+    m_entityCollisions.clear();
+}
 
 namespace
 {

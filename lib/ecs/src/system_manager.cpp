@@ -100,7 +100,17 @@ void SystemManager::update(float l_dt)
                 system->m_elapsed = 0.F;
             }
         }
+
         l_systemManager.handleEvents();
+
+        for (auto& s_itr : l_systemManager.m_systems)
+        {
+            auto* system = s_itr.second.get();
+            if (system->m_elapsed == 0.F)
+            {
+                system->lateUpdate();
+            }
+        }
     };
 
     float remaining_time = l_dt;

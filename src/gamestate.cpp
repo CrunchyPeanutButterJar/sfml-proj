@@ -1,6 +1,10 @@
 #include "core/directions.hpp"
+#include "ecs/entity/c_state.fwd.hpp"
+#include "ecs/messaging/entity_message.hpp"
+#include "ecs/messaging/message.hpp"
 #include "utils/assert.hpp"
 #include <SFML/Graphics/View.hpp>
+#include <SFML/Window/Keyboard.hpp>
 #include <core/audio/sound_manager.hpp>
 #include <core/bindings.hpp>
 #include <core/event_manager.hpp>
@@ -12,6 +16,8 @@
 #include <ecs/ecs_types.hpp>
 #include <ecs/entity/c_collidable.hpp>
 #include <ecs/entity/c_position.hpp>
+#include <ecs/entity/c_spritesheet.hpp>
+#include <ecs/entity/c_state.hpp>
 #include <ecs/entity/entity_manager.hpp>
 #include <ecs/messaging/message_handler.hpp>
 #include <ecs/shared_context.hpp>
@@ -22,10 +28,44 @@
 #include <gamestate.hpp>
 #include <utils/utilities.hpp>
 
+enum EntityTag : std::uint8_t
+{
+    Player = 0,
+    Demon
+};
+
 static bool s_init = []() -> bool
 {
-    ecs::system::registerCollisionResolution(0, 1, [](auto, auto, auto*)
-                                             { LOG("Collided with player"); });
+    ecs::system::registerCollisionResolution(
+        Demon, Player,
+        [](ecs::EntityId l_playerId, ecs::EntityId l_demonId, ecs::SharedContext* context)
+        {
+            auto& entity_manager = context->m_entityManager;
+            auto& system_manager = context->m_systemManager;
+
+            auto* state =
+                entity_manager.getComponent<ecs::entity::CState>(l_playerId, ecs::Component::State);
+            if (state->getState() != ecs::entity::EntityState::Attacking)
+            {
+                return;
+            }
+
+            auto* spritesheet = entity_manager.getComponent<ecs::entity::CSpriteSheet>(
+                l_playerId, ecs::Component::SpriteSheet);
+            if (spritesheet->getSpriteSheet()->getCurrentAnimation()->isInAction())
+            {
+                LOG("Killing {}", l_demonId);
+                auto& msg_handler = system_manager.getMessageHandler();
+
+                ecs::messaging::Message msg{
+                    .m_type =
+                        (ecs::messaging::MessageType)ecs::messaging::EntityMessage::Switch_State,
+                    .m_receiver = (int)l_demonId,
+                    .m_int      = (int)ecs::entity::EntityState::Dying};
+
+                msg_handler.dispatch(msg);
+            }
+        });
     return true;
 }();
 
@@ -39,6 +79,9 @@ template class core::RegisterBinding<BINDING("Game_MoveRight", core::KeyPressed{
 template class core::RegisterBinding<BINDING("Game_MoveLeft", core::KeyPressed{sf::Keyboard::A}),
                                      core::Customizable>;
 template class core::RegisterBinding<BINDING("Game_Jump", core::KeyPressed{sf::Keyboard::Space}),
+                                     core::Customizable>;
+
+template class core::RegisterBinding<BINDING("Game_Attack", core::KeyPressed{sf::Keyboard::E}),
                                      core::Customizable>;
 
 static void jumpEntity(ecs::messaging::MessageHandler& l_messageHandler, ecs::EntityId l_entity)
@@ -95,6 +138,10 @@ GameState::GameState(core::state::StateManager& l_stateManager)
                                                           player_id, core::Direction::Left);
                               });
 
+    event_manager.addCallback(
+        StateType::Game, "Game_Attack", [player_id, system_manager](const auto&)
+        { ecs::system::entityAttack(system_manager->getMessageHandler(), player_id); });
+
     auto& player_has_jumped = m_playerHasJumped;
     event_manager.addCallback(
         StateType::Game, "Game_Jump", [player_id, system_manager, &player_has_jumped](const auto&)
@@ -109,6 +156,7 @@ GameState::~GameState()
     event_manager.removeCallback(StateType::Game, "Game_MoveLeft");
     event_manager.removeCallback(StateType::Game, "Game_MoveRight");
     event_manager.removeCallback(StateType::Game, "Game_Jump");
+    event_manager.removeCallback(StateType::Game, "Game_Attack");
 
     context->m_guiManager.removeInterface(GameState::TYPE, SCORE_INTERFACE_NAME);
 }

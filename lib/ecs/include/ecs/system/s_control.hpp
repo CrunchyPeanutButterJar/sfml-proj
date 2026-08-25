@@ -2,6 +2,8 @@
 #define ECS_SYSTEM_S_CONTROL_HPP
 
 #include "core/directions.hpp"
+#include <ecs/ecs_types.hpp>
+#include <ecs/messaging/message_handler.hpp>
 #include <ecs/messaging/message_handler.fwd.hpp>
 #include <ecs/system/s_base.hpp>
 
@@ -22,6 +24,8 @@ class SControl : public SBase
 
 void moveEntity(ecs::messaging::MessageHandler& l_messageHandler, ecs::EntityId l_entity,
                 core::Direction l_dir);
+
+void entityAttack(ecs::messaging::MessageHandler& l_messageHandler, ecs::EntityId l_entity);
 
 } // namespace ecs::system
 
