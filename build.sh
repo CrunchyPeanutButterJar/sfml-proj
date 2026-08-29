@@ -79,8 +79,6 @@ detect_os() {
   esac
 }
 
-echo "⚙️ Build en mode $BUILD_TYPE"
-
 PROFILE_NAME_BASE="clang_profile_base"
 PROFILE_NAME="clang_profile"
 
@@ -94,11 +92,17 @@ get_conan_profile_path() {
   fi
 }
 
-generate_conan_clang_profile() {
-  os=$(detect_os)
-  if [ "$os" = "Windows" ]; then
-    cat << EOF
-include($PROFILE_NAME_BASE)
+WIN_MSVC_PROFILE="
+[settings]
+build_type=Release
+os=Windows
+compiler=msvc
+compiler.cppstd=23
+[conf]
+tools.build:compiler_executables={'c': 'cl', 'cpp': 'cl'}
+"
+
+WIN_CLANG_PROFILE="
 [settings]
 build_type=Release
 os=Windows
@@ -110,10 +114,9 @@ compiler.runtime_type=Release
 compiler.runtime_version=v144
 [conf]
 tools.build:compiler_executables={'c': 'clang', 'cpp': 'clang++'}
-EOF
-  elif [ "$os" = "Linux" ]; then
-    cat << EOF
-include($PROFILE_NAME_BASE)
+"
+
+LIN_CLANG_PROFILE="
 [settings]
 build_type=Release
 compiler=clang
@@ -123,6 +126,19 @@ compiler.version=18
 os=Linux
 [conf]
 tools.build:compiler_executables={'c': 'clang', 'cpp': 'clang++'}
+"
+
+generate_conan_clang_profile() {
+  os=$(detect_os)
+  if [ "$os" = "Windows" ]; then
+    cat << EOF
+include($PROFILE_NAME_BASE)
+$WIN_MSVC_PROFILE
+EOF
+  elif [ "$os" = "Linux" ]; then
+    cat << EOF
+include($PROFILE_NAME_BASE)
+$LIN_CLANG_PROFILE
 EOF
   fi
 }
@@ -149,13 +165,28 @@ if [[ "$CONAN_STEP" == "true" || ! -d $BUILD_DIR ]]; then
       -s build_type=$BUILD_TYPE
 fi
 
+get_conan_build_preset() {
+  if [ "$BUILD_TYPE" = "Release" ]; then echo "--preset conan-release"; else echo "--preset conan-debug"; fi
+}
+
+get_conan_configure_preset() {
+  os=$(detect_os)
+  if [ "$os" = "Windows" ]; then
+    echo "--preset conan-default" #msvc's multi-configuration preset
+  elif [ "$os" = "Linux" ]; then
+    get_conan_build_preset
+  fi
+}
+
 # Étape CMake configure + build
 cd $BUILD_DIR
 cmake .. \
-    -DCMAKE_EXPORT_COMPILE_COMMANDS=ON\
-    $(if [ "$BUILD_TYPE" = "Release" ]; then echo "--preset conan-release"; else echo "--preset conan-debug"; fi )\
+    -DCMAKE_EXPORT_COMPILE_COMMANDS=ON \
+    $(get_conan_configure_preset)
 
-cmake --build . --parallel $(nproc)
+cmake --build . \
+    $(get_conan_build_preset) \
+    --parallel $(nproc)
 
 ctest
 

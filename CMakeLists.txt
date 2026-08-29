@@ -1,5 +1,6 @@
 cmake_minimum_required(VERSION 3.10)
 set(CMAKE_CXX_STANDARD 23)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 project(sfml-app)
 
@@ -14,16 +15,35 @@ add_compile_definitions(NOMINMAX)
 endif()
 
 add_compile_options(
-    -std=c++23
-    -Wall
-    -Werror
-    -Wextra
-    $<$<CONFIG:Debug>:-g>
+    $<$<CXX_COMPILER_ID:MSVC>:/W4>
+    $<$<NOT:$<CXX_COMPILER_ID:MSVC>>:-Wall>
+    $<$<NOT:$<CXX_COMPILER_ID:MSVC>>:-Wextra>
+    $<$<NOT:$<CXX_COMPILER_ID:MSVC>>:-Werror>
+)
+
+add_compile_options(
     $<$<CONFIG:Debug>:-DDEBUG_BUILD>
-    $<$<CONFIG:Debug>:-O0>
-    $<$<CONFIG:Debug>:-fsanitize=address>
-    $<$<CONFIG:Debug>:-fno-omit-frame-pointer>
-    $<$<CONFIG:Release>:-O3>
+    $<$<AND:$<CONFIG:Debug>,$<NOT:$<CXX_COMPILER_ID:MSVC>>>:-g>
+    $<$<AND:$<CONFIG:Debug>,$<NOT:$<CXX_COMPILER_ID:MSVC>>>:-O0>
+    $<$<AND:$<CONFIG:Debug>,$<NOT:$<CXX_COMPILER_ID:MSVC>>>:-fsanitize=address>
+    $<$<AND:$<CONFIG:Debug>,$<NOT:$<CXX_COMPILER_ID:MSVC>>>:-fno-omit-frame-pointer>
+    $<$<AND:$<CONFIG:Debug>,$<CXX_COMPILER_ID:MSVC>>:/Zi>
+    $<$<AND:$<CONFIG:Debug>,$<CXX_COMPILER_ID:MSVC>>:/Od>
+    $<$<AND:$<CONFIG:Debug>,$<CXX_COMPILER_ID:MSVC>>:/fsanitize=address>
+)
+
+add_link_options(
+    $<$<AND:$<CONFIG:Debug>,$<NOT:$<CXX_COMPILER_ID:MSVC>>>:-g>
+    $<$<AND:$<CONFIG:Debug>,$<NOT:$<CXX_COMPILER_ID:MSVC>>>:-fsanitize=address>
+    $<$<AND:$<CONFIG:Debug>,$<NOT:$<CXX_COMPILER_ID:MSVC>>>:-fno-omit-frame-pointer>
+    $<$<AND:$<CONFIG:Debug>,$<CXX_COMPILER_ID:MSVC>>:/DEBUG>
+    $<$<AND:$<CONFIG:Debug>,$<CXX_COMPILER_ID:MSVC>>:/fsanitize=address>
+    $<$<AND:$<CONFIG:Debug>,$<CXX_COMPILER_ID:MSVC>>:/INCREMENTAL:NO>
+)
+
+add_compile_options(
+    $<$<AND:$<CONFIG:Release>,$<NOT:$<CXX_COMPILER_ID:MSVC>>>:-O3>
+    $<$<AND:$<CONFIG:Release>,$<CXX_COMPILER_ID:MSVC>>:/O2>
 )
 
 if(UNIX)
@@ -32,11 +52,6 @@ add_compile_options(
 )
 endif()
 
-add_link_options(
-  $<$<CONFIG:Debug>:-g>
-  $<$<CONFIG:Debug>:-fsanitize=address>
-  $<$<CONFIG:Debug>:-fno-omit-frame-pointer>
-)
 
 if(UNIX)
 add_link_options(
@@ -80,6 +95,10 @@ enable_project_pch(sfml-app)
 
 target_link_libraries(sfml-app PRIVATE app) 
 
+add_custom_target(print_config ALL
+    COMMAND ${CMAKE_COMMAND} -E echo "🔍 Building in $<CONFIG> mode"
+)
+
 add_custom_command(TARGET sfml-app POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy_directory
             ${CMAKE_SOURCE_DIR}/resources
@@ -91,9 +110,5 @@ add_custom_command(TARGET sfml-app POST_BUILD
             ${CMAKE_SOURCE_DIR}/config
             $<TARGET_FILE_DIR:sfml-app>/config
     COMMENT "📁 Copie du dossier config vers le dossier du binaire")
-
-if(CMAKE_BUILD_TYPE STREQUAL "Debug")
-    message(STATUS "🔍 Build en mode Debug")
-endif()
 
 enable_testing()
