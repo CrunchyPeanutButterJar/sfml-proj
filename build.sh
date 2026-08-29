@@ -143,7 +143,8 @@ echo
 if [[ "$CONAN_STEP" == "true" || ! -d $BUILD_DIR ]]; then
   conan install . \
       --output-folder=$BUILD_DIR \
-      --profile $PROFILE_NAME \
+      -pr:h $PROFILE_NAME \
+      -pr:b $PROFILE_NAME \
       --build=missing \
       -s build_type=$BUILD_TYPE
 fi
@@ -153,7 +154,6 @@ cd $BUILD_DIR
 cmake .. \
     -DCMAKE_EXPORT_COMPILE_COMMANDS=ON\
     $(if [ "$BUILD_TYPE" = "Release" ]; then echo "--preset conan-release"; else echo "--preset conan-debug"; fi )\
-    -DCMAKE_BUILD_TYPE=$BUILD_TYPE
 
 cmake --build . --parallel $(nproc)
 
