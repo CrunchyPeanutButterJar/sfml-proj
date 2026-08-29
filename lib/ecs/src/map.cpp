@@ -66,14 +66,14 @@ void Map::loadMap(const std::string& l_path)
 
     while (!tokens.empty())
     {
-        auto key = *consumeToken<std::string>(tokens);
+        auto key = *utils::consumeToken<std::string>(tokens);
         if (key == "TilesSet")
         {
-            loadTileset(utils::getConfigDirectory() + *consumeToken<std::string>(tokens));
+            loadTileset(utils::getConfigDirectory() + *utils::consumeToken<std::string>(tokens));
         }
         else if (key == "Background")
         {
-            std::string texture_alias = *consumeToken<std::string>(tokens);
+            std::string texture_alias = *utils::consumeToken<std::string>(tokens);
             ASSERT_NON_FATAL(m_backgroundTexture == nullptr, "Overriding background texture");
             m_backgroundTexture = m_context->m_textureManager.acquire(texture_alias);
             ASSERT_NON_FATAL(m_backgroundTexture != nullptr,
@@ -88,18 +88,18 @@ void Map::loadMap(const std::string& l_path)
         }
         else if (key == "Gravity")
         {
-            m_gravity = *consumeToken<float>(tokens);
+            m_gravity = *utils::consumeToken<float>(tokens);
         }
         else if (key == "Size")
         {
-            std::tie(m_mapSize.x, m_mapSize.y) = *consumeTokens<size_t, size_t>(tokens);
+            std::tie(m_mapSize.x, m_mapSize.y) = *utils::consumeTokens<size_t, size_t>(tokens);
         }
         else if (key == "TilesStart")
         {
             std::string temp;
             while (temp = *tokens.head<std::string>(), temp != "TilesEnd")
             {
-                auto [tileId, iRow, iCol] = *consumeTokens<TileId, size_t, size_t>(tokens);
+                auto [tileId, iRow, iCol] = *utils::consumeTokens<TileId, size_t, size_t>(tokens);
                 auto it                   = m_tileSet.find(tileId);
                 ASSERT_NON_FATAL(it != m_tileSet.end(), "Invalid tile id {}", tileId);
                 if (it != m_tileSet.end())
@@ -119,7 +119,7 @@ void Map::loadMap(const std::string& l_path)
             std::string temp;
             while (temp = *tokens.head<std::string>(), temp != "EntitiesEnd")
             {
-                auto  name     = *consumeToken<std::string>(tokens);
+                auto  name     = *utils::consumeToken<std::string>(tokens);
                 auto& entities = m_context->m_entityManager;
                 int   entity   = m_context->m_entityManager.addEntity(name);
                 if (entity < 0)
@@ -145,19 +145,19 @@ void Map::loadMap(const std::string& l_path)
         {
             while (tokens.head<std::string>().value() != "ProceeduralGenerationConfigEnd")
             {
-                key = *consumeToken<std::string>(tokens);
+                key = *utils::consumeToken<std::string>(tokens);
                 if (key == "Gifs")
                 {
                     std::string str;
                     {
                         auto scope = tokens.setDelimiterScoped('"');
-                        str        = *consumeToken<std::string>(tokens);
+                        str        = *utils::consumeToken<std::string>(tokens);
                     }
 
                     utils::Tokens gifs{std::istringstream{std::move(str)}};
                     while (!gifs.empty())
                     {
-                        const auto          GifConfigFileName = *consumeToken<std::string>(gifs);
+                        const auto GifConfigFileName = *utils::consumeToken<std::string>(gifs);
                         core::graphics::Gif temp{m_context->m_textureManager};
                         const std::string   Path = "media/gifs/" + GifConfigFileName + ".gifconf";
                         ASSERT(temp.loadGif(Path), "Failure loading gif file");
@@ -173,19 +173,19 @@ void Map::loadMap(const std::string& l_path)
                 }
                 else if (key == "MinTilesLength")
                 {
-                    m_minTilesLength = *consumeToken<size_t>(tokens);
+                    m_minTilesLength = *utils::consumeToken<size_t>(tokens);
                 }
                 else if (key == "MaxTilesLength")
                 {
-                    m_maxTilesLength = *consumeToken<size_t>(tokens);
+                    m_maxTilesLength = *utils::consumeToken<size_t>(tokens);
                 }
                 else if (key == "MinTilesPercentageOnScreen")
                 {
-                    m_minTilesPercentageOnScreen = *consumeToken<float>(tokens);
+                    m_minTilesPercentageOnScreen = *utils::consumeToken<float>(tokens);
                 }
                 else if (key == "Seed")
                 {
-                    m_seed = *consumeToken<size_t>(tokens);
+                    m_seed = *utils::consumeToken<size_t>(tokens);
                 }
             }
             tokens.advance(); // consume closing tag
@@ -205,24 +205,24 @@ void Map::loadTileset(const std::string& l_path)
 
     while (!tokens.empty())
     {
-        auto key = *consumeToken<std::string>(tokens);
+        auto key = *utils::consumeToken<std::string>(tokens);
         if (key == "Dimensions")
         {
             ASSERT_NON_FATAL(!filled_dimensions, "Overriding tilesheet dimensions in {}", l_path);
             std::tie(m_tileSheetConfig.m_width, m_tileSheetConfig.m_height) =
-                *consumeTokens<size_t, size_t>(tokens);
+                *utils::consumeTokens<size_t, size_t>(tokens);
             filled_dimensions = true;
         }
         else if (key == "TileSize")
         {
             ASSERT_NON_FATAL(!filled_tile_size, "Overriding tilesheet tilesize in {}", l_path);
-            std::tie(m_tileSheetConfig.m_tileSize) = *consumeTokens<size_t>(tokens);
+            std::tie(m_tileSheetConfig.m_tileSize) = *utils::consumeTokens<size_t>(tokens);
             filled_tile_size                       = true;
         }
         else if (key == "Texture")
         {
             ASSERT_NON_FATAL(!filled_texture, "Overriding tilesheet texture in {}", l_path);
-            std::string texture_alias   = *consumeToken<std::string>(tokens);
+            std::string texture_alias   = *utils::consumeToken<std::string>(tokens);
             m_tileSheetConfig.m_texture = m_context->m_textureManager.acquire(texture_alias);
             ASSERT_NON_FATAL(m_tileSheetConfig.m_texture != nullptr,
                              "Error loading texture alias {}", texture_alias);
@@ -233,7 +233,7 @@ void Map::loadTileset(const std::string& l_path)
             ASSERT(filled_dimensions && filled_tile_size && filled_texture, "Invalid config for {}",
                    l_path);
             std::string tile_type;
-            while (std::tie(tile_type) = *consumeTokens<std::string>(tokens),
+            while (std::tie(tile_type) = *utils::consumeTokens<std::string>(tokens),
                    tile_type != "TilesEnd")
             {
                 TileInfo new_tile{m_tileSheetConfig, tokens};

@@ -16,7 +16,7 @@ EnemyEntitiesManager::EnemyEntitiesManager(ecs::entity::EntityManager& l_entityM
                                            const ecs::Map&             l_map)
     : m_entityManager{l_entityManager}, m_map{l_map}
 {
-    constexpr std::string ConfigFile = "enemies.cfg";
+    constexpr const char* ConfigFile = "enemies.cfg";
 
     auto file = utils::readFile(utils::getConfigDirectory() + ConfigFile);
     if (!file.has_value())
@@ -29,15 +29,15 @@ EnemyEntitiesManager::EnemyEntitiesManager(ecs::entity::EntityManager& l_entityM
 
     while (!tokens.empty())
     {
-        auto key = *consumeToken<std::string>(tokens);
+        auto key = *utils::consumeToken<std::string>(tokens);
         if (key == "NumberOfEnemiesOnScreen")
         {
-            auto [min, max]   = *consumeTokens<unsigned int, unsigned int>(tokens);
+            auto [min, max]   = *utils::consumeTokens<unsigned int, unsigned int>(tokens);
             m_enemySpawnRange = std::make_pair(min, max);
         }
         else if (key == "TraversalLength")
         {
-            auto [min, max]       = *consumeTokens<float, float>(tokens);
+            auto [min, max]       = *utils::consumeTokens<float, float>(tokens);
             m_enemyTraversalRange = std::make_pair(min, max);
         }
     }

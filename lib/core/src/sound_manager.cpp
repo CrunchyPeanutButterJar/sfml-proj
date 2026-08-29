@@ -262,26 +262,26 @@ auto SoundManager::loadProperties(const std::string& l_fileName) -> bool
     utils::Tokens tokens{std::move(file.value())};
     while (!tokens.empty())
     {
-        auto key = *consumeToken<std::string>(tokens);
+        auto key = *utils::consumeToken<std::string>(tokens);
         if (key == "Audio")
         {
-            props.m_audioName = *consumeToken<std::string>(tokens);
+            props.m_audioName = *utils::consumeToken<std::string>(tokens);
         }
         else if (key == "Volume")
         {
-            props.m_volume = *consumeToken<float>(tokens);
+            props.m_volume = *utils::consumeToken<float>(tokens);
         }
         else if (key == "Pitch")
         {
-            props.m_pitch = *consumeToken<float>(tokens);
+            props.m_pitch = *utils::consumeToken<float>(tokens);
         }
         else if (key == "Distance")
         {
-            props.m_minDistance = *consumeToken<float>(tokens);
+            props.m_minDistance = *utils::consumeToken<float>(tokens);
         }
         else if (key == "Attenuation")
         {
-            props.m_attenuation = *consumeToken<float>(tokens);
+            props.m_attenuation = *utils::consumeToken<float>(tokens);
         }
         else
         {

@@ -290,14 +290,14 @@ auto GUI_Manager::loadInterface(core::state::StateType l_state, const std::strin
 
     while (!tokens.empty())
     {
-        auto key = *consumeToken<std::string>(tokens);
+        auto key = *utils::consumeToken<std::string>(tokens);
         if (key == "Interface")
         {
             interface_name = std::string{};
             std::string style_file_name;
 
             std::tie(interface_name.value(), style_file_name) =
-                *consumeTokens<std::string, std::string>(tokens);
+                *utils::consumeTokens<std::string, std::string>(tokens);
 
             if (!addInterface(l_state, l_name))
             {
@@ -329,7 +329,7 @@ auto GUI_Manager::loadInterface(core::state::StateType l_state, const std::strin
             std::string  style;
 
             std::tie(type, name, position.x, position.y, style) =
-                *consumeTokens<std::string, std::string, float, float, std::string>(tokens);
+                *utils::consumeTokens<std::string, std::string, float, float, std::string>(tokens);
             auto e_type = stringToType(type);
             if (e_type == GUI_ElementType::None)
             {
@@ -386,7 +386,7 @@ auto GUI_Manager::loadStyle(const std::string& l_file, GUI_Element* l_element) -
 
     while (!tokens.empty())
     {
-        const auto Key = *consumeToken<std::string>(tokens);
+        const auto Key = *utils::consumeToken<std::string>(tokens);
         if (Key == "State")
         {
             if (current_state.has_value())
@@ -397,7 +397,7 @@ auto GUI_Manager::loadStyle(const std::string& l_file, GUI_Element* l_element) -
                 continue;
             }
 
-            current_state = *consumeToken<std::string>(tokens);
+            current_state = *utils::consumeToken<std::string>(tokens);
         }
         else if (Key == "/State")
         {
@@ -438,28 +438,28 @@ auto GUI_Manager::loadStyle(const std::string& l_file, GUI_Element* l_element) -
             if (Key == "Size")
             {
                 std::tie(temporary_style.m_size.x, temporary_style.m_size.y) =
-                    *consumeTokens<float, float>(tokens);
+                    *utils::consumeTokens<float, float>(tokens);
             }
             else if (Key == "BgColor")
             {
-                int r                             = 0;
-                int g                             = 0;
-                int b                             = 0;
-                int a                             = 0;
-                std::tie(r, g, b, a)              = *consumeTokens<int, int, int, int>(tokens);
+                int r                = 0;
+                int g                = 0;
+                int b                = 0;
+                int a                = 0;
+                std::tie(r, g, b, a) = *utils::consumeTokens<int, int, int, int>(tokens);
                 temporary_style.m_backgroundColor = sf::Color(r, g, b, a);
             }
             else if (Key == "BgImage")
             {
-                temporary_style.m_backgroundImage = *consumeToken<std::string>(tokens);
+                temporary_style.m_backgroundImage = *utils::consumeToken<std::string>(tokens);
             }
             else if (Key == "BgImageColor")
             {
-                int r                                  = 0;
-                int g                                  = 0;
-                int b                                  = 0;
-                int a                                  = 0;
-                std::tie(r, g, b, a)                   = *consumeTokens<int, int, int, int>(tokens);
+                int r                = 0;
+                int g                = 0;
+                int b                = 0;
+                int a                = 0;
+                std::tie(r, g, b, a) = *utils::consumeTokens<int, int, int, int>(tokens);
                 temporary_style.m_backgroundImageColor = sf::Color(r, g, b, a);
             }
             else if (Key == "TextColor")
@@ -468,12 +468,12 @@ auto GUI_Manager::loadStyle(const std::string& l_file, GUI_Element* l_element) -
                 int g                       = 0;
                 int b                       = 0;
                 int a                       = 0;
-                std::tie(r, g, b, a)        = *consumeTokens<int, int, int, int>(tokens);
+                std::tie(r, g, b, a)        = *utils::consumeTokens<int, int, int, int>(tokens);
                 temporary_style.m_textColor = sf::Color(r, g, b, a);
             }
             else if (Key == "TextSize")
             {
-                temporary_style.m_textSize = *consumeToken<unsigned int>(tokens);
+                temporary_style.m_textSize = *utils::consumeToken<unsigned int>(tokens);
             }
             else if (Key == "TextOriginCenter")
             {
@@ -481,12 +481,12 @@ auto GUI_Manager::loadStyle(const std::string& l_file, GUI_Element* l_element) -
             }
             else if (Key == "Font")
             {
-                temporary_style.m_textFont = *consumeToken<std::string>(tokens);
+                temporary_style.m_textFont = *utils::consumeToken<std::string>(tokens);
             }
             else if (Key == "TextPadding")
             {
                 std::tie(temporary_style.m_textPadding.x, temporary_style.m_textPadding.y) =
-                    *consumeTokens<float, float>(tokens);
+                    *utils::consumeTokens<float, float>(tokens);
             }
             else if (Key == "ElementColor")
             {
@@ -494,17 +494,17 @@ auto GUI_Manager::loadStyle(const std::string& l_file, GUI_Element* l_element) -
                 int g                          = 0;
                 int b                          = 0;
                 int a                          = 0;
-                std::tie(r, g, b, a)           = *consumeTokens<int, int, int, int>(tokens);
+                std::tie(r, g, b, a)           = *utils::consumeTokens<int, int, int, int>(tokens);
                 temporary_style.m_elementColor = sf::Color(r, g, b, a);
             }
             else if (Key == "Glyph")
             {
-                temporary_style.m_glyph = *consumeToken<std::string>(tokens);
+                temporary_style.m_glyph = *utils::consumeToken<std::string>(tokens);
             }
             else if (Key == "GlyphPadding")
             {
                 std::tie(temporary_style.m_glyphPadding.x, temporary_style.m_glyphPadding.y) =
-                    *consumeTokens<float, float>(tokens);
+                    *utils::consumeTokens<float, float>(tokens);
             }
             else
             {

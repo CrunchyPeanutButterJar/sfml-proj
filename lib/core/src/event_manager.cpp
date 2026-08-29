@@ -75,24 +75,33 @@ auto loadFromBindingsFile() -> std::optional<SerializableBindings>
 
 using Registry = std::vector<BindingsRegisterFn>;
 
-static Registry s_default_customizable_bindings_registry;
-static Registry s_non_customizable_bindings_registry;
+static auto getCustomizableBindingsRegistry() -> Registry&
+{
+    static Registry s_default_customizable_bindings_registry;
+    return s_default_customizable_bindings_registry;
+}
 
 void core::registerDefaultCustomizableBinding(BindingsRegisterFn l_fn)
 {
-    s_default_customizable_bindings_registry.push_back(l_fn);
+    getCustomizableBindingsRegistry().push_back(l_fn);
+}
+
+static auto getNonCustomizableBindingsRegistry() -> Registry&
+{
+    static Registry s_non_customizable_bindings_registry;
+    return s_non_customizable_bindings_registry;
 }
 
 void core::registerNonCustomizableBinding(BindingsRegisterFn l_fn)
 {
-    s_non_customizable_bindings_registry.push_back(l_fn);
+    getNonCustomizableBindingsRegistry().push_back(l_fn);
 }
 
 auto buildDefaultBindings() -> SerializableBindings
 {
     SerializableBindings bindings;
 
-    for (auto fn : s_default_customizable_bindings_registry)
+    for (auto fn : getCustomizableBindingsRegistry())
     {
         auto [action, events] = fn();
         bindings[action].push_back(events);
@@ -123,7 +132,7 @@ auto buildNonCustomizableBindings() -> SerializableBindings
     bindings["Window_ToggleFullscreen"].push_back(SimplifiedEvents{KeyPressed{sf::Keyboard::F5}});
     bindings["Window_Resized"].push_back(SimplifiedEvents{WindowResized{}});
 
-    for (auto fn : s_non_customizable_bindings_registry)
+    for (auto fn : getNonCustomizableBindingsRegistry())
     {
         auto [action, events] = fn();
         bindings[action].push_back(events);

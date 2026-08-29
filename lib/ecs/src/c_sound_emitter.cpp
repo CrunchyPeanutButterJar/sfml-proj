@@ -12,7 +12,7 @@ void CSoundEmitter::readInput(utils::Tokens& l_tokens)
     const char FrameDelimiter = ',';
     auto       scope          = l_tokens.setDelimiterScoped('\n');
 
-    auto          line_str = *consumeToken<std::string>(l_tokens);
+    auto          line_str = *utils::consumeToken<std::string>(l_tokens);
     utils::Tokens line{std::istringstream{std::move(line_str)}, MainDelimiter};
 
     size_t i_sound = 0;
@@ -28,7 +28,7 @@ void CSoundEmitter::readInput(utils::Tokens& l_tokens)
 
         auto default_delimiter_scope = line.setDelimiterScoped(MainDelimiter);
 
-        std::string sound = *consumeToken<std::string>(line);
+        std::string sound = *utils::consumeToken<std::string>(line);
 
         if (sound == "skip")
         {
@@ -39,7 +39,7 @@ void CSoundEmitter::readInput(utils::Tokens& l_tokens)
         m_params[i_sound].m_sound = sound;
 
         auto          scope      = line.setDelimiterScoped('"');
-        auto          frames_str = *consumeToken<std::string>(line);
+        auto          frames_str = *utils::consumeToken<std::string>(line);
         utils::Tokens frames{std::istringstream{std::move(frames_str)}, FrameDelimiter};
 
         size_t i_frame = 0;
@@ -51,7 +51,7 @@ void CSoundEmitter::readInput(utils::Tokens& l_tokens)
                                   SoundParameters::MAX_SOUND_FRAMES);
                 break;
             }
-            auto frame_id                         = *consumeToken<unsigned int>(frames);
+            auto frame_id                         = *utils::consumeToken<unsigned int>(frames);
             m_params[i_sound].m_frames[i_frame++] = frame_id;
         }
 

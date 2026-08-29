@@ -110,7 +110,8 @@ void GUI_Interface::readIn(utils::Tokens& l_tokens)
 {
     std::string title;
 
-    std::tie(m_elementPadding.x, m_elementPadding.y) = *consumeTokens<float, float>(l_tokens);
+    std::tie(m_elementPadding.x, m_elementPadding.y) =
+        *utils::consumeTokens<float, float>(l_tokens);
 
     if (*l_tokens.head<std::string>() == "Movable")
     {
@@ -124,7 +125,7 @@ void GUI_Interface::readIn(utils::Tokens& l_tokens)
     }
 
     auto scope = l_tokens.setDelimiterScoped('"');
-    title      = *consumeToken<std::string>(l_tokens);
+    title      = *utils::consumeToken<std::string>(l_tokens);
 
     m_visual.m_text.setString(title);
 }

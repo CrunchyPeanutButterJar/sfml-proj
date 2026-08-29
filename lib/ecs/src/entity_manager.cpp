@@ -50,7 +50,7 @@ auto EntityManager::addEntity(utils::Bitmask l_mask) -> int
     return entity;
 }
 
-static constexpr std::string COMPONENT_STR = "Component";
+static constexpr const char* COMPONENT_STR = "Component";
 
 static auto deduceAttributes(const std::string& l_entityFilePath) -> std::optional<utils::Bitmask>
 {
@@ -68,11 +68,11 @@ static auto deduceAttributes(const std::string& l_entityFilePath) -> std::option
 
     while (!tokens.empty())
     {
-        auto key = *consumeToken<std::string>(tokens);
+        auto key = *utils::consumeToken<std::string>(tokens);
 
         if (key == COMPONENT_STR)
         {
-            auto component_type = *consumeToken<unsigned int>(tokens);
+            auto component_type = *utils::consumeToken<unsigned int>(tokens);
             result.turnOnBit(component_type);
         }
     }
@@ -99,7 +99,7 @@ auto EntityManager::addEntity(const std::string& l_entityFile) -> int
 
     while (!tokens.empty())
     {
-        auto key = *consumeToken<std::string>(tokens);
+        auto key = *utils::consumeToken<std::string>(tokens);
         if (key == "Name")
         {
         }
@@ -112,7 +112,7 @@ auto EntityManager::addEntity(const std::string& l_entityFile) -> int
                     l_entityFile);
                 return -1;
             }
-            const auto CId       = *consumeToken<unsigned int>(tokens);
+            const auto CId       = *utils::consumeToken<unsigned int>(tokens);
             auto*      component = getComponent<CBase>(entity_id, (Component)CId);
             if (component == nullptr)
             {

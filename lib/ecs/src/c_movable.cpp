@@ -34,7 +34,7 @@ void CMovable::readInput(utils::Tokens& l_tokens)
 {
     unsigned int direction{0};
     std::tie(m_maxVelocity, m_speed.x, m_speed.y, direction) =
-        *consumeTokens<float, float, float, unsigned int>(l_tokens);
+        *utils::consumeTokens<float, float, float, unsigned int>(l_tokens);
     m_direction = static_cast<core::Direction>(direction);
 
     if (auto str = l_tokens.head<std::string>(); str.has_value() && str.value() == "Fly")

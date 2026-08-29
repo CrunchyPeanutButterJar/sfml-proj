@@ -14,7 +14,7 @@ void CCollidable::readInput(utils::Tokens& l_tokens)
     sf::Vector2f size;
 
     std::tie(size.x, size.y, m_offset.x, m_offset.y, origin, m_entityTag) =
-        *consumeTokens<float, float, float, float, unsigned int, EntityTag>(l_tokens);
+        *utils::consumeTokens<float, float, float, float, unsigned int, EntityTag>(l_tokens);
 
     setSize(size);
     m_origin = (Origin)origin;

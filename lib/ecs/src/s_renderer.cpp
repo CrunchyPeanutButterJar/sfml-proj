@@ -56,6 +56,7 @@ void SRenderer::notify(const Message& l_message)
             }
             break;
         default:
+            break;
         }
     }
 }

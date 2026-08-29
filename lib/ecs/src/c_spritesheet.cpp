@@ -13,7 +13,7 @@ CSpriteSheet::CSpriteSheet() : CDrawable(Component::SpriteSheet) {}
 
 void CSpriteSheet::readInput(utils::Tokens& l_tokens)
 {
-    m_sheetName = *consumeToken<std::string>(l_tokens);
+    m_sheetName = *utils::consumeToken<std::string>(l_tokens);
 }
 
 void CSpriteSheet::create(core::graphics::TextureManager& l_textureManager,

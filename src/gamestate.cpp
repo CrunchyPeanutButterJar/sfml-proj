@@ -93,7 +93,7 @@ static void jumpEntity(ecs::messaging::MessageHandler& l_messageHandler, ecs::En
     l_messageHandler.dispatch(msg);
 }
 
-constexpr std::string SCORE_INTERFACE_NAME = "ScoreInterface";
+constexpr const char* SCORE_INTERFACE_NAME = "ScoreInterface";
 
 GameState::GameState(core::state::StateManager& l_stateManager)
     : core::state::BaseState{l_stateManager},

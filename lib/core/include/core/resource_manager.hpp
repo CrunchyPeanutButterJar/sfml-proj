@@ -27,7 +27,7 @@ template <typename Derived, typename T> class ResourceManager
 
                 {
                     auto scope = tokens.setQuotedCharScoped('"');
-                    opt_path   = consumeToken<std::string>(tokens);
+                    opt_path   = utils::consumeToken<std::string>(tokens);
                 }
 
                 ASSERT(opt_alias.has_value() && opt_path.has_value(),

@@ -1,10 +1,10 @@
 #include "core/directions.hpp"
 #include "ecs/entity/c_collidable.hpp"
-#include <ecs/entity/c_state.fwd.hpp>
 #include "ecs/messaging/entity_events.hpp"
 #include "ecs/messaging/entity_message.hpp"
 #include "ecs/messaging/event_queue.hpp"
 #include <ecs/entity/c_movable.hpp>
+#include <ecs/entity/c_state.fwd.hpp>
 #include <ecs/entity/entity_manager.hpp>
 #include <ecs/messaging/message_handler.hpp>
 #include <ecs/system/s_control.hpp>

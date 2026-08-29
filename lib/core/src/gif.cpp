@@ -46,21 +46,21 @@ auto Gif::loadGif(const std::string& l_filePath) -> bool
 
     while (!tokens.empty())
     {
-        auto key = *consumeToken<std::string>(tokens);
+        auto key = *utils::consumeToken<std::string>(tokens);
 
         if (key == "Size")
         {
             sf::Vector2u temp;
-            std::tie(temp.x, temp.y) = *consumeTokens<unsigned int, unsigned int>(tokens);
+            std::tie(temp.x, temp.y) = *utils::consumeTokens<unsigned int, unsigned int>(tokens);
             image_size               = temp;
         }
         else if (key == "Texture")
         {
-            m_texture = m_textureManager.acquire(*consumeToken<std::string>(tokens));
+            m_texture = m_textureManager.acquire(*utils::consumeToken<std::string>(tokens));
         }
         else if (key == "FrameTime")
         {
-            m_frameTime = *consumeToken<float>(tokens);
+            m_frameTime = *utils::consumeToken<float>(tokens);
         }
         else if (key == "Loop")
         {

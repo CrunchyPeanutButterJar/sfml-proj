@@ -8,7 +8,7 @@ CPosition::CPosition() : CBase{Component::Position} {}
 
 void CPosition::readInput(utils::Tokens& l_tokens)
 {
-    std::tie(m_position.x, m_position.y) = *consumeTokens<float, float>(l_tokens);
+    std::tie(m_position.x, m_position.y) = *utils::consumeTokens<float, float>(l_tokens);
 }
 
 auto CPosition::getPosition() const -> const sf::Vector2f&

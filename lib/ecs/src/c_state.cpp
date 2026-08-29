@@ -8,7 +8,7 @@ CState::CState() : CBase{Component::State} {}
 
 void CState::readInput(utils::Tokens& l_tokens)
 {
-    setState((EntityState)*consumeToken<unsigned int>(l_tokens));
+    setState((EntityState)*utils::consumeToken<unsigned int>(l_tokens));
 }
 
 auto CState::getState() const -> EntityState

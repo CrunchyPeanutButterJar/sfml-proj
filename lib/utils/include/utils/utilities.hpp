@@ -56,9 +56,15 @@ inline auto getResourcesDirectory() -> std::string
     return getWorkingDirectory() + "resources/";
 }
 
+#if defined(_MSC_VER)
+#define FUNC_SIGNATURE __FUNCSIG__
+#elif defined(__GNUC__) || defined(__clang__)
+#define FUNC_SIGNATURE __PRETTY_FUNCTION__
+#endif
+
 template <typename T> auto printTypeName() -> std::string
 {
-    return __PRETTY_FUNCTION__;
+    return FUNC_SIGNATURE;
 }
 
 auto readFile(const std::string& l_filePath) -> std::optional<std::istringstream>;

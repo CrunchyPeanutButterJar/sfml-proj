@@ -73,7 +73,8 @@ auto Tokens::currentMatch() -> bool
         return currentMatch();
     }
 
-    if (m_currentStr.back() == m_delimiter || m_currentStr.back() == '\n')
+    if (!m_currentStr.empty() &&
+        (m_currentStr.back() == m_delimiter || m_currentStr.back() == '\n'))
     {
         m_currentStr.pop_back();
     }

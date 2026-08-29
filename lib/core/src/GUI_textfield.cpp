@@ -12,7 +12,7 @@ GUI_Textfield::~GUI_Textfield() = default;
 void GUI_Textfield::readIn(utils::Tokens& l_tokens)
 {
     auto scope   = l_tokens.setDelimiterScoped('"');
-    auto content = *consumeToken<std::string>(l_tokens);
+    auto content = *utils::consumeToken<std::string>(l_tokens);
     m_visual.m_text.setString(content);
 }
 void GUI_Textfield::onClick(const sf::Vector2f& /*l_mousePos*/)

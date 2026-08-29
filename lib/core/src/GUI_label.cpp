@@ -12,7 +12,7 @@ GUI_Label::~GUI_Label() = default;
 void GUI_Label::readIn(utils::Tokens& l_tokens)
 {
     auto scope   = l_tokens.setDelimiterScoped('"');
-    auto content = *consumeToken<std::string>(l_tokens);
+    auto content = *utils::consumeToken<std::string>(l_tokens);
     m_visual.m_text.setString(content);
 }
 

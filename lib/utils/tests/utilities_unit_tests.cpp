@@ -19,24 +19,25 @@ TEST(Tokenizer, consume_typed_tokens)
     float y = NAN;
     float z = NAN;
 
-    std::tie(std::ignore, x, y, z) = *consumeTokens<std::string, float, float, float>(tokens);
+    std::tie(std::ignore, x, y, z) =
+        *utils::consumeTokens<std::string, float, float, float>(tokens);
     EXPECT_FLOAT_EQ(x, 1.0F);
     EXPECT_FLOAT_EQ(y, 2.0F);
     EXPECT_FLOAT_EQ(z, 3.14F);
 
     int age = 0;
 
-    std::tie(std::ignore, age) = *consumeTokens<std::string, int>(tokens);
+    std::tie(std::ignore, age) = *utils::consumeTokens<std::string, int>(tokens);
     EXPECT_EQ(age, 18);
 
     std::string name;
 
-    std::tie(std::ignore, name) = *consumeTokens<std::string, std::string>(tokens);
+    std::tie(std::ignore, name) = *utils::consumeTokens<std::string, std::string>(tokens);
     EXPECT_EQ(name, "joe");
 
     std::string family_name;
 
-    std::tie(std::ignore, family_name) = *consumeTokens<std::string, std::string>(tokens);
+    std::tie(std::ignore, family_name) = *utils::consumeTokens<std::string, std::string>(tokens);
     EXPECT_EQ(family_name, "Rustom");
 
     EXPECT_TRUE(tokens.empty());
@@ -62,7 +63,7 @@ TEST(Tokenizer, consume_tokens_return_nullopt_in_case_of_failure)
         ss << "      \n\n\n\n\n\n\n#this is a comment       \n\n\n\n\n";
 
         utils::Tokens tokens{std::istringstream(ss.str())};
-        auto          result = consumeTokens<int, float, double>(tokens);
+        auto          result = utils::consumeTokens<int, float, double>(tokens);
         EXPECT_FALSE(result.has_value());
     }
 
@@ -71,7 +72,7 @@ TEST(Tokenizer, consume_tokens_return_nullopt_in_case_of_failure)
         ss << "      \n\n\n\n\n\n\n joeeee tempppp       \n\n\n\n\n";
 
         utils::Tokens tokens{std::istringstream(ss.str())};
-        auto          result = consumeTokens<int, float, double>(tokens);
+        auto          result = utils::consumeTokens<int, float, double>(tokens);
         EXPECT_FALSE(result.has_value());
     }
 }
@@ -82,7 +83,7 @@ TEST(Tokenizer, skips_line_correctly)
     ss << "      \n\n\n\n\n\n\n  this is a   line       \n\n  joe   \n\n\n";
     utils::Tokens tokens{std::istringstream{ss.str()}};
     tokens.skipLine();
-    auto token = consumeToken<std::string>(tokens);
+    auto token = utils::consumeToken<std::string>(tokens);
     ASSERT_TRUE(token.has_value());
     EXPECT_EQ(*token, "joe");
 }
@@ -97,10 +98,10 @@ TEST(Tokenizer, capture_quoted_strings)
 
     auto scope = tokens.setQuotedCharScoped('"');
 
-    const auto QuotedString = *consumeToken<std::string>(tokens);
+    const auto QuotedString = *utils::consumeToken<std::string>(tokens);
     EXPECT_EQ(QuotedString, "this is a   string \n \n i want to capture");
 
-    const auto Joe = *consumeToken<std::string>(tokens);
+    const auto Joe = *utils::consumeToken<std::string>(tokens);
     EXPECT_EQ(Joe, "joe");
 
     EXPECT_TRUE(tokens.empty());
@@ -114,7 +115,7 @@ TEST(Tokenizer, capture_strings_test)
 
     utils::Tokens tokens{std::istringstream{ss.str()}, '-'};
 
-    const auto Str = *consumeToken<std::string>(tokens);
+    const auto Str = *utils::consumeToken<std::string>(tokens);
     EXPECT_EQ(Str, "joe and jp");
 
     EXPECT_TRUE(tokens.empty());
@@ -127,11 +128,11 @@ TEST(Tokenizer, change_delimiter)
 
     utils::Tokens tokens{std::istringstream{ss.str()}};
 
-    consumeTokens<std::string, int>(tokens);
+    utils::consumeTokens<std::string, int>(tokens);
 
     {
         auto scoped = tokens.setDelimiterScoped(':');
-        auto str    = *consumeToken<std::string>(tokens);
+        auto str    = *utils::consumeToken<std::string>(tokens);
         EXPECT_EQ(str, "footstep");
     }
 
@@ -139,21 +140,21 @@ TEST(Tokenizer, change_delimiter)
 
     {
         auto scoped = tokens.setDelimiterScoped('"');
-        value       = *consumeToken<std::string>(tokens);
+        value       = *utils::consumeToken<std::string>(tokens);
     }
 
     utils::Tokens    inner_tokens{std::istringstream{value}, ','};
     std::vector<int> frames;
     while (!inner_tokens.empty())
     {
-        frames.push_back(*consumeToken<int>(inner_tokens));
+        frames.push_back(*utils::consumeToken<int>(inner_tokens));
     }
 
     ASSERT_EQ(frames.size(), 2);
     EXPECT_EQ(frames[0], 1);
     EXPECT_EQ(frames[1], 4);
 
-    auto joe = *consumeToken<std::string>(tokens);
+    auto joe = *utils::consumeToken<std::string>(tokens);
     EXPECT_EQ(joe, "joe");
 
     EXPECT_TRUE(tokens.empty());
@@ -166,10 +167,10 @@ TEST(Tokenizer, capture_lines)
           "  \n";
 
     utils::Tokens tokens{std::istringstream{ss.str()}, '\n'};
-    auto          first_line = *consumeToken<std::string>(tokens);
+    auto          first_line = *utils::consumeToken<std::string>(tokens);
     EXPECT_EQ(first_line, "joee this is   aa  test");
 
-    auto second_line = *consumeToken<std::string>(tokens);
+    auto second_line = *utils::consumeToken<std::string>(tokens);
     EXPECT_EQ(second_line, "last line 1 2 3");
 
     EXPECT_TRUE(tokens.empty());

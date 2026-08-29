@@ -6,9 +6,9 @@
 using namespace core::graphics;
 
 TileInfo::TileInfo(const TileSheetConfig& l_config, utils::Tokens& l_tokens)
-    : m_config{l_config}, m_id{*consumeToken<TileId>(l_tokens)},
-      m_name{*consumeToken<std::string>(l_tokens)},
-      m_friction{*consumeToken<float>(l_tokens), *consumeToken<float>(l_tokens)}
+    : m_config{l_config}, m_id{*utils::consumeToken<TileId>(l_tokens)},
+      m_name{*utils::consumeToken<std::string>(l_tokens)},
+      m_friction{*utils::consumeToken<float>(l_tokens), *utils::consumeToken<float>(l_tokens)}
 {
     const size_t NRows = m_config.m_height / m_config.m_tileSize;
     const size_t NCols = m_config.m_width / m_config.m_tileSize;

@@ -3,8 +3,8 @@
 
 #include "core/directions.hpp"
 #include <ecs/ecs_types.hpp>
-#include <ecs/messaging/message_handler.hpp>
 #include <ecs/messaging/message_handler.fwd.hpp>
+#include <ecs/messaging/message_handler.hpp>
 #include <ecs/system/s_base.hpp>
 
 namespace ecs::system
