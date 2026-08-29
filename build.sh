@@ -96,41 +96,36 @@ get_conan_profile_path() {
 
 generate_conan_clang_profile() {
   os=$(detect_os)
-  profile_path=$(get_conan_profile_path $PROFILE_NAME)
   if [ "$os" = "Windows" ]; then
-    cat > "$profile_path" << EOF
-      include($PROFILE_NAME_BASE)
-      [settings]
-      build_type=Release
-      os=Windows
-      compiler=clang
-      compiler.cppstd=23
-      compiler.version=19
-      compiler.runtime=dynamic
-      compiler.runtime_type=Release
-      compiler.runtime_version=v144
+    cat << EOF
+include($PROFILE_NAME_BASE)
+[settings]
+build_type=Release
+os=Windows
+compiler=clang
+compiler.cppstd=23
+compiler.version=19
+compiler.runtime=dynamic
+compiler.runtime_type=Release
+compiler.runtime_version=v144
+[conf]
+tools.build:compiler_executables={'c': 'clang', 'cpp': 'clang++'}
 EOF
   elif [ "$os" = "Linux" ]; then
-    cat > "$profile_path" << EOF
-      include($PROFILE_NAME_BASE)
-      [settings]
-      build_type=Release
-      compiler=clang
-      compiler.cppstd=23
-      compiler.libcxx=libc++
-      compiler.version=18
-      os=Linux
+    cat << EOF
+include($PROFILE_NAME_BASE)
+[settings]
+build_type=Release
+compiler=clang
+compiler.cppstd=23
+compiler.libcxx=libc++
+compiler.version=18
+os=Linux
+[conf]
+tools.build:compiler_executables={'c': 'clang', 'cpp': 'clang++'}
 EOF
   fi
 }
-
-if [[ "$CONAN_STEP" == "true" || ! -d $BUILD_DIR ]]; then
-  CXX=clang++ CC=clang conan install . \
-      --output-folder=$BUILD_DIR \
-      --profile $PROFILE_NAME \
-      --build=missing \
-      -s build_type=$BUILD_TYPE
-fi
 
 echo "Creation clang_profile_base"
 
@@ -139,16 +134,25 @@ conan profile detect --name=$PROFILE_NAME_BASE --force 2>/dev/null
 set -e
 
 echo "Creation clang_profile"
-generate_conan_clang_profile
+OUTPUT_FILE=$(generate_conan_clang_profile)
+echo "$OUTPUT_FILE"
+echo "$OUTPUT_FILE" > "$(get_conan_profile_path $PROFILE_NAME)"
+
+echo
+
+if [[ "$CONAN_STEP" == "true" || ! -d $BUILD_DIR ]]; then
+  conan install . \
+      --output-folder=$BUILD_DIR \
+      --profile $PROFILE_NAME \
+      --build=missing \
+      -s build_type=$BUILD_TYPE
+fi
 
 # Étape CMake configure + build
 cd $BUILD_DIR
 cmake .. \
-    -DCMAKE_C_COMPILER=clang\
-    -DCMAKE_CXX_COMPILER=clang++\
     -DCMAKE_EXPORT_COMPILE_COMMANDS=ON\
-    -DCMAKE_TOOLCHAIN_FILE=conan_toolchain.cmake \
-    $(if [ "$BUILD_TYPE" = "Release" ]; then echo "--preset conan-release"; else echo ""; fi )\
+    $(if [ "$BUILD_TYPE" = "Release" ]; then echo "--preset conan-release"; else echo "--preset conan-debug"; fi )\
     -DCMAKE_BUILD_TYPE=$BUILD_TYPE
 
 cmake --build . --parallel $(nproc)
