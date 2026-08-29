@@ -1,6 +1,7 @@
 #ifndef ECS_ENTITY_ENTITY_MANAGER_HPP
 #define ECS_ENTITY_ENTITY_MANAGER_HPP
 
+#include <algorithm>
 #include <core/graphics/texture_manager.fwd.hpp>
 #include <ecs/ecs_types.hpp>
 #include <ecs/entity/c_base.hpp>

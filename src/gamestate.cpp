@@ -69,20 +69,12 @@ static bool s_init = []() -> bool
     return true;
 }();
 
-template class core::RegisterBinding<
-    BINDING("Game_MoveRight", core::KeyPressed{sf::Keyboard::Right}), core::Customizable>;
-template class core::RegisterBinding<BINDING("Game_MoveLeft", core::KeyPressed{sf::Keyboard::Left}),
-                                     core::Customizable>;
-
-template class core::RegisterBinding<BINDING("Game_MoveRight", core::KeyPressed{sf::Keyboard::D}),
-                                     core::Customizable>;
-template class core::RegisterBinding<BINDING("Game_MoveLeft", core::KeyPressed{sf::Keyboard::A}),
-                                     core::Customizable>;
-template class core::RegisterBinding<BINDING("Game_Jump", core::KeyPressed{sf::Keyboard::Space}),
-                                     core::Customizable>;
-
-template class core::RegisterBinding<BINDING("Game_Attack", core::KeyPressed{sf::Keyboard::E}),
-                                     core::Customizable>;
+REGISTER_BINDING(core::Customizable, "Game_MoveRight", core::KeyPressed{sf::Keyboard::Right});
+REGISTER_BINDING(core::Customizable, "Game_MoveLeft", core::KeyPressed{sf::Keyboard::Left});
+REGISTER_BINDING(core::Customizable, "Game_MoveRight", core::KeyPressed{sf::Keyboard::D});
+REGISTER_BINDING(core::Customizable, "Game_MoveLeft", core::KeyPressed{sf::Keyboard::A});
+REGISTER_BINDING(core::Customizable, "Game_Jump", core::KeyPressed{sf::Keyboard::Space});
+REGISTER_BINDING(core::Customizable, "Game_Attack", core::KeyPressed{sf::Keyboard::E});
 
 static void jumpEntity(ecs::messaging::MessageHandler& l_messageHandler, ecs::EntityId l_entity)
 {

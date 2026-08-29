@@ -128,6 +128,17 @@ os=Linux
 tools.build:compiler_executables={'c': 'clang', 'cpp': 'clang++'}
 "
 
+LIN_GNU_PROFILE="
+[settings]
+build_type=Release
+compiler=gcc
+compiler.cppstd=23
+compiler.version=14
+os=Linux
+[conf]
+tools.build:compiler_executables={'c': 'gcc-14', 'cpp': 'g++-14'}
+"
+
 generate_conan_clang_profile() {
   os=$(detect_os)
   if [ "$os" = "Windows" ]; then
@@ -138,7 +149,7 @@ EOF
   elif [ "$os" = "Linux" ]; then
     cat << EOF
 include($PROFILE_NAME_BASE)
-$LIN_CLANG_PROFILE
+$LIN_GNU_PROFILE
 EOF
   fi
 }

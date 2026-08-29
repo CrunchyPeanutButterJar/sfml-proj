@@ -10,10 +10,8 @@
 #include <core/window.hpp>
 #include <utils/assert.hpp>
 
-template class core::RegisterBinding<
-    BINDING("MainMenu_Play", core::GuiEventClick{"MainMenu", "Play"}), core::NonCustomizable>;
-template class core::RegisterBinding<
-    BINDING("MainMenu_Quit", core::GuiEventClick{"MainMenu", "Quit"}), core::NonCustomizable>;
+REGISTER_BINDING(core::NonCustomizable, "MainMenu_Play", core::GuiEventClick{"MainMenu", "Play"});
+REGISTER_BINDING(core::NonCustomizable, "MainMenu_Quit", core::GuiEventClick{"MainMenu", "Quit"});
 
 MainMenuState::MainMenuState(core::state::StateManager& l_stateManager)
     : BaseState(l_stateManager), m_gif{m_stateManager.getContext()->m_textureManager}

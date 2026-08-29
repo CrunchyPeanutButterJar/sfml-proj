@@ -4,10 +4,6 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 project(sfml-app)
 
-if(CMAKE_CXX_COMPILER_VERSION VERSION_LESS "18.0")
-  message(FATAL_ERROR "Clang 18 requis pour ce projet.")
-endif()
-
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 if(WIN32)
@@ -16,9 +12,9 @@ endif()
 
 add_compile_options(
     $<$<CXX_COMPILER_ID:MSVC>:/W4>
-    $<$<NOT:$<CXX_COMPILER_ID:MSVC>>:-Wall>
-    $<$<NOT:$<CXX_COMPILER_ID:MSVC>>:-Wextra>
-    $<$<NOT:$<CXX_COMPILER_ID:MSVC>>:-Werror>
+    $<$<CXX_COMPILER_ID:Clang>:-Wall>
+    $<$<CXX_COMPILER_ID:Clang>:-Wextra>
+    $<$<CXX_COMPILER_ID:Clang>:-Werror>
 )
 
 add_compile_options(
@@ -48,16 +44,15 @@ add_compile_options(
 
 if(UNIX)
 add_compile_options(
-    -stdlib=libc++
+    $<$<CXX_COMPILER_ID:Clang>:-stdlib=libc++>
 )
 endif()
 
-
 if(UNIX)
 add_link_options(
-  -lc++
-  -stdlib=libc++
-  -lc++abi
+    $<$<CXX_COMPILER_ID:Clang>:-lc++>
+    $<$<CXX_COMPILER_ID:Clang>:-lc++abi>
+    $<$<CXX_COMPILER_ID:Clang>:-stdlib=libc++>
 )
 endif()
 

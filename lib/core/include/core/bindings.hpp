@@ -88,8 +88,14 @@ struct NonCustomizable;
 
 template <BindingsRegisterFn Fn, typename Tag> class RegisterBinding
 {
-    inline static bool s_registered = []() -> bool
+  public:
+    RegisterBinding()
     {
+        if (s_init)
+        {
+            return;
+        }
+
         if constexpr (std::is_same_v<Tag, core::Customizable>)
         {
             registerDefaultCustomizableBinding(Fn);
@@ -102,13 +108,28 @@ template <BindingsRegisterFn Fn, typename Tag> class RegisterBinding
         {
             static_assert(false, "Invalid Tag");
         }
-        return true;
-    }();
+
+        s_init = true;
+    }
+
+  private:
+    static bool s_init;
 };
+
+template <BindingsRegisterFn Fn, typename Tag> bool RegisterBinding<Fn, Tag>::s_init = false;
 
 #define BINDING(action, ...)                                                                       \
     +[]() -> std::pair<core::Action, core::SimplifiedEvents>                                       \
     { return std::make_pair(core::Action(action), core::SimplifiedEvents{__VA_ARGS__}); }
+
+#define CONCAT_IMPL(a, b) a##b
+#define CONCAT(a, b) CONCAT_IMPL(a, b)
+
+#define REGISTER_BINDING(Tag, action, ...)                                                         \
+    inline const core::RegisterBinding<BINDING(action __VA_OPT__(, ) __VA_ARGS__), Tag> CONCAT(    \
+        reg_, __LINE__)                                                                            \
+    {                                                                                              \
+    }
 
 } // namespace core
 #endif
