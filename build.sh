@@ -81,45 +81,65 @@ detect_os() {
 
 echo "⚙️ Build en mode $BUILD_TYPE"
 
-echo "Creation clang_profile"
-
+PROFILE_NAME_BASE="clang_profile_base"
 PROFILE_NAME="clang_profile"
 
-set +e
-conan profile detect --name=$PROFILE_NAME 2>/dev/null
-set -e
-
-detect_conan_path() {
+get_conan_profile_path() {
+  profile_name="$1"
   os=$(detect_os)
   if [ "$os" = "Linux" ]; then
-    conan profile path "$PROFILE_NAME" 2>/dev/null
+    conan profile path "$profile_name" 2>/dev/null
   elif [ "$os" = "Windows" ]; then
-    cygpath.exe $(conan profile path "$PROFILE_NAME" 2>/dev/null)
+    cygpath.exe $(conan profile path "$profile_name" 2>/dev/null)
   fi
 }
 
-PROFILE_PATH=$(detect_conan_path)
-
-define_clang_version() {
+generate_conan_clang_profile() {
   os=$(detect_os)
-  version="18"
+  profile_path=$(get_conan_profile_path $PROFILE_NAME)
   if [ "$os" = "Windows" ]; then
-    version="19"
+    cat > "$profile_path" << EOF
+      include($PROFILE_NAME_BASE)
+      [settings]
+      build_type=Release
+      os=Windows
+      compiler=clang
+      compiler.cppstd=23
+      compiler.version=19
+      compiler.runtime=dynamic
+      compiler.runtime_type=Release
+      compiler.runtime_version=v144
+EOF
+  elif [ "$os" = "Linux" ]; then
+    cat > "$profile_path" << EOF
+      include($PROFILE_NAME_BASE)
+      [settings]
+      build_type=Release
+      compiler=clang
+      compiler.cppstd=23
+      compiler.libcxx=libc++
+      compiler.version=18
+      os=Linux
+EOF
   fi
-  sed -i "s/compiler.version=.*/compiler.version=$version/" "$PROFILE_PATH"
 }
-
-sed -i 's/compiler=.*/compiler=clang/' "$PROFILE_PATH"
-define_clang_version
-sed -i 's/compiler.cppstd=.*/compiler.cppstd=23/' "$PROFILE_PATH"
 
 if [[ "$CONAN_STEP" == "true" || ! -d $BUILD_DIR ]]; then
   CXX=clang++ CC=clang conan install . \
       --output-folder=$BUILD_DIR \
-      --profile clang_profile\
+      --profile $PROFILE_NAME \
       --build=missing \
       -s build_type=$BUILD_TYPE
 fi
+
+echo "Creation clang_profile_base"
+
+set +e
+conan profile detect --name=$PROFILE_NAME_BASE --force 2>/dev/null
+set -e
+
+echo "Creation clang_profile"
+generate_conan_clang_profile
 
 # Étape CMake configure + build
 cd $BUILD_DIR
