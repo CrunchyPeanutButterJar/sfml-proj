@@ -3,15 +3,22 @@ set -e
 
 BUILD_DIR="build"
 BUILD_TYPE="Release"
+
+#pre build
 DO_CLEAN=false
+
+#main build
 CONAN_STEP=false
-CONAN_STEP_ONLY=false
+DO_BUILD=false
+
+#post build
 DO_CLANG_TIDY=false
 DO_CLANG_FORMAT=false
 DO_UPDATE_RESOURCES=false
+DO_RUN_BIN=false
 
 # 🔍 Analyse des options
-while getopts ":dcxfrtpe" opt; do
+while getopts ":dcxfrtpb" opt; do
   case $opt in
     d)
       BUILD_TYPE="Debug"
@@ -19,9 +26,8 @@ while getopts ":dcxfrtpe" opt; do
     c)
       DO_CLEAN=true
       ;;
-    e)
-      echo "Étape Conan seulement!"
-      CONAN_STEP_ONLY=true
+    b)
+      DO_BUILD=true
       ;;
     x)
       echo "🔄 Étape Conan forcée."
@@ -29,9 +35,7 @@ while getopts ":dcxfrtpe" opt; do
       ;;
     r)
       echo "Lancement du binaire"
-      cd ./$BUILD_DIR
-      ./sfml-app
-      exit 0
+      DO_RUN_BIN=true
       ;;
     t)
       echo "Lancement de clang-tidy"
@@ -47,35 +51,36 @@ while getopts ":dcxfrtpe" opt; do
       ;;
     \?)
       echo "❌ Option invalide: -$OPTARG"
-      echo "Usage: $0 [-d] [-c] [-x](pour forcer l'étape Conan) [-e](étape Conan uniquement) [-r](pour lancer le binaire) [-t] (pour lancer le linter) [-f] (pour lancer clang-format) [-p] (pour mettre a jour les fichiers resources et config)"
+      echo "Usage: $0 [-d] [-c] [-x](pour forcer l'étape Conan) [-b](pour construire le projet) [-r](pour lancer le binaire) [-t] (pour lancer le linter) [-f] (pour lancer clang-format) [-p] (pour mettre a jour les fichiers resources et config)"
       exit 1
       ;;
   esac
 done
 
-if $DO_UPDATE_RESOURCES; then
+do_update_resources() {
   rm -rf ./build/config/*
   rm -rf ./build/resources/*
   cp -r ./config/* ./build/config/
   cp -r ./resources/* ./build/resources/
-  exit 0
-fi
+}
 
-
-if $DO_CLANG_FORMAT; then
+do_clang_format() {
   clang-format-18 -i $(find ./lib/* ./src/* -name "*.cpp" -o -name "*.hpp")
-  exit 0
-fi
+}
 
-if $DO_CLEAN; then
-    if [ -d $BUILD_DIR ]; then
-        echo "🧹 Nettoyage du dossier $BUILD_DIR..."
-        rm -rvf "$BUILD_DIR" && echo "✅ Dossier nettoyé."
-    else
-        echo "ℹ️ Le dossier a été supprimé. donc Rien à nettoyer."
-    fi
-    exit 0
-fi
+do_clean() {
+  if [ -d $BUILD_DIR ]; then
+      echo "🧹 Nettoyage du dossier $BUILD_DIR..."
+      rm -rvf "$BUILD_DIR" && echo "✅ Dossier nettoyé."
+  else
+      echo "ℹ️ Le dossier a été supprimé. donc Rien à nettoyer."
+  fi
+}
+
+do_run_bin() {
+  cd $BUILD_DIR
+  ./sfml-app
+}
 
 detect_os() {
   case "$(uname -s)" in
@@ -84,18 +89,7 @@ detect_os() {
   esac
 }
 
-PROFILE_NAME_BASE="active_profile_base"
-PROFILE_NAME="active_profile"
-
-get_conan_profile_path() {
-  profile_name="$1"
-  os=$(detect_os)
-  if [ "$os" = "Linux" ]; then
-    conan profile path "$profile_name" 2>/dev/null
-  elif [ "$os" = "Windows" ]; then
-    cygpath.exe $(conan profile path "$profile_name" 2>/dev/null)
-  fi
-}
+#conan setup begin
 
 WIN_MSVC_VS_PROFILE="
 [settings]
@@ -159,6 +153,19 @@ tools.build:compiler_executables={'c': 'gcc-14', 'cpp': 'g++-14'}
 
 ACTIVE_LIN_PROFILE="$LIN_GNU_PROFILE"
 
+PROFILE_NAME_BASE="active_profile_base"
+PROFILE_NAME="active_profile"
+
+get_conan_profile_path() {
+  profile_name="$1"
+  os=$(detect_os)
+  if [ "$os" = "Linux" ]; then
+    conan profile path "$profile_name" 2>/dev/null
+  elif [ "$os" = "Windows" ]; then
+    cygpath.exe $(conan profile path "$profile_name" 2>/dev/null)
+  fi
+}
+
 generate_conan_profile() {
   os=$(detect_os)
   if [ "$os" = "Windows" ]; then
@@ -185,27 +192,23 @@ create_conan_profile() {
   return
 }
 
-create_conan_profile $PROFILE_NAME_BASE
+do_conan_install() {
 
-create_conan_profile $PROFILE_NAME
+  create_conan_profile $PROFILE_NAME_BASE
 
-OUTPUT_FILE=$(generate_conan_profile)
-echo "$OUTPUT_FILE"
-echo "$OUTPUT_FILE" > "$(get_conan_profile_path $PROFILE_NAME)"
+  create_conan_profile $PROFILE_NAME
 
-echo
+  OUTPUT_FILE=$(generate_conan_profile)
+  echo "$OUTPUT_FILE"
+  echo "$OUTPUT_FILE" > "$(get_conan_profile_path $PROFILE_NAME)"
 
-if [[ "$CONAN_STEP" == "true" || ! -d $BUILD_DIR ]]; then
   conan install . \
       --output-folder=$BUILD_DIR \
       -pr:h $PROFILE_NAME \
       -pr:b $PROFILE_NAME \
       --build=missing \
       -s build_type=$BUILD_TYPE
-  if [[ "$CONAN_STEP_ONLY" == "true" ]]; then
-    exit 0
-  fi
-fi
+}
 
 get_conan_build_preset() {
   if [ "$BUILD_TYPE" = "Release" ]; then echo "--preset conan-release"; else echo "--preset conan-debug"; fi
@@ -221,26 +224,57 @@ get_conan_configure_preset() {
   fi
   get_conan_build_preset
 }
+#conan setup end
 
-# Étape CMake configure + build
-cd $BUILD_DIR
-cmake .. \
-    -DCMAKE_EXPORT_COMPILE_COMMANDS=ON \
-    $(get_conan_configure_preset)
+do_build_app() {
+  # Étape CMake configure + build
+  cd $BUILD_DIR
+  cmake .. \
+      -DCMAKE_EXPORT_COMPILE_COMMANDS=ON \
+      $(get_conan_configure_preset)
 
-cmake --build . \
-    $(get_conan_build_preset) \
-    --parallel $(nproc)
+  cmake --build . \
+      $(get_conan_build_preset) \
+      --parallel $(nproc)
 
-ctest
+  ctest
 
-cd ../
+  cd ../
+}
 
-if $DO_CLANG_TIDY; then
+do_clang_tidy() {
   command="clang-tidy-18 -fix-errors -fix $(git status| grep -oE '[^[:space:]]+\.(hpp|cpp)' ) -p build"
   #command="clang-tidy-18 -fix-errors -fix $(git diff --name-only  HEAD~1...HEAD | grep -oE '[^[:space:]]+\.(hpp|cpp)') -p build"
   #command="clang-tidy-18 -fix-errors -fix $(find ./lib/* ./src/* -name "*.cpp" -o -name "*.hpp") -p build"
   echo "Running clang-tidy command"
   echo $command
   eval $command
+}
+
+if [[ "$DO_CLEAN" == "true" ]]; then
+  do_clean
+fi
+
+if [[ "$CONAN_STEP" == "true" || ( ! -d $BUILD_DIR && "$DO_CLEAN" == "false" ) ]]; then
+  do_conan_install
+fi
+
+if [[ "$DO_BUILD" == "true" ]]; then
+  do_build_app
+fi
+
+if [[ "$DO_CLANG_TIDY" == "true" ]]; then
+  do_clang_tidy
+fi
+
+if [[ "$DO_CLANG_FORMAT" == "true" ]]; then
+  do_clang_format
+fi
+
+if [[ "$DO_UPDATE_RESOURCES" == "true" ]]; then
+  do_update_resources
+fi
+
+if [[ "$DO_RUN_BIN" == "true" ]]; then
+  do_run_bin
 fi
