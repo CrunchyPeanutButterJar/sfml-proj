@@ -69,11 +69,10 @@ Game::Game()
                                                   .m_soundManager   = m_soundManager,
                                                   .m_entityManager  = m_entityManager,
                                                   .m_systemManager  = m_systemManager})},
-      m_stateManager{core::state::StateManager::build<MainMenuState, GameState>(m_context)},
-      m_entityManager{m_systemManager, m_stateManager.getContext()->m_textureManager},
-      m_systemManager{m_entityManager},
-      m_guiManager(&m_window.getEventManager(), m_stateManager.getContext()),
-      m_soundManager{m_audioManager}
+      m_entityManager{m_systemManager, m_context.m_textureManager},
+      m_systemManager{m_entityManager}, m_guiManager(&m_window.getEventManager(), &m_context),
+      m_soundManager{m_audioManager},
+      m_stateManager{core::state::StateManager::build<MainMenuState, GameState>(m_context)}
 {
     m_systemManager.getSystem<ecs::system::SSound>(ecs::System::Sound)
         ->setUp(&m_audioManager, &m_soundManager);

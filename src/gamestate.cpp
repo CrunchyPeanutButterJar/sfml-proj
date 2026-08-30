@@ -34,7 +34,9 @@ enum EntityTag : std::uint8_t
     Demon
 };
 
-static bool s_init = []() -> bool
+static bool s_init{false};
+
+constexpr auto REGISTER_PLAYER_DEMON_COLLISION = []() -> void
 {
     ecs::system::registerCollisionResolution(
         Demon, Player,
@@ -66,8 +68,7 @@ static bool s_init = []() -> bool
                 msg_handler.dispatch(msg);
             }
         });
-    return true;
-}();
+};
 
 REGISTER_BINDING(core::Customizable, "Game_MoveRight", core::KeyPressed{sf::Keyboard::Right});
 REGISTER_BINDING(core::Customizable, "Game_MoveLeft", core::KeyPressed{sf::Keyboard::Left});
@@ -93,6 +94,12 @@ GameState::GameState(core::state::StateManager& l_stateManager)
       m_enemyEntitiesManager{m_stateManager.getContext<ecs::SharedContext>()->m_entityManager,
                              m_map}
 {
+    if (!s_init)
+    {
+        REGISTER_PLAYER_DEMON_COLLISION();
+        s_init = true;
+    }
+
     m_map.loadMap(utils::getConfigDirectory() + "map.map");
 
     m_enemyEntitiesManager.generateEnemies();

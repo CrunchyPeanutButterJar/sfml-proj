@@ -36,7 +36,6 @@ private:
 
     ecs::SharedContext m_context;
 
-    core::state::StateManager m_stateManager;
     ecs::entity::EntityManager m_entityManager;
     ecs::system::SystemManager m_systemManager;
     core::graphics::TextureManager m_textureManager;
@@ -44,6 +43,7 @@ private:
     core::gui::GUI_Manager m_guiManager;
     core::audio::AudioManager m_audioManager;
     core::audio::SoundManager m_soundManager;
+    core::state::StateManager m_stateManager;
 
 };
 
