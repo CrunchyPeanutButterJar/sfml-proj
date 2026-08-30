@@ -184,8 +184,8 @@ static auto getTransitionsGraph()
     return transitions;
 }
 
-static auto transitionIsValid(entity::EntityState l_prevState,
-                              entity::EntityState l_newState) -> bool
+static auto transitionIsValid(entity::EntityState l_prevState, entity::EntityState l_newState)
+    -> bool
 {
     static const auto Transitions = getTransitionsGraph();
 

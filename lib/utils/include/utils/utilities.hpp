@@ -21,11 +21,11 @@ namespace utils
 #ifdef _WIN32
 inline auto getWorkingDirectory() -> std::string
 {
-    HMODULE hModule = GetModuleHandle(nullptr);
-    if (hModule)
+    HMODULE h_module = GetModuleHandle(nullptr);
+    if (h_module != nullptr)
     {
         char path[256];
-        GetModuleFileName(hModule, path, sizeof(path));
+        GetModuleFileName(h_module, path, sizeof(path));
         PathRemoveFileSpec(path);
         std::replace(path, path + sizeof(path), '\\', '/');
         strcat_s(path, "/");      // new
@@ -105,8 +105,8 @@ class Tokens
 
   public:
     auto setDelimiterScoped(char l_delimiter) -> ScopedReplacer<&Tokens::m_delimiter>;
-    auto
-    setQuotedCharScoped(std::optional<char> l_quoteChar) -> ScopedReplacer<&Tokens::m_quoteChar>;
+    auto setQuotedCharScoped(std::optional<char> l_quoteChar)
+        -> ScopedReplacer<&Tokens::m_quoteChar>;
 
     template <typename T> auto head() -> std::optional<T>
     {

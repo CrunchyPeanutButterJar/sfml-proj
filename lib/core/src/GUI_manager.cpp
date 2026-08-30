@@ -46,8 +46,8 @@ GUI_Manager::~GUI_Manager()
     m_eventMgr->removeCallback(core::state::StateType(0), "Text_Entered");
 }
 
-auto GUI_Manager::getInterface(state::StateType   l_state,
-                               const std::string& l_name) -> GUI_Interface*
+auto GUI_Manager::getInterface(state::StateType l_state, const std::string& l_name)
+    -> GUI_Interface*
 {
     auto s = m_interfaces.find(l_state);
     if (s == m_interfaces.end())
@@ -255,8 +255,8 @@ void GUI_Manager::render(sf::RenderWindow* l_wind)
         i->draw(l_wind);
     }
 }
-auto GUI_Manager::createElement(const GUI_ElementType& l_id,
-                                GUI_Interface*         l_owner) -> GUI_ElementPtr
+auto GUI_Manager::createElement(const GUI_ElementType& l_id, GUI_Interface* l_owner)
+    -> GUI_ElementPtr
 {
     if (l_id == GUI_ElementType::Window)
     {

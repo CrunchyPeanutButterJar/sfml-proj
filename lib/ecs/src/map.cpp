@@ -52,8 +52,8 @@ auto Map::convertCoordinates(size_t iRow, size_t iCol) const -> std::optional<Ti
     return (iRow * nCols) + iCol;
 }
 
-static auto getUpscaleFactors(const sf::Vector2f& l_originalSize,
-                              const sf::Vector2f& l_targetSize) -> sf::Vector2f
+static auto getUpscaleFactors(const sf::Vector2f& l_originalSize, const sf::Vector2f& l_targetSize)
+    -> sf::Vector2f
 {
     return {l_targetSize.x / l_originalSize.x, l_targetSize.y / l_originalSize.y};
 }

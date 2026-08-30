@@ -142,8 +142,8 @@ auto SoundManager::pause(const SoundID& l_id) -> bool
     return true;
 }
 
-auto SoundManager::playMusic(const std::string& l_musicFilePath, float l_volume,
-                             bool l_loop) -> bool
+auto SoundManager::playMusic(const std::string& l_musicFilePath, float l_volume, bool l_loop)
+    -> bool
 {
     auto s =
         m_music.insert_or_assign(m_currentState, std::make_pair(SoundInfo{""}, MusicPtr{})).first;

@@ -20,11 +20,11 @@ namespace core
 
 struct EventDetails
 {
-    std::optional<sf::Vector2i> m_newMousePos;
-    std::optional<float>        m_scrollWheelDelta;
-    std::optional<int>          m_mouseButton;
-    std::optional<char>         m_enteredText;
-    std::optional<sf::Vector2u> m_newWindowSize;
+    std::optional<sf::Vector2i> m_newMousePos{};
+    std::optional<float>        m_scrollWheelDelta{};
+    std::optional<int>          m_mouseButton{};
+    std::optional<char>         m_enteredText{};
+    std::optional<sf::Vector2u> m_newWindowSize{};
     bool                        m_realtimeContribution{false};
 };
 
@@ -37,8 +37,8 @@ class EventManager
     void handleEvent(const core::gui::GUI_Event& l_event);
     void update(state::StateType l_state);
 
-    auto addCallback(state::StateType l_state, const std::string& l_action,
-                     Callback l_callback) -> bool;
+    auto addCallback(state::StateType l_state, const std::string& l_action, Callback l_callback)
+        -> bool;
     void removeCallback(state::StateType l_state, const std::string& l_action);
 
     EventManager();

@@ -14,8 +14,8 @@ static auto getNumberOfImagesPerRow(const sf::Vector2u& l_imageSize,
     return l_textureSize.x / l_imageSize.x;
 }
 
-static auto getNumberOfRows(const sf::Vector2u& l_imageSize,
-                            const sf::Vector2u& l_textureSize) -> std::uint8_t
+static auto getNumberOfRows(const sf::Vector2u& l_imageSize, const sf::Vector2u& l_textureSize)
+    -> std::uint8_t
 {
     // col height / image height
     return l_textureSize.y / l_imageSize.y;

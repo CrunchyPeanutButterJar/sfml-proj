@@ -215,11 +215,13 @@ static auto simplifiedEventMatchesActualEvent(const SimplifiedEvent& l_simpleEve
                                               core::EventDetails&    l_details) -> bool
 {
     return std::visit(
-        Overloaded{[&](KeyPressed l_simpleEvent) {
+        Overloaded{[&](KeyPressed l_simpleEvent)
+                   {
                        return l_event.type == sf::Event::KeyPressed &&
                               l_simpleEvent.get() == l_event.key.code;
                    },
-                   [&](KeyReleased l_simpleEvent) {
+                   [&](KeyReleased l_simpleEvent)
+                   {
                        return l_event.type == sf::Event::KeyReleased &&
                               l_simpleEvent.get() == l_event.key.code;
                    },

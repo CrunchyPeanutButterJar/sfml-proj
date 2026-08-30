@@ -38,8 +38,8 @@ class Map
   private:
     auto getTile(size_t iRow, size_t iCol) -> const core::graphics::Tile*;
     void loadTileset(const std::string& l_path);
-    auto convertCoordinates(size_t iRow,
-                            size_t iCol) const -> std::optional<core::graphics::TileId>;
+    auto convertCoordinates(size_t iRow, size_t iCol) const
+        -> std::optional<core::graphics::TileId>;
     auto convertCoordinates(core::graphics::TileId l_id) -> sf::Vector2u;
     auto convertCoordinates(int iRow, int iCol) const -> std::optional<sf::Vector2<size_t>>;
 

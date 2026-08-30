@@ -109,8 +109,8 @@ class GUI_Interface : public GUI_Element
 
 using GUI_InterfacePtr = std::unique_ptr<GUI_Interface>;
 
-[[nodiscard]] auto getOriginalPoint(sf::Vector2f l_point,
-                                    GUI_Manager* l_guiManager) -> sf::Vector2f;
+[[nodiscard]] auto getOriginalPoint(sf::Vector2f l_point, GUI_Manager* l_guiManager)
+    -> sf::Vector2f;
 
 } // namespace core::gui
 #endif

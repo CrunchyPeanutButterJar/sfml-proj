@@ -50,8 +50,8 @@ class SoundManager
     auto stop(const SoundID& l_id) -> bool;
     auto pause(const SoundID& l_id) -> bool;
 
-    auto playMusic(const std::string& l_musicFilePath, float l_volume = 100.F,
-                   bool l_loop = false) -> bool;
+    auto playMusic(const std::string& l_musicFilePath, float l_volume = 100.F, bool l_loop = false)
+        -> bool;
     auto playMusic() -> bool;
     auto stopMusic() -> bool;
     auto pauseMusic() -> bool;
