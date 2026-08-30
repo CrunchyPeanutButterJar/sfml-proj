@@ -97,7 +97,7 @@ get_conan_profile_path() {
   fi
 }
 
-WIN_MSVC_PROFILE="
+WIN_MSVC_VS_PROFILE="
 [settings]
 build_type=Release
 os=Windows
@@ -106,6 +106,19 @@ compiler.cppstd=23
 [conf]
 tools.build:compiler_executables={'c': 'cl', 'cpp': 'cl'}
 "
+
+WIN_MSVC_NINJA_PROFILE="
+[settings]
+build_type=Release
+os=Windows
+compiler=msvc
+compiler.cppstd=23
+[conf]
+tools.build:compiler_executables={'c': 'cl', 'cpp': 'cl'}
+tools.cmake.cmaketoolchain:generator=Ninja
+"
+
+ACTIVE_WIN_PROFILE="$WIN_MSVC_VS_PROFILE"
 
 WIN_CLANG_PROFILE="
 [settings]
@@ -144,17 +157,19 @@ os=Linux
 tools.build:compiler_executables={'c': 'gcc-14', 'cpp': 'g++-14'}
 "
 
+ACTIVE_LIN_PROFILE="$LIN_GNU_PROFILE"
+
 generate_conan_clang_profile() {
   os=$(detect_os)
   if [ "$os" = "Windows" ]; then
     cat << EOF
 include($PROFILE_NAME_BASE)
-$WIN_MSVC_PROFILE
+$ACTIVE_WIN_PROFILE
 EOF
   elif [ "$os" = "Linux" ]; then
     cat << EOF
 include($PROFILE_NAME_BASE)
-$LIN_GNU_PROFILE
+$ACTIVE_LIN_PROFILE
 EOF
   fi
 }
@@ -191,10 +206,12 @@ get_conan_build_preset() {
 get_conan_configure_preset() {
   os=$(detect_os)
   if [ "$os" = "Windows" ]; then
-    echo "--preset conan-default" #msvc's multi-configuration preset
-  elif [ "$os" = "Linux" ]; then
-    get_conan_build_preset
+    if [ "$ACTIVE_WIN_PROFILE" = "$WIN_MSVC_VS_PROFILE" ]; then
+      echo "--preset conan-default" #msvc's multi-configuration preset
+      return
+    fi
   fi
+  get_conan_build_preset
 }
 
 # Étape CMake configure + build
