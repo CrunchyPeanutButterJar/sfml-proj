@@ -5,18 +5,23 @@ BUILD_DIR="build"
 BUILD_TYPE="Release"
 DO_CLEAN=false
 CONAN_STEP=false
+CONAN_STEP_ONLY=false
 DO_CLANG_TIDY=false
 DO_CLANG_FORMAT=false
 DO_UPDATE_RESOURCES=false
 
 # 🔍 Analyse des options
-while getopts ":dcxfrtp" opt; do
+while getopts ":dcxfrtpe" opt; do
   case $opt in
     d)
       BUILD_TYPE="Debug"
       ;;
     c)
       DO_CLEAN=true
+      ;;
+    e)
+      echo "Étape Conan seulement!"
+      CONAN_STEP_ONLY=true
       ;;
     x)
       echo "🔄 Étape Conan forcée."
@@ -42,7 +47,7 @@ while getopts ":dcxfrtp" opt; do
       ;;
     \?)
       echo "❌ Option invalide: -$OPTARG"
-      echo "Usage: $0 [-d] [-c] [-x](pour forcer l'étape Conan) [-r](pour lancer le binaire) [-t] (pour lancer le linter) [-f] (pour lancer clang-format) [-p] (pour mettre a jour les fichiers resources et config)"
+      echo "Usage: $0 [-d] [-c] [-x](pour forcer l'étape Conan) [-e](étape Conan uniquement) [-r](pour lancer le binaire) [-t] (pour lancer le linter) [-f] (pour lancer clang-format) [-p] (pour mettre a jour les fichiers resources et config)"
       exit 1
       ;;
   esac
@@ -174,6 +179,9 @@ if [[ "$CONAN_STEP" == "true" || ! -d $BUILD_DIR ]]; then
       -pr:b $PROFILE_NAME \
       --build=missing \
       -s build_type=$BUILD_TYPE
+  if [[ "$CONAN_STEP_ONLY" == "true" ]]; then
+    exit 0
+  fi
 fi
 
 get_conan_build_preset() {
