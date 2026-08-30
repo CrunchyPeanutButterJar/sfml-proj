@@ -84,8 +84,8 @@ detect_os() {
   esac
 }
 
-PROFILE_NAME_BASE="clang_profile_base"
-PROFILE_NAME="clang_profile"
+PROFILE_NAME_BASE="active_profile_base"
+PROFILE_NAME="active_profile"
 
 get_conan_profile_path() {
   profile_name="$1"
@@ -118,7 +118,7 @@ tools.build:compiler_executables={'c': 'cl', 'cpp': 'cl'}
 tools.cmake.cmaketoolchain:generator=Ninja
 "
 
-ACTIVE_WIN_PROFILE="$WIN_MSVC_VS_PROFILE"
+ACTIVE_WIN_PROFILE="$WIN_MSVC_NINJA_PROFILE"
 
 WIN_CLANG_PROFILE="
 [settings]
@@ -159,7 +159,7 @@ tools.build:compiler_executables={'c': 'gcc-14', 'cpp': 'g++-14'}
 
 ACTIVE_LIN_PROFILE="$LIN_GNU_PROFILE"
 
-generate_conan_clang_profile() {
+generate_conan_profile() {
   os=$(detect_os)
   if [ "$os" = "Windows" ]; then
     cat << EOF
@@ -174,14 +174,22 @@ EOF
   fi
 }
 
-echo "Creation clang_profile_base"
+create_conan_profile() {
+  profile_name="$1"
 
-set +e
-conan profile detect --name=$PROFILE_NAME_BASE --force 2>/dev/null
-set -e
+  echo "Creation $profile_name"
 
-echo "Creation clang_profile"
-OUTPUT_FILE=$(generate_conan_clang_profile)
+  set +e
+  conan profile detect --name=$profile_name --force 2>/dev/null
+  set -e
+  return
+}
+
+create_conan_profile $PROFILE_NAME_BASE
+
+create_conan_profile $PROFILE_NAME
+
+OUTPUT_FILE=$(generate_conan_profile)
 echo "$OUTPUT_FILE"
 echo "$OUTPUT_FILE" > "$(get_conan_profile_path $PROFILE_NAME)"
 
